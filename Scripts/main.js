@@ -1,44 +1,165 @@
-document.addEventListener("DOMContentLoaded", async () => {
+const manifestCache = new Map();
+const sectionsCache = new Map();
+let latestRenderToken = 0;
+
+function createSafeId(value, suffix = "") {
+    const safeValue = String(value).replace(/[^a-zA-Z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+    return `${safeValue || "item"}${suffix}`;
+}
+
+function createEntryId(manifestSubset, entry, index) {
+    return createSafeId(`quick-ref-${manifestSubset}-${index}-${entry.file}-${entry.title}`.toLowerCase());
+}
+
+function showRulesError(message, renderToken) {
+    if (renderToken !== latestRenderToken) return;
+
+    const rulesReferenceSection = document.getElementById("rulesCardContainer") || document.getElementById("rules-reference")?.querySelector(".row");
+    if (!rulesReferenceSection) return;
+
+    const errorCol = document.createElement("div");
+    errorCol.className = "col-12";
+
+    const alert = document.createElement("div");
+    alert.className = "alert alert-danger";
+    alert.setAttribute("role", "alert");
+    alert.textContent = message;
+
+    errorCol.appendChild(alert);
+    rulesReferenceSection.replaceChildren(errorCol);
+}
+
+async function fetchJson(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Unable to load ${url} (${response.status})`);
+    }
+    return response.json();
+}
+
+async function fetchText(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Unable to load ${url} (${response.status})`);
+    }
+    return response.text();
+}
+
+async function getManifest(manifestSubset) {
+    if (!manifestCache.has(manifestSubset)) {
+        const manifestPromise = fetchJson(`${manifestSubset}_manifest.json`).catch((error) => {
+            manifestCache.delete(manifestSubset);
+            throw error;
+        });
+        manifestCache.set(manifestSubset, manifestPromise);
+    }
+    return manifestCache.get(manifestSubset);
+}
+
+function parseMarkdownSections(mdText) {
+    const sections = [];
+    const lines = mdText.split("\n");
+    let currentSection = null;
+
+    for (const line of lines) {
+        if (line.startsWith("# ")) {
+            if (currentSection) {
+                sections.push(currentSection);
+            }
+            currentSection = {
+                title: line.replace("# ", "").trim(),
+                items: []
+            };
+        } else if (line.startsWith("- ") && currentSection) {
+            currentSection.items.push(line.slice(2).trim());
+        }
+    }
+
+    if (currentSection) {
+        sections.push(currentSection);
+    }
+
+    return sections;
+}
+
+async function getSections(manifestSubset, entry) {
+    const cacheKey = `${manifestSubset}:${entry.file}`;
+    if (!sectionsCache.has(cacheKey)) {
+        const sectionsPromise = fetchText(entry.file)
+            .then(parseMarkdownSections)
+            .catch((error) => {
+                sectionsCache.delete(cacheKey);
+                throw error;
+            });
+        sectionsCache.set(cacheKey, sectionsPromise);
+    }
+    return sectionsCache.get(cacheKey);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("[data-ruleset]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            renderCards(link.dataset.ruleset);
+        });
+    });
+
+    document.querySelectorAll("[data-background]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            changeBackground(link.dataset.background);
+        });
+    });
+
+    document.querySelectorAll("[data-scroll-target]").forEach((button) => {
+        button.addEventListener("click", () => scrollToSection(button.dataset.scrollTarget));
+    });
+
     renderCards("personnel");
 });
 
 async function renderCards(manifestSubset) {
-    const rulesReferenceSection = document.getElementById("rules-reference").querySelector(".row");
-    rulesReferenceSection.innerHTML = ""; // Clear previous cards
+    const renderToken = ++latestRenderToken;
+    const rulesReferenceSection = document.getElementById("rulesCardContainer") || document.getElementById("rules-reference").querySelector(".row");
+    const menu = document.getElementById("quickRef");
 
-    const response = await fetch(`${manifestSubset}_manifest.json`);
-    const manifest = await response.json();
+    if (!rulesReferenceSection || !menu) return;
 
-    for (const entry of manifest) {
-        const mdResponse = await fetch(entry.file);
-        const mdText = await mdResponse.text();
+    try {
+        const manifest = await getManifest(manifestSubset);
+        const entriesWithSections = await Promise.all(
+            manifest.map(async (entry, index) => ({
+                entry,
+                entryId: createEntryId(manifestSubset, entry, index),
+                sections: await getSections(manifestSubset, entry)
+            }))
+        );
 
-        // Parse markdown into sections
-        const sections = [];
-        const lines = mdText.split("\n");
-        let currentSection = null;
+        if (renderToken !== latestRenderToken) return;
 
-        for (let line of lines) {
-            if (line.startsWith("# ")) {
-                if (currentSection) {
-                    sections.push(currentSection);
-                }
-                currentSection = {
-                    title: line.replace("# ", "").trim(),
-                    items: []
-                };
-            } else if (line.startsWith("- ")) {
-                if (currentSection) {
-                    currentSection.items.push(line.slice(2).trim());
-                }
-            }
-        }
-        if (currentSection) {
-            sections.push(currentSection);
-        }
+        const cardsFragment = document.createDocumentFragment();
+        const menuFragment = document.createDocumentFragment();
 
-        
-        // Build the card
+        entriesWithSections.forEach(({ entry, entryId, sections }) => {
+            cardsFragment.appendChild(createCard(entry, entryId, sections));
+            menuFragment.appendChild(createMenuItem(entry, entryId));
+        });
+
+        rulesReferenceSection.replaceChildren(cardsFragment);
+        menu.replaceChildren(menuFragment);
+
+        // Animation delay
+        rulesReferenceSection.querySelectorAll(".flicker-in-1").forEach((el) => {
+            const randomDelay = (Math.random() * .7).toFixed(2) + "s"; // Up to 0.7s delay
+            el.style.animationDelay = randomDelay;
+        });
+    } catch (error) {
+        console.error(error);
+        showRulesError("The quick reference could not be loaded. Please refresh the page or try another ruleset.", renderToken);
+    }
+}
+
+function createCard(entry, entryId, sections) {
     const cardCol = document.createElement("div");
     cardCol.className = "col-lg-6 col-md-12 mb-4";
 
@@ -46,7 +167,7 @@ async function renderCards(manifestSubset) {
     card.className = "card h-100";
 
     // Create a unique collapse ID for this card's body
-    const collapseId = `${entry.title.replace(/\s+/g, "")}Collapse`;
+    const collapseId = `${entryId}-collapse`;
 
     const cardHeader = document.createElement("div");
     cardHeader.className = "card-header flicker-in-1";
@@ -55,7 +176,17 @@ async function renderCards(manifestSubset) {
     cardHeader.setAttribute("aria-expanded", "false");
     cardHeader.setAttribute("aria-controls", collapseId);
     cardHeader.style.cursor = "pointer";
-    cardHeader.innerHTML = `<h5 class="mb-0" id="${entry.title}"><i class="${entry.icon}"></i> ${entry.title}</h5>`;
+
+    const title = document.createElement("h5");
+    title.className = "mb-0";
+    title.id = entryId;
+
+    const icon = document.createElement("i");
+    icon.className = entry.icon;
+
+    title.appendChild(icon);
+    title.append(` ${entry.title}`);
+    cardHeader.appendChild(title);
 
     const cardBodyWrapper = document.createElement("div");
     cardBodyWrapper.className = "collapse";
@@ -65,35 +196,14 @@ async function renderCards(manifestSubset) {
     cardBody.className = "card-body";
 
     // Accordion stays inside card body
-    const accordionId = `${entry.title.replace(/\s+/g, "")}Accordion`;
+    const accordionId = `${entryId}-accordion`;
     const accordion = document.createElement("div");
     accordion.className = "accordion";
     accordion.id = accordionId;
 
     // Add accordion items
     sections.forEach((section, index) => {
-        const sectionId = `${accordionId}-section${index}`;
-
-        const item = document.createElement("div");
-        item.className = "accordion-item";
-        item.innerHTML = `
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#${sectionId}">
-                    ${section.title}
-                </button>
-            </h2>
-            <div id="${sectionId}" class="accordion-collapse collapse"
-                data-bs-parent="#${accordionId}">
-                <div class="accordion-body">
-                    <ul>
-                        ${section.items.map((item) => `<li>${item}</li>`).join("")}
-                    </ul>
-                </div>
-            </div>
-        `;
-
-        accordion.appendChild(item);
+        accordion.appendChild(createAccordionItem(accordionId, section, index));
     });
 
     cardBody.appendChild(accordion);
@@ -102,37 +212,89 @@ async function renderCards(manifestSubset) {
     card.appendChild(cardHeader);
     card.appendChild(cardBodyWrapper);
     cardCol.appendChild(card);
-    rulesReferenceSection.appendChild(cardCol);
-    }
-    
-    // Create a dropdown menu for this entry
-    const menu = document.getElementById("quickRef");
-    menu.innerHTML = ""; // Clear previous menu items
 
-    for (const entry of manifest) {
-        const menuItem = document.createElement("li");
-        const link = document.createElement("a");
-        link.className = "dropdown-item";
-        link.href = "#"+entry.title;
-        link.textContent = entry.title;
-        link.onclick = (e) => {
-            e.preventDefault();
-            scrollToSection(entry.title);
-        };
-        menuItem.appendChild(link);
-        menu.appendChild(menuItem);
-    }
+    return cardCol;
+}
 
-    // Animation delay
-    document.querySelectorAll('.flicker-in-1').forEach(el => {
-    const randomDelay = (Math.random() * .7).toFixed(2) + 's'; // Up to 0.7s delay
-    el.style.animationDelay = randomDelay;
-});
+function appendSafeInlineContent(parent, value) {
+    const parts = String(value).split(/(<\/?b>|<\/?br\s*\/?>)/gi);
+    const strongStack = [];
+    let currentParent = parent;
 
+    parts.forEach((part) => {
+        const token = part.toLowerCase();
+        if (token === "<b>") {
+            const strong = document.createElement("strong");
+            currentParent.appendChild(strong);
+            strongStack.push(currentParent);
+            currentParent = strong;
+        } else if (token === "</b>") {
+            currentParent = strongStack.pop() || parent;
+        } else if (token === "<br>" || token === "<br/>" || token === "<br />" || token === "</br>") {
+            currentParent.appendChild(document.createElement("br"));
+        } else if (part) {
+            currentParent.append(part);
+        }
+    });
+}
+
+function createAccordionItem(accordionId, section, index) {
+    const sectionId = `${accordionId}-section${index}`;
+
+    const item = document.createElement("div");
+    item.className = "accordion-item";
+
+    const header = document.createElement("h2");
+    header.className = "accordion-header";
+
+    const button = document.createElement("button");
+    button.className = "accordion-button collapsed";
+    button.type = "button";
+    button.setAttribute("data-bs-toggle", "collapse");
+    button.setAttribute("data-bs-target", `#${sectionId}`);
+    button.textContent = section.title;
+
+    header.appendChild(button);
+
+    const collapse = document.createElement("div");
+    collapse.id = sectionId;
+    collapse.className = "accordion-collapse collapse";
+    collapse.setAttribute("data-bs-parent", `#${accordionId}`);
+
+    const body = document.createElement("div");
+    body.className = "accordion-body";
+
+    const list = document.createElement("ul");
+    section.items.forEach((sectionItem) => {
+        const listItem = document.createElement("li");
+        appendSafeInlineContent(listItem, sectionItem);
+        list.appendChild(listItem);
+    });
+
+    body.appendChild(list);
+    collapse.appendChild(body);
+    item.appendChild(header);
+    item.appendChild(collapse);
+
+    return item;
+}
+
+function createMenuItem(entry, entryId) {
+    const menuItem = document.createElement("li");
+    const link = document.createElement("a");
+    link.className = "dropdown-item";
+    link.href = `#${entryId}`;
+    link.textContent = entry.title;
+    link.addEventListener("click", (e) => {
+        e.preventDefault();
+        scrollToSection(entryId);
+    });
+    menuItem.appendChild(link);
+    return menuItem;
 }
 
 function changeBackground(imageURL) {
-    document.documentElement.style.setProperty('--bg-image', `url('${imageURL}')`);
+    document.documentElement.style.setProperty("--bg-image", `url('${imageURL}')`);
 }
 
 // Smooth scrolling function
@@ -142,17 +304,17 @@ function scrollToSection(sectionId) {
     if (!element) return;
 
     const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-    window.scrollTo({ top: y, behavior: 'smooth' });
+    window.scrollTo({ top: y, behavior: "smooth" });
 
     // Collapse the navbar if it's open (mobile)
-    const navbarCollapse = document.querySelector('.navbar-collapse.show');
+    const navbarCollapse = document.querySelector(".navbar-collapse.show");
     if (navbarCollapse) {
         const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse, { toggle: false });
         bsCollapse.hide();
     }
 
     // Collapse any open dropdowns
-    const dropdown = document.querySelector('.nav-item.dropdown.show');
+    const dropdown = document.querySelector(".nav-item.dropdown.show");
     if (dropdown) {
         const dropdownToggle = dropdown.querySelector('[data-bs-toggle="dropdown"]');
         if (dropdownToggle) {
@@ -160,4 +322,3 @@ function scrollToSection(sectionId) {
         }
     }
 }
-

@@ -35,8 +35,8 @@
                             Rulesets
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item" href="#" role="button" onclick="renderCards('personnel')">Personnel Ruleset</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" onclick="renderCards('vehicle')">Vehicle Ruleset</a></li>
+                            <li><a class="dropdown-item" href="#" role="button" data-ruleset="personnel">Personnel Ruleset</a></li>
+                            <li><a class="dropdown-item" href="#" role="button" data-ruleset="vehicle">Vehicle Ruleset</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -51,15 +51,15 @@
                             Backgrounds
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item" href="#" role="button" onclick="changeBackground('../Resources/Base.jpg')">Base</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" onclick="changeBackground('../Resources/Dusk.jpg')">Dusk</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" onclick="changeBackground('../Resources/Insignia.jpg')">Insignia</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" onclick="changeBackground('../Resources/Invasion.jpg')">Invasion</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" onclick="changeBackground('../Resources/ISD.jpg')">ISD</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" onclick="changeBackground('../Resources/ISD-Fleet.jpg')">ISD Fleet</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" onclick="changeBackground('../Resources/Jaku.jpg')">Jaku</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" onclick="changeBackground('../Resources/Planetary.jpg')">Planetary</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" onclick="changeBackground('../Resources/Pursuit.jpg')">Pursuit</a></li>
+                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Base.jpg">Base</a></li>
+                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Dusk.jpg">Dusk</a></li>
+                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Insignia.jpg">Insignia</a></li>
+                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Invasion.jpg">Invasion</a></li>
+                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/ISD.jpg">ISD</a></li>
+                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/ISD-Fleet.jpg">ISD Fleet</a></li>
+                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Jaku.jpg">Jaku</a></li>
+                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Planetary.jpg">Planetary</a></li>
+                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Pursuit.jpg">Pursuit</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -92,15 +92,14 @@
                             </a>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <button href="https://online.anyflip.com/ziisf/jobq/mobile/index.html"
-                                class="btn btn-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#characterModal">
+                            <button type="button" class="btn btn-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#characterModal">
                                 <i class="fa-solid fa-sheet-plastic"></i> Characters
-                            </a>
+                            </button>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <button class="btn btn-red btn-lg w-100" onclick="scrollToSection('dice-roller')">
+                            <button type="button" class="btn btn-red btn-lg w-100" data-scroll-target="dice-roller">
                                 <i class="fas fa-dice"></i> Dice Roller
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -119,13 +118,13 @@
             </div>
             <div class="modal-body">
                 <table class="table">
-                    <thread>
+                    <thead>
                         <tr>
                             <th scope="col">Link</th>
                             <th scope="col">Name</th>
                             <th scope="col">Career</th>
                         </tr>
-                    </thread>
+                    </thead>
                     <tbody>
                         <tr>
                             <th scope="row">
@@ -217,34 +216,28 @@
                                     <div class="mb-2">
                                         <label class="form-label">Proficiency (Yellow)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-warning"
-                                                onclick="adjustDice('proficiency', -1)">-</button>
+                                            <button class="btn btn-outline-warning" data-dice-adjust="proficiency" data-dice-change="-1">-</button>
                                             <input type="number" class="form-control text-center" id="proficiency"
                                                 value="0" min="0" max="10">
-                                            <button class="btn btn-outline-warning"
-                                                onclick="adjustDice('proficiency', 1)">+</button>
+                                            <button class="btn btn-outline-warning" data-dice-adjust="proficiency" data-dice-change="1">+</button>
                                         </div>
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label">Ability (Green)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-success"
-                                                onclick="adjustDice('ability', -1)">-</button>
+                                            <button class="btn btn-outline-success" data-dice-adjust="ability" data-dice-change="-1">-</button>
                                             <input type="number" class="form-control text-center" id="ability" value="0"
                                                 min="0" max="10">
-                                            <button class="btn btn-outline-success"
-                                                onclick="adjustDice('ability', 1)">+</button>
+                                            <button class="btn btn-outline-success" data-dice-adjust="ability" data-dice-change="1">+</button>
                                         </div>
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label">Boost (Blue)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-info"
-                                                onclick="adjustDice('boost', -1)">-</button>
+                                            <button class="btn btn-outline-info" data-dice-adjust="boost" data-dice-change="-1">-</button>
                                             <input type="number" class="form-control text-center" id="boost" value="0"
                                                 min="0" max="10">
-                                            <button class="btn btn-outline-info"
-                                                onclick="adjustDice('boost', 1)">+</button>
+                                            <button class="btn btn-outline-info" data-dice-adjust="boost" data-dice-change="1">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -255,34 +248,28 @@
                                     <div class="mb-2">
                                         <label class="form-label">Challenge (Red)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-danger"
-                                                onclick="adjustDice('challenge', -1)">-</button>
+                                            <button class="btn btn-outline-danger" data-dice-adjust="challenge" data-dice-change="-1">-</button>
                                             <input type="number" class="form-control text-center" id="challenge"
                                                 value="0" min="0" max="10">
-                                            <button class="btn btn-outline-danger"
-                                                onclick="adjustDice('challenge', 1)">+</button>
+                                            <button class="btn btn-outline-danger" data-dice-adjust="challenge" data-dice-change="1">+</button>
                                         </div>
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label">Difficulty (Purple)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-secondary"
-                                                onclick="adjustDice('difficulty', -1)">-</button>
+                                            <button class="btn btn-outline-secondary" data-dice-adjust="difficulty" data-dice-change="-1">-</button>
                                             <input type="number" class="form-control text-center" id="difficulty"
                                                 value="0" min="0" max="10">
-                                            <button class="btn btn-outline-secondary"
-                                                onclick="adjustDice('difficulty', 1)">+</button>
+                                            <button class="btn btn-outline-secondary" data-dice-adjust="difficulty" data-dice-change="1">+</button>
                                         </div>
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label">Setback (Black)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-dark"
-                                                onclick="adjustDice('setback', -1)">-</button>
+                                            <button class="btn btn-outline-dark" data-dice-adjust="setback" data-dice-change="-1">-</button>
                                             <input type="number" class="form-control text-center" id="setback" value="0"
                                                 min="0" max="10">
-                                            <button class="btn btn-outline-dark"
-                                                onclick="adjustDice('setback', 1)">+</button>
+                                            <button class="btn btn-outline-dark" data-dice-adjust="setback" data-dice-change="1">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -291,10 +278,10 @@
 
                         <!-- Roll Button and Results -->
                         <div class="text-center">
-                            <button class="btn btn-primary btn-lg mb-2 ms-5" onclick="rollDice()">
+                            <button class="btn btn-primary btn-lg mb-2 ms-5" data-dice-action="roll">
                                 <i class="fas fa-dice px-1"></i> Roll Dice Pool
                             </button>
-                            <button class="btn btn-secondary mb-2 ms-3" onclick="clearDice()">Clear All</button>
+                            <button class="btn btn-secondary mb-2 ms-3" data-dice-action="clear">Clear All</button>
                         </div>
 
                         <!-- Results Display -->

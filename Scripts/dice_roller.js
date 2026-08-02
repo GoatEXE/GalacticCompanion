@@ -1,80 +1,83 @@
-let totals = {
-    success: 0,
-    advantage: 0,
-    triumph: 0,
-    despair: 0,
-    failure: 0,
-    threat: 0
-}
+const DICE_TYPES = ['proficiency', 'ability', 'boost', 'challenge', 'difficulty', 'setback'];
+const MIN_DICE = 0;
+const MAX_DICE = 10;
 
-const boostDictionary = {
-    roll1: function() {return;},
-    roll2: function() {return;},
-    roll3: function() {totals.success++; return;},
-    roll4: function() {totals.success++; totals.advantage++; return;},
-    roll5: function() {totals.advantage+=2; return;},
-    roll6: function() {totals.advantage++; return;},
-}
+const DICE_FACES = {
+    boost: [
+        {},
+        {},
+        { success: 1 },
+        { success: 1, advantage: 1 },
+        { advantage: 2 },
+        { advantage: 1 }
+    ],
+    setback: [
+        {},
+        {},
+        { failure: 1 },
+        { failure: 1 },
+        { threat: 1 },
+        { threat: 1 }
+    ],
+    ability: [
+        {},
+        { success: 1 },
+        { success: 1 },
+        { success: 2 },
+        { advantage: 1 },
+        { advantage: 1 },
+        { success: 1, advantage: 1 },
+        { advantage: 2 }
+    ],
+    difficulty: [
+        {},
+        { failure: 1 },
+        { failure: 2 },
+        { threat: 1 },
+        { threat: 1 },
+        { threat: 1 },
+        { threat: 2 },
+        { failure: 1, threat: 1 }
+    ],
+    proficiency: [
+        {},
+        { success: 1 },
+        { success: 1 },
+        { success: 2 },
+        { success: 2 },
+        { advantage: 1 },
+        { success: 1, advantage: 1 },
+        { success: 1, advantage: 1 },
+        { success: 1, advantage: 1 },
+        { advantage: 2 },
+        { advantage: 2 },
+        { triumph: 1 }
+    ],
+    challenge: [
+        {},
+        { failure: 1 },
+        { failure: 1 },
+        { failure: 2 },
+        { failure: 2 },
+        { threat: 1 },
+        { threat: 1 },
+        { failure: 1, threat: 1 },
+        { failure: 1, threat: 1 },
+        { threat: 2 },
+        { threat: 2 },
+        { despair: 1 }
+    ]
+};
 
-const setbackDictionary = {
-    roll1: function() {return;},
-    roll2: function() {return;},
-    roll3: function() {totals.failure++; return;},
-    roll4: function() {totals.failure++; return;},
-    roll5: function() {totals.threat++; return;},
-    roll6: function() {totals.threat++; return;},
-}
-
-const abilityDictionary = {
-    roll1: function() {return;},
-    roll2: function() {totals.success++; return;},
-    roll3: function() {totals.success++; return;},
-    roll4: function() {totals.success+=2; return;},
-    roll5: function() {totals.advantage++; return;},
-    roll6: function() {totals.advantage++; return;},
-    roll7: function() {totals.advantage++; totals.success++; return;},
-    roll8: function() {totals.advantage+=2; return;},
-}
-
-const difficultyDictionary = {
-    roll1: function() {return;},
-    roll2: function() {totals.failure++; return;},
-    roll3: function() {totals.failure+=2; return;},
-    roll4: function() {totals.threat++; return;},
-    roll5: function() {totals.threat++; return;},
-    roll6: function() {totals.threat++; return;},
-    roll7: function() {totals.threat+=2; return;},
-    roll8: function() {totals.threat++; totals.failure++; return;},
-}
-
-const proficiencyDictionary = {
-    roll1: function() {return;},
-    roll2: function() {totals.success++; return;},
-    roll3: function() {totals.success++; return;},
-    roll4: function() {totals.success+=2; return;},
-    roll5: function() {totals.success+=2; return;},
-    roll6: function() {totals.advantage++; return;},
-    roll7: function() {totals.advantage++; totals.success++; return;},
-    roll8: function() {totals.advantage++; totals.success++; return;},
-    roll9: function() {totals.advantage++; totals.success++; return;},
-    roll10: function() {totals.advantage+=2; return;},
-    roll11: function() {totals.advantage+=2; return;},
-    roll12: function() {totals.triumph++; return;},
-}
-
-const challengeDictionary = {
-    roll1: function() {return;},
-    roll2: function() {totals.failure++; return;},
-    roll3: function() {totals.failure++; return;},
-    roll4: function() {totals.failure+=2; return;},
-    roll5: function() {totals.failure+=2; return;},
-    roll6: function() {totals.threat++; return;},
-    roll7: function() {totals.threat++; return;},
-    roll8: function() {totals.threat++; totals.failure++; return;},
-    roll9: function() {totals.threat++; totals.failure++; return;},
-    roll10: function() {totals.threat+=2; return;},
-    roll11: function() {totals.threat+=2; return;},
-    roll12: function() {totals.despair++; return;},
+function createEmptyTotals() {
+    return {
+        success: 0,
+        advantage: 0,
+        triumph: 0,
+        despair: 0,
+        failure: 0,
+        threat: 0
+    };
 }
 
 /**
@@ -84,37 +87,70 @@ const challengeDictionary = {
  */
 function adjustDice(diceType, change) {
     const input = document.getElementById(diceType);
-    const currentValue = parseInt(input.value);
-    const newValue = Math.max(0, Math.min(10, currentValue + change));
-    input.value = newValue;
+    if (!input) return;
+
+    const currentValue = readDiceInput(diceType);
+    input.value = clampDiceCount(currentValue + change);
+}
+
+function clampDiceCount(value) {
+    const parsedValue = Number.parseInt(value, 10);
+    if (Number.isNaN(parsedValue)) return MIN_DICE;
+    return Math.max(MIN_DICE, Math.min(MAX_DICE, parsedValue));
+}
+
+function readDiceInput(diceType) {
+    const input = document.getElementById(diceType);
+    if (!input) return MIN_DICE;
+
+    const normalizedValue = clampDiceCount(input.value);
+    input.value = normalizedValue;
+    return normalizedValue;
+}
+
+function getDicePool() {
+    return Object.fromEntries(DICE_TYPES.map((type) => [type, readDiceInput(type)]));
 }
 
 /**
  * Clears all dice input fields and hides the results section.
  */
 function clearDice() {
-    const diceTypes = ['proficiency', 'ability', 'boost', 'challenge', 'difficulty', 'setback'];
-    diceTypes.forEach(type => {
-        document.getElementById(type).value = 0;
+    DICE_TYPES.forEach(type => {
+        const input = document.getElementById(type);
+        if (input) input.value = MIN_DICE;
     });
-    document.getElementById('results').style.display = 'none';
+
+    const results = document.getElementById('results');
+    if (results) results.style.display = 'none';
 }
 
 /**
  * Rolls the dice (simulateRoll function) based on the values in the input fields and displays the results (displayResults function).
  */
 function rollDice() {
-    const proficiency = parseInt(document.getElementById('proficiency').value);
-    const ability = parseInt(document.getElementById('ability').value);
-    const boost = parseInt(document.getElementById('boost').value);
-    const challenge = parseInt(document.getElementById('challenge').value);
-    const difficulty = parseInt(document.getElementById('difficulty').value);
-    const setback = parseInt(document.getElementById('setback').value);
-
-    const results = simulateRoll(proficiency, ability, boost, challenge, difficulty, setback);
+    const pool = getDicePool();
+    const results = simulateRoll(pool.proficiency, pool.ability, pool.boost, pool.challenge, pool.difficulty, pool.setback);
     console.table(results);
     displayResults(results);
-    resetTotals();
+}
+
+function addSymbols(totals, symbols) {
+    Object.entries(symbols).forEach(([symbol, count]) => {
+        totals[symbol] += count;
+    });
+}
+
+function rollDie(diceType, totals) {
+    const faces = DICE_FACES[diceType];
+    const face = faces[Math.floor(Math.random() * faces.length)];
+    addSymbols(totals, face);
+}
+
+function rollDiceType(diceType, count, totals) {
+    for (let i = 0; i < clampDiceCount(count); i++) {
+        rollDie(diceType, totals);
+    }
 }
 
 /**
@@ -125,114 +161,136 @@ function rollDice() {
  * @param {Number} chal - The number of challenge dice.
  * @param {Number} diff - The number of difficulty dice.
  * @param {Number} setb - The number of setback dice.
- * @returns {Array} - An object containing the results all dice rolls, which is then passed to displayResults from rollDice.
+ * @returns {Object} - An object containing the raw results all dice rolls, which is then passed to displayResults from rollDice.
  */
 function simulateRoll(prof, abil, boost, chal, diff, setb) {
-    for (i = 0; i < boost; i++) {
-        const roll = Math.ceil(Math.random() * 6);
-        boostDictionary['roll'+roll]();
-    }
+    const totals = createEmptyTotals();
 
-    for (i = 0; i < setb; i++) {
-        const roll = Math.ceil(Math.random() * 6);
-        setbackDictionary['roll'+roll]();
-    }
-
-    for (i=0; i < abil; i++) {
-        const roll = Math.ceil(Math.random() * 8);
-        abilityDictionary['roll'+roll]();
-    }
-
-    for (i=0; i < diff; i++) {
-        const roll = Math.ceil(Math.random() * 8);
-        difficultyDictionary['roll'+roll]();
-    }
-
-    for (i=0; i < prof; i++) {
-        const roll = Math.ceil(Math.random() * 12);
-        proficiencyDictionary['roll'+roll]();
-    }
-
-    for (i=0; i < chal; i++) {
-        const roll = Math.ceil(Math.random() * 12);
-        challengeDictionary['roll'+roll]();
-    }
+    rollDiceType('boost', boost, totals);
+    rollDiceType('setback', setb, totals);
+    rollDiceType('ability', abil, totals);
+    rollDiceType('difficulty', diff, totals);
+    rollDiceType('proficiency', prof, totals);
+    rollDiceType('challenge', chal, totals);
 
     return totals;
 }
 
+function normalizeResults(results) {
+    const normalizedResults = { ...results };
+    const totalSuccess = normalizedResults.success + normalizedResults.triumph;
+    const totalFailure = normalizedResults.failure + normalizedResults.despair;
+
+    // Effects of despair and triumph cannot be negated.
+    if (totalSuccess > totalFailure) {
+        normalizedResults.success = Math.max(0, normalizedResults.success - totalFailure);
+        normalizedResults.failure = 0;
+    } else if (totalFailure >= totalSuccess) {
+        normalizedResults.failure = Math.max(0, normalizedResults.failure - totalSuccess);
+        normalizedResults.success = 0;
+    }
+
+    normalizedResults.advantage -= normalizedResults.threat;
+    if (normalizedResults.advantage < 0) {
+        normalizedResults.threat = Math.abs(normalizedResults.advantage);
+        normalizedResults.advantage = 0;
+    } else {
+        normalizedResults.threat = 0;
+    }
+
+    return {
+        normalizedResults,
+        totalSuccess,
+        totalFailure
+    };
+}
+
+function createBadge(className, label, value) {
+    const badge = document.createElement('span');
+    badge.className = `badge ${className} me-2`;
+    badge.textContent = `${label}: ${value}`;
+    return badge;
+}
+
+function createInterpretation(totalSuccess, totalFailure, results) {
+    const interpretation = document.createElement('div');
+    const hasSpecialEvent = results.triumph > 0 || results.despair > 0;
+
+    if (totalSuccess > totalFailure) {
+        interpretation.className = 'alert alert-success';
+        interpretation.textContent = hasSpecialEvent ? 'The action succeeds! Special event triggered.' : 'The action succeeds!';
+    } else {
+        interpretation.className = 'alert alert-danger';
+        interpretation.textContent = hasSpecialEvent ? 'The action fails. Special event triggered.' : 'The action fails.';
+    }
+
+    return interpretation;
+}
+
 /**
  * Displays the results of the dice roll and adds an interpretation of the results to the results section.
- * @param {Array} results - The results of all dice rolls from simulateRoll.
+ * @param {Object} results - The raw results of all dice rolls from simulateRoll.
  */
 function displayResults(results) {
     const resultsDiv = document.getElementById('results');
     const summaryDiv = document.getElementById('resultsSummary');
     const detailsDiv = document.getElementById('resultsDetails');
 
-    // Measure Success
-    totalSuccess = results.success + results.triumph;
-    totalFailure = results.failure + results.despair;
+    if (!resultsDiv || !summaryDiv || !detailsDiv) return;
 
-    // Effects of despair and triumph cannot be negated
-    if (totalSuccess > totalFailure) {
-        results.success -= totalFailure;
-        results.failure = 0;
-    } else if (totalFailure >= totalSuccess) {
-        results.failure -= totalSuccess;
-        results.success = 0;
-    }
+    const { normalizedResults, totalSuccess, totalFailure } = normalizeResults(results);
+    const summaryFragment = document.createDocumentFragment();
 
-    // Measure magnitude
-    results.advantage -= results.threat;
-    results.advantage < 0 ? results.threat=Math.abs(results.advantage) : results.threat=0;
-
-    let summary = '';
-    if (results.success > 0) {
-        summary += `<span class="badge bg-success me-2">Success: ${results.success}</span>`;
+    if (normalizedResults.success > 0) {
+        summaryFragment.appendChild(createBadge('bg-success', 'Success', normalizedResults.success));
     }
-    if (results.failure > 0) {
-        summary += `<span class="badge bg-danger me-2">Failure: ${results.failure}</span>`;
+    if (normalizedResults.failure > 0) {
+        summaryFragment.appendChild(createBadge('bg-danger', 'Failure', normalizedResults.failure));
     }
-    if (results.advantage > 0) {
-        summary += `<span class="badge bg-info me-2">Advantage: ${results.advantage}</span>`;
+    if (normalizedResults.advantage > 0) {
+        summaryFragment.appendChild(createBadge('bg-info', 'Advantage', normalizedResults.advantage));
     }
-    if (results.threat > 0) {
-        summary += `<span class="badge bg-orange me-2">Threat: ${results.threat}</span>`;
+    if (normalizedResults.threat > 0) {
+        summaryFragment.appendChild(createBadge('bg-orange', 'Threat', normalizedResults.threat));
     }
-    if (results.triumph > 0) {
-        summary += `<span class="badge bg-warning me-2">Triumph: ${results.triumph}</span>`;
+    if (normalizedResults.triumph > 0) {
+        summaryFragment.appendChild(createBadge('bg-warning', 'Triumph', normalizedResults.triumph));
     }
-    if (results.despair > 0) {
-        summary += `<span class="badge bg-dark me-2">Despair: ${results.despair}</span>`;
+    if (normalizedResults.despair > 0) {
+        summaryFragment.appendChild(createBadge('bg-dark', 'Despair', normalizedResults.despair));
     }
 
-    summaryDiv.innerHTML = summary || '<span class="text-muted">No significant results</span>';
-
-    // Add interpretation
-    let interpretation = '';
-    if ((totalSuccess > totalFailure) && (totals.triumph > 0 || totals.despair > 0)) {
-        interpretation = '<div class="alert alert-success">The action succeeds! Special event triggered.</div>';
-    } else if (totalSuccess > totalFailure) {
-        interpretation = '<div class="alert alert-success">The action succeeds!</div>';
-    } else if ((totalFailure >= totalSuccess) && (totals.triumph > 0 || totals.despair > 0)) {
-        interpretation = '<div class="alert alert-danger">The action fails. Special event triggered.</div>';
-    } else if (totalFailure >= totalSuccess) {
-        interpretation = '<div class="alert alert-danger">The action fails.</div>';
+    if (!summaryFragment.hasChildNodes()) {
+        const noResults = document.createElement('span');
+        noResults.className = 'text-muted';
+        noResults.textContent = 'No significant results';
+        summaryFragment.appendChild(noResults);
     }
 
-    detailsDiv.innerHTML = interpretation;
+    summaryDiv.replaceChildren(summaryFragment);
+    detailsDiv.replaceChildren(createInterpretation(totalSuccess, totalFailure, normalizedResults));
     resultsDiv.style.display = 'block';
-}
-
-
-function resetTotals() {
-    for (key in totals) {
-        totals[key] = 0;
-    }
 }
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Dice roller is ready for use.")
+    document.querySelectorAll('[data-dice-adjust]').forEach((button) => {
+        button.addEventListener('click', () => {
+            adjustDice(button.dataset.diceAdjust, Number.parseInt(button.dataset.diceChange, 10) || 0);
+        });
+    });
+
+    document.querySelectorAll('[data-dice-action="roll"]').forEach((button) => {
+        button.addEventListener('click', rollDice);
+    });
+
+    document.querySelectorAll('[data-dice-action="clear"]').forEach((button) => {
+        button.addEventListener('click', clearDice);
+    });
+
+    document.querySelectorAll('.dice-controls input[type="number"]').forEach((input) => {
+        input.addEventListener('change', () => readDiceInput(input.id));
+    });
+
+    console.log("Dice roller is ready for use.");
 });
