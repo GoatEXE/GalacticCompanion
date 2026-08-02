@@ -11,22 +11,72 @@ function createEntryId(manifestSubset, entry, index) {
     return createSafeId(`quick-ref-${manifestSubset}-${index}-${entry.file}-${entry.title}`.toLowerCase());
 }
 
+function setRulesBusy(rulesReferenceSection, isBusy) {
+    rulesReferenceSection.setAttribute("aria-busy", String(isBusy));
+}
+
+function createStatusColumn(message, alertClass = "alert-info", role = "status") {
+    const statusCol = document.createElement("div");
+    statusCol.className = "col-12";
+
+    const alert = document.createElement("div");
+    alert.className = `alert ${alertClass}`;
+    alert.setAttribute("role", role);
+    alert.textContent = message;
+
+    statusCol.appendChild(alert);
+    return statusCol;
+}
+
+function createMenuStatusItem(message) {
+    const menuItem = document.createElement("li");
+    const statusItem = document.createElement("span");
+    statusItem.className = "dropdown-item disabled";
+    statusItem.setAttribute("aria-disabled", "true");
+    statusItem.textContent = message;
+    menuItem.appendChild(statusItem);
+    return menuItem;
+}
+
+function setMenuStatus(menu, message) {
+    if (!menu) return;
+    menu.replaceChildren(createMenuStatusItem(message));
+}
+
+function showRulesLoading(rulesReferenceSection, menu) {
+    setRulesBusy(rulesReferenceSection, true);
+
+    const loadingCol = document.createElement("div");
+    loadingCol.className = "col-12 text-center";
+
+    const loadingStatus = document.createElement("div");
+    loadingStatus.className = "d-inline-flex align-items-center gap-2";
+    loadingStatus.setAttribute("role", "status");
+
+    const spinner = document.createElement("span");
+    spinner.className = "spinner-border spinner-border-sm";
+    spinner.setAttribute("aria-hidden", "true");
+
+    const message = document.createElement("span");
+    message.textContent = "Loading quick reference…";
+
+    loadingStatus.append(spinner, message);
+    loadingCol.appendChild(loadingStatus);
+
+    rulesReferenceSection.replaceChildren(loadingCol);
+    setMenuStatus(menu, "Loading quick reference…");
+}
+
 function showRulesError(message, renderToken) {
     if (renderToken !== latestRenderToken) return;
 
     const rulesReferenceSection = document.getElementById("rulesCardContainer") || document.getElementById("rules-reference")?.querySelector(".row");
+    const menu = document.getElementById("quickRef");
     if (!rulesReferenceSection) return;
 
-    const errorCol = document.createElement("div");
-    errorCol.className = "col-12";
-
-    const alert = document.createElement("div");
-    alert.className = "alert alert-danger";
-    alert.setAttribute("role", "alert");
-    alert.textContent = message;
-
-    errorCol.appendChild(alert);
-    rulesReferenceSection.replaceChildren(errorCol);
+    rulesReferenceSection.replaceChildren(createStatusColumn(message, "alert-danger", "alert"));
+    setMenuStatus(menu, "Quick reference unavailable");
+    setRulesBusy(rulesReferenceSection, false);
 }
 
 async function fetchJson(url) {
@@ -125,8 +175,20 @@ async function renderCards(manifestSubset) {
 
     if (!rulesReferenceSection || !menu) return;
 
+    showRulesLoading(rulesReferenceSection, menu);
+
     try {
         const manifest = await getManifest(manifestSubset);
+
+        if (renderToken !== latestRenderToken) return;
+
+        if (!Array.isArray(manifest) || manifest.length === 0) {
+            rulesReferenceSection.replaceChildren(createStatusColumn("No quick reference entries are available for this ruleset."));
+            setMenuStatus(menu, "No quick reference entries");
+            setRulesBusy(rulesReferenceSection, false);
+            return;
+        }
+
         const entriesWithSections = await Promise.all(
             manifest.map(async (entry, index) => ({
                 entry,
@@ -147,6 +209,7 @@ async function renderCards(manifestSubset) {
 
         rulesReferenceSection.replaceChildren(cardsFragment);
         menu.replaceChildren(menuFragment);
+        setRulesBusy(rulesReferenceSection, false);
 
         if (!prefersReducedMotion()) {
             // Animation delay
@@ -155,6 +218,8 @@ async function renderCards(manifestSubset) {
                 el.style.animationDelay = randomDelay;
             });
         }
+
+        handleQuickReferenceHash(entriesWithSections.map(({ entryId }) => entryId));
     } catch (error) {
         console.error(error);
         showRulesError("The quick reference could not be loaded. Please refresh the page or try another ruleset.", renderToken);
@@ -200,12 +265,19 @@ function createCard(entry, entryId, sections) {
     accordion.className = "accordion";
     accordion.id = accordionId;
 
-    // Add accordion items
-    sections.forEach((section, index) => {
-        accordion.appendChild(createAccordionItem(accordionId, section, index));
-    });
+    if (sections.length === 0) {
+        const emptyMessage = document.createElement("p");
+        emptyMessage.className = "mb-0 text-body-secondary";
+        emptyMessage.textContent = "No quick reference details are available for this card yet.";
+        cardBody.appendChild(emptyMessage);
+    } else {
+        // Add accordion items
+        sections.forEach((section, index) => {
+            accordion.appendChild(createAccordionItem(accordionId, section, index));
+        });
 
-    cardBody.appendChild(accordion);
+        cardBody.appendChild(accordion);
+    }
     cardBodyWrapper.appendChild(cardBody);
 
     card.appendChild(cardHeader);
@@ -304,6 +376,26 @@ function changeBackground(imageURL) {
 
 function prefersReducedMotion() {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function handleQuickReferenceHash(entryIds) {
+    if (!location.hash || location.hash.length <= 1) return;
+
+    let hashTarget;
+    try {
+        hashTarget = decodeURIComponent(location.hash.slice(1));
+    } catch (error) {
+        hashTarget = location.hash.slice(1);
+    }
+
+    if (!entryIds.includes(hashTarget)) return;
+
+    scrollToSection(hashTarget);
+
+    const target = document.getElementById(hashTarget);
+    if (target) {
+        target.focus({ preventScroll: true });
+    }
 }
 
 // Smooth scrolling function
