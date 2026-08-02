@@ -294,7 +294,8 @@ function createMenuItem(entry, entryId) {
 }
 
 function changeBackground(imageURL) {
-    document.documentElement.style.setProperty("--bg-image", `url('${imageURL}')`);
+    const resolvedImageUrl = new URL(imageURL, document.baseURI).href;
+    document.documentElement.style.setProperty("--bg-image", `url("${resolvedImageUrl}")`);
 }
 
 // Smooth scrolling function
