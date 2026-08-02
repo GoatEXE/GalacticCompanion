@@ -1,10 +1,10 @@
 # Attack!
 - Declare a target using a weapon of choice.
-- Ranged difficulties: Engaged and Short range 1, Medium 2 , Long 3, Extreme 4.
+- Ranged difficulties by range band: Short range 1, Medium 2, Long 3, Extreme 4. Engaged uses special ranged-attack penalties instead of being a normal ranged band difficulty.
 - Melee difficulty: always 2.
-- Attack is successful if succes > failure. +1 damage for each uncancelled success. This extra damage is also added to additional targets.
+- Attack is successful if success exceeds failure. +1 damage for each uncancelled success. This extra damage is also added to additional targets.
 - Resolve advantage and triumph. Commonly used to trigger weapon effect or crit. (p.219)
-- Resolve threat and despair. PC rolls are resolved by GM, NPC rolls can be resolved by PCs. (p.219)
+- Resolve threat and despair. The GM normally spends Threat and Despair from PC checks; players may spend Threat and Despair from NPC checks when the GM allows. (p.219)
 - Reduce damage and apply wounds. Wound Value = Damage - Soak.
 - Apply crit injury if needed. d100. +10 to the roll for every time the crit is triggered, +10 for every current crit injury. (p.231)
 
@@ -24,10 +24,10 @@
 # Two-Weapon Combat
 - Generally 2 light weapons or one-handed (p.224)
 - Designate one weapon as primary and the other as secondary.
-- Determine the traits and skills for each weapon and take the lowest of both to assemble the dice pool.
-- Take the highest difficulty of either of the weapons and add 1 if the weapons are the same, 2 otherwise.
-- If successful, you can spend one triumph or two advantage to make another attack.
-- If that is successful, spend an additional triumph or advantage to activate qualities from either weapon. 
+- Determine the relevant skill and characteristic for each weapon, then build the dice pool using the lower skill and lower characteristic.
+- Use the higher base difficulty of the two weapons, then increase it by 1 if both checks use the same skill or by 2 if they use different skills.
+- If the combined check succeeds, the primary weapon hits. Spend two advantage or one triumph to also hit with the secondary weapon.
+- Spend additional advantage or triumph to activate qualities from either weapon as normal.
 - +1 damage for each uncancelled success.
 
 # Unarmed Combat

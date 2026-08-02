@@ -7,10 +7,10 @@
 # Building Dice Pool
 - Find the skill and parent trait value. The number of ability dice (d8) rolled are equal to the higher of the two values. (p.26)
 - Upgrade those dice from d8 to proficiency dice (d12) equal to the value of the lower number. 
-- If the number of dice to be upgraded surpases the number of dice you have, then add one d8 (which consumes one of the upgraded dice), then upgrade it if any points remain and so on. (p.28)
+- If upgrades exceed the dice currently in the pool, add one base die of the appropriate type, then upgrade it if upgrades remain. Repeat as needed. (p.28)
 - Add dice as needed (boost, destiny, equipment)
 - GM selects number of difficulty dice (0 = simple, 1 = easy, 2 = average etc.) (p.25)
 - Address wounds from crits/environment as necessary for setback dice (d6) (p.27-28)
-- GM can upgrade difficulty to chalenge dice (d12) via destiny points.
-- Downgrade where applicable. Dice cannot be removed from play via downgrade. (p.29)
-- Remove dice where applicable. (p.29)
+- GM can upgrade difficulty to challenge dice (d12) via destiny points.
+- Downgrade where applicable by converting upgraded dice back to their base type where possible. Extra downgrades are ignored if no upgraded dice remain. (p.29)
+- Remove dice where applicable only after add, upgrade, and downgrade steps are complete. (p.29)

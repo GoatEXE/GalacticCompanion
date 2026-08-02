@@ -1,10 +1,10 @@
 # Engaged
-- Two or more targets interacting with eachother, including terminals and combatives. (p.221)
+- Close enough for direct physical interaction, including melee combat or using nearby objects. (p.221)
 - Required for melee combat.
 - 1 maneuver required to move from short to engaged.
-- Ranged attack DC1
+- Engaged is not a normal ranged attack difficulty. Use the close-combat ranged penalties below.
 - If target is engaged: Light ranged DC2, Heavy Ranged DC3, Gunnery checks cannot be made.
-- If you make a ranged attack while being engaged, they get +1 boost against the next attack against you unless disengaged.
+- If you make a ranged attack while engaged with an opponent, that opponent gains +1 boost on its next melee or brawl attack against you.
 
 # Short
 - Several meters between 2 targets.
