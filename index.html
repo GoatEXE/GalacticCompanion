@@ -22,7 +22,8 @@
             <a class="navbar-brand" href="#home">
                 <i class="fa-brands fa-rebel"></i> Age of Rebellion
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -31,35 +32,38 @@
                         <a class="nav-link" href="#dice-roller">Dice Roller</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="rulesetsDropdown" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
                             Rulesets
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item" href="#" role="button" data-ruleset="personnel">Personnel Ruleset</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" data-ruleset="vehicle">Vehicle Ruleset</a></li>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="rulesetsDropdown">
+                            <li><button type="button" class="dropdown-item" data-ruleset="personnel">Personnel Ruleset</button></li>
+                            <li><button type="button" class="dropdown-item" data-ruleset="vehicle">Vehicle Ruleset</button></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="quickReferenceDropdown" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
                             Quick Reference
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark" id="quickRef">
+                        <ul class="dropdown-menu dropdown-menu-dark" id="quickRef" aria-labelledby="quickReferenceDropdown">
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="backgroundsDropdown" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
                             Backgrounds
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Base.jpg">Base</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Dusk.jpg">Dusk</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Insignia.jpg">Insignia</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Invasion.jpg">Invasion</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/ISD.jpg">ISD</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/ISD-Fleet.jpg">ISD Fleet</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Jaku.jpg">Jaku</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Planetary.jpg">Planetary</a></li>
-                            <li><a class="dropdown-item" href="#" role="button" data-background="Resources/Pursuit.jpg">Pursuit</a></li>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="backgroundsDropdown">
+                            <li><button type="button" class="dropdown-item" data-background="Resources/Base.jpg">Base</button></li>
+                            <li><button type="button" class="dropdown-item" data-background="Resources/Dusk.jpg">Dusk</button></li>
+                            <li><button type="button" class="dropdown-item" data-background="Resources/Insignia.jpg">Insignia</button></li>
+                            <li><button type="button" class="dropdown-item" data-background="Resources/Invasion.jpg">Invasion</button></li>
+                            <li><button type="button" class="dropdown-item" data-background="Resources/ISD.jpg">ISD</button></li>
+                            <li><button type="button" class="dropdown-item" data-background="Resources/ISD-Fleet.jpg">ISD Fleet</button></li>
+                            <li><button type="button" class="dropdown-item" data-background="Resources/Jaku.jpg">Jaku</button></li>
+                            <li><button type="button" class="dropdown-item" data-background="Resources/Planetary.jpg">Planetary</button></li>
+                            <li><button type="button" class="dropdown-item" data-background="Resources/Pursuit.jpg">Pursuit</button></li>
                         </ul>
                     </li>
                 </ul>
@@ -214,30 +218,30 @@
                                 <h5>Positive Dice</h5>
                                 <div class="dice-controls">
                                     <div class="mb-2">
-                                        <label class="form-label">Proficiency (Yellow)</label>
+                                        <label class="form-label" for="proficiency">Proficiency (Yellow)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-warning" data-dice-adjust="proficiency" data-dice-change="-1">-</button>
+                                            <button type="button" class="btn btn-outline-warning" data-dice-adjust="proficiency" data-dice-change="-1" aria-label="Decrease proficiency dice">-</button>
                                             <input type="number" class="form-control text-center" id="proficiency"
                                                 value="0" min="0" max="10">
-                                            <button class="btn btn-outline-warning" data-dice-adjust="proficiency" data-dice-change="1">+</button>
+                                            <button type="button" class="btn btn-outline-warning" data-dice-adjust="proficiency" data-dice-change="1" aria-label="Increase proficiency dice">+</button>
                                         </div>
                                     </div>
                                     <div class="mb-2">
-                                        <label class="form-label">Ability (Green)</label>
+                                        <label class="form-label" for="ability">Ability (Green)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-success" data-dice-adjust="ability" data-dice-change="-1">-</button>
+                                            <button type="button" class="btn btn-outline-success" data-dice-adjust="ability" data-dice-change="-1" aria-label="Decrease ability dice">-</button>
                                             <input type="number" class="form-control text-center" id="ability" value="0"
                                                 min="0" max="10">
-                                            <button class="btn btn-outline-success" data-dice-adjust="ability" data-dice-change="1">+</button>
+                                            <button type="button" class="btn btn-outline-success" data-dice-adjust="ability" data-dice-change="1" aria-label="Increase ability dice">+</button>
                                         </div>
                                     </div>
                                     <div class="mb-2">
-                                        <label class="form-label">Boost (Blue)</label>
+                                        <label class="form-label" for="boost">Boost (Blue)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-info" data-dice-adjust="boost" data-dice-change="-1">-</button>
+                                            <button type="button" class="btn btn-outline-info" data-dice-adjust="boost" data-dice-change="-1" aria-label="Decrease boost dice">-</button>
                                             <input type="number" class="form-control text-center" id="boost" value="0"
                                                 min="0" max="10">
-                                            <button class="btn btn-outline-info" data-dice-adjust="boost" data-dice-change="1">+</button>
+                                            <button type="button" class="btn btn-outline-info" data-dice-adjust="boost" data-dice-change="1" aria-label="Increase boost dice">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -246,30 +250,30 @@
                                 <h5>Negative Dice</h5>
                                 <div class="dice-controls">
                                     <div class="mb-2">
-                                        <label class="form-label">Challenge (Red)</label>
+                                        <label class="form-label" for="challenge">Challenge (Red)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-danger" data-dice-adjust="challenge" data-dice-change="-1">-</button>
+                                            <button type="button" class="btn btn-outline-danger" data-dice-adjust="challenge" data-dice-change="-1" aria-label="Decrease challenge dice">-</button>
                                             <input type="number" class="form-control text-center" id="challenge"
                                                 value="0" min="0" max="10">
-                                            <button class="btn btn-outline-danger" data-dice-adjust="challenge" data-dice-change="1">+</button>
+                                            <button type="button" class="btn btn-outline-danger" data-dice-adjust="challenge" data-dice-change="1" aria-label="Increase challenge dice">+</button>
                                         </div>
                                     </div>
                                     <div class="mb-2">
-                                        <label class="form-label">Difficulty (Purple)</label>
+                                        <label class="form-label" for="difficulty">Difficulty (Purple)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-secondary" data-dice-adjust="difficulty" data-dice-change="-1">-</button>
+                                            <button type="button" class="btn btn-outline-secondary" data-dice-adjust="difficulty" data-dice-change="-1" aria-label="Decrease difficulty dice">-</button>
                                             <input type="number" class="form-control text-center" id="difficulty"
                                                 value="0" min="0" max="10">
-                                            <button class="btn btn-outline-secondary" data-dice-adjust="difficulty" data-dice-change="1">+</button>
+                                            <button type="button" class="btn btn-outline-secondary" data-dice-adjust="difficulty" data-dice-change="1" aria-label="Increase difficulty dice">+</button>
                                         </div>
                                     </div>
                                     <div class="mb-2">
-                                        <label class="form-label">Setback (Black)</label>
+                                        <label class="form-label" for="setback">Setback (Black)</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-dark" data-dice-adjust="setback" data-dice-change="-1">-</button>
+                                            <button type="button" class="btn btn-outline-dark" data-dice-adjust="setback" data-dice-change="-1" aria-label="Decrease setback dice">-</button>
                                             <input type="number" class="form-control text-center" id="setback" value="0"
                                                 min="0" max="10">
-                                            <button class="btn btn-outline-dark" data-dice-adjust="setback" data-dice-change="1">+</button>
+                                            <button type="button" class="btn btn-outline-dark" data-dice-adjust="setback" data-dice-change="1" aria-label="Increase setback dice">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -277,11 +281,11 @@
                         </div>
 
                         <!-- Roll Button and Results -->
-                        <div class="text-center">
-                            <button class="btn btn-primary btn-lg mb-2 ms-5" data-dice-action="roll">
+                        <div class="dice-actions d-flex flex-column flex-sm-row justify-content-center align-items-stretch align-items-sm-center gap-2">
+                            <button type="button" class="btn btn-primary btn-lg" data-dice-action="roll">
                                 <i class="fas fa-dice px-1"></i> Roll Dice Pool
                             </button>
-                            <button class="btn btn-secondary mb-2 ms-3" data-dice-action="clear">Clear All</button>
+                            <button type="button" class="btn btn-secondary" data-dice-action="clear">Clear All</button>
                         </div>
 
                         <!-- Results Display -->

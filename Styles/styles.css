@@ -64,6 +64,36 @@ h2 {
     font-weight: bold;
 }
 
+button.card-header-toggle {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--sw-red-gradient);
+    border: 0;
+    border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color);
+    color: white;
+    cursor: pointer;
+    display: block;
+    font: inherit;
+    font-size: 1.25rem;
+    font-weight: bold;
+    line-height: 1.2;
+    margin: 0;
+    padding: var(--bs-card-cap-padding-y) var(--bs-card-cap-padding-x);
+    text-align: left;
+    width: 100%;
+}
+
+button.card-header-toggle:hover,
+button.card-header-toggle:focus {
+    background: var(--sw-red-gradient);
+    color: white;
+}
+
+button.card-header-toggle:focus-visible {
+    outline: 3px solid var(--sw-yellow);
+    outline-offset: -3px;
+}
+
 .btn-primary {
     background: var(--sw-blue);
 
@@ -125,6 +155,10 @@ h2 {
     background-color: var(--sw-orange) !important;
 }
 
+.dice-actions .btn {
+    min-width: 9rem;
+}
+
 .flicker-in-1 {
     animation: flicker-in-1 2s linear both;
 }
@@ -141,5 +175,20 @@ h2 {
     }
     10.1%, 20.1%, 30.1%, 45.1%,  60%, 65.1%, 75%, 85%, 100% {
         opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .card:hover {
+        transform: none;
     }
 }

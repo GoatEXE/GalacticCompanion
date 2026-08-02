@@ -148,11 +148,13 @@ async function renderCards(manifestSubset) {
         rulesReferenceSection.replaceChildren(cardsFragment);
         menu.replaceChildren(menuFragment);
 
-        // Animation delay
-        rulesReferenceSection.querySelectorAll(".flicker-in-1").forEach((el) => {
-            const randomDelay = (Math.random() * .7).toFixed(2) + "s"; // Up to 0.7s delay
-            el.style.animationDelay = randomDelay;
-        });
+        if (!prefersReducedMotion()) {
+            // Animation delay
+            rulesReferenceSection.querySelectorAll(".flicker-in-1").forEach((el) => {
+                const randomDelay = (Math.random() * .7).toFixed(2) + "s"; // Up to 0.7s delay
+                el.style.animationDelay = randomDelay;
+            });
+        }
     } catch (error) {
         console.error(error);
         showRulesError("The quick reference could not be loaded. Please refresh the page or try another ruleset.", renderToken);
@@ -169,28 +171,25 @@ function createCard(entry, entryId, sections) {
     // Create a unique collapse ID for this card's body
     const collapseId = `${entryId}-collapse`;
 
-    const cardHeader = document.createElement("div");
-    cardHeader.className = "card-header flicker-in-1";
+    const cardHeader = document.createElement("button");
+    cardHeader.className = "card-header card-header-toggle flicker-in-1";
+    cardHeader.type = "button";
+    cardHeader.id = entryId;
     cardHeader.setAttribute("data-bs-toggle", "collapse");
     cardHeader.setAttribute("data-bs-target", `#${collapseId}`);
     cardHeader.setAttribute("aria-expanded", "false");
     cardHeader.setAttribute("aria-controls", collapseId);
-    cardHeader.style.cursor = "pointer";
-
-    const title = document.createElement("h5");
-    title.className = "mb-0";
-    title.id = entryId;
 
     const icon = document.createElement("i");
     icon.className = entry.icon;
 
-    title.appendChild(icon);
-    title.append(` ${entry.title}`);
-    cardHeader.appendChild(title);
+    cardHeader.appendChild(icon);
+    cardHeader.append(` ${entry.title}`);
 
     const cardBodyWrapper = document.createElement("div");
     cardBodyWrapper.className = "collapse";
     cardBodyWrapper.id = collapseId;
+    cardBodyWrapper.setAttribute("aria-labelledby", entryId);
 
     const cardBody = document.createElement("div");
     cardBody.className = "card-body";
@@ -240,6 +239,7 @@ function appendSafeInlineContent(parent, value) {
 
 function createAccordionItem(accordionId, section, index) {
     const sectionId = `${accordionId}-section${index}`;
+    const buttonId = `${sectionId}-button`;
 
     const item = document.createElement("div");
     item.className = "accordion-item";
@@ -250,8 +250,11 @@ function createAccordionItem(accordionId, section, index) {
     const button = document.createElement("button");
     button.className = "accordion-button collapsed";
     button.type = "button";
+    button.id = buttonId;
     button.setAttribute("data-bs-toggle", "collapse");
     button.setAttribute("data-bs-target", `#${sectionId}`);
+    button.setAttribute("aria-expanded", "false");
+    button.setAttribute("aria-controls", sectionId);
     button.textContent = section.title;
 
     header.appendChild(button);
@@ -259,6 +262,7 @@ function createAccordionItem(accordionId, section, index) {
     const collapse = document.createElement("div");
     collapse.id = sectionId;
     collapse.className = "accordion-collapse collapse";
+    collapse.setAttribute("aria-labelledby", buttonId);
     collapse.setAttribute("data-bs-parent", `#${accordionId}`);
 
     const body = document.createElement("div");
@@ -298,6 +302,10 @@ function changeBackground(imageURL) {
     document.documentElement.style.setProperty("--bg-image", `url("${resolvedImageUrl}")`);
 }
 
+function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 // Smooth scrolling function
 function scrollToSection(sectionId) {
     const yOffset = -250; // Adjust to match your navbar height
@@ -305,7 +313,7 @@ function scrollToSection(sectionId) {
     if (!element) return;
 
     const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-    window.scrollTo({ top: y, behavior: "smooth" });
+    window.scrollTo({ top: y, behavior: prefersReducedMotion() ? "auto" : "smooth" });
 
     // Collapse the navbar if it's open (mobile)
     const navbarCollapse = document.querySelector(".navbar-collapse.show");
