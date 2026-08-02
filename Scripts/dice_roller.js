@@ -94,9 +94,11 @@ function adjustDice(diceType, change) {
 }
 
 function clampDiceCount(value) {
-    const parsedValue = Number.parseInt(value, 10);
-    if (Number.isNaN(parsedValue)) return MIN_DICE;
-    return Math.max(MIN_DICE, Math.min(MAX_DICE, parsedValue));
+    const parsedValue = Number(value);
+    if (!Number.isFinite(parsedValue)) return MIN_DICE;
+
+    const integerValue = Math.trunc(parsedValue);
+    return Math.max(MIN_DICE, Math.min(MAX_DICE, integerValue));
 }
 
 function readDiceInput(diceType) {
@@ -180,15 +182,13 @@ function normalizeResults(results) {
     const normalizedResults = { ...results };
     const totalSuccess = normalizedResults.success + normalizedResults.triumph;
     const totalFailure = normalizedResults.failure + normalizedResults.despair;
+    const netSuccess = Math.max(0, totalSuccess - totalFailure);
+    const netFailure = Math.max(0, totalFailure - totalSuccess);
 
-    // Effects of despair and triumph cannot be negated.
-    if (totalSuccess > totalFailure) {
-        normalizedResults.success = Math.max(0, normalizedResults.success - totalFailure);
-        normalizedResults.failure = 0;
-    } else if (totalFailure >= totalSuccess) {
-        normalizedResults.failure = Math.max(0, normalizedResults.failure - totalSuccess);
-        normalizedResults.success = 0;
-    }
+    // Triumph and Despair each contribute one success/failure to the net result,
+    // while their special events remain visible and do not cancel each other.
+    normalizedResults.success = netSuccess;
+    normalizedResults.failure = netFailure;
 
     normalizedResults.advantage -= normalizedResults.threat;
     if (normalizedResults.advantage < 0) {
@@ -200,8 +200,8 @@ function normalizeResults(results) {
 
     return {
         normalizedResults,
-        totalSuccess,
-        totalFailure
+        netSuccess,
+        netFailure
     };
 }
 
@@ -212,16 +212,21 @@ function createBadge(className, label, value) {
     return badge;
 }
 
-function createInterpretation(totalSuccess, totalFailure, results) {
+function createInterpretation(netSuccess, netFailure, results) {
     const interpretation = document.createElement('div');
-    const hasSpecialEvent = results.triumph > 0 || results.despair > 0;
+    const specialEvents = [];
+    if (results.triumph > 0) specialEvents.push('Triumph');
+    if (results.despair > 0) specialEvents.push('Despair');
+    const eventText = specialEvents.length > 0 ? ` ${specialEvents.join(' and ')} event${specialEvents.length > 1 ? 's' : ''} triggered.` : '';
 
-    if (totalSuccess > totalFailure) {
+    if (netSuccess > netFailure) {
         interpretation.className = 'alert alert-success';
-        interpretation.textContent = hasSpecialEvent ? 'The action succeeds! Special event triggered.' : 'The action succeeds!';
+        interpretation.textContent = `The action succeeds with ${netSuccess} net Success.${eventText}`;
     } else {
         interpretation.className = 'alert alert-danger';
-        interpretation.textContent = hasSpecialEvent ? 'The action fails. Special event triggered.' : 'The action fails.';
+        interpretation.textContent = netFailure > 0
+            ? `The action fails with ${netFailure} net Failure.${eventText}`
+            : `The action fails with no net Success.${eventText}`;
     }
 
     return interpretation;
@@ -238,14 +243,14 @@ function displayResults(results) {
 
     if (!resultsDiv || !summaryDiv || !detailsDiv) return;
 
-    const { normalizedResults, totalSuccess, totalFailure } = normalizeResults(results);
+    const { normalizedResults, netSuccess, netFailure } = normalizeResults(results);
     const summaryFragment = document.createDocumentFragment();
 
     if (normalizedResults.success > 0) {
-        summaryFragment.appendChild(createBadge('bg-success', 'Success', normalizedResults.success));
+        summaryFragment.appendChild(createBadge('bg-success', 'Net Success', normalizedResults.success));
     }
     if (normalizedResults.failure > 0) {
-        summaryFragment.appendChild(createBadge('bg-danger', 'Failure', normalizedResults.failure));
+        summaryFragment.appendChild(createBadge('bg-danger', 'Net Failure', normalizedResults.failure));
     }
     if (normalizedResults.advantage > 0) {
         summaryFragment.appendChild(createBadge('bg-info', 'Advantage', normalizedResults.advantage));
@@ -268,7 +273,7 @@ function displayResults(results) {
     }
 
     summaryDiv.replaceChildren(summaryFragment);
-    detailsDiv.replaceChildren(createInterpretation(totalSuccess, totalFailure, normalizedResults));
+    detailsDiv.replaceChildren(createInterpretation(netSuccess, netFailure, normalizedResults));
     resultsDiv.style.display = 'block';
 }
 
@@ -276,7 +281,8 @@ function displayResults(results) {
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('[data-dice-adjust]').forEach((button) => {
         button.addEventListener('click', () => {
-            adjustDice(button.dataset.diceAdjust, Number.parseInt(button.dataset.diceChange, 10) || 0);
+            const change = Number(button.dataset.diceChange);
+            adjustDice(button.dataset.diceAdjust, Number.isFinite(change) ? Math.trunc(change) : 0);
         });
     });
 
