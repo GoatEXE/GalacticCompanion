@@ -5,12 +5,13 @@
 - This page dynamically uses markdown files and translates them into JSON to populate cards in the Rules Reference section. 
 
 # Adding Cards to the References Documentation
-- Create a markdown file in the Markdown subdirectory.
-- The name of the file will be displayed as the card's title.
-- The headings of the markdown file will be accordions held within the card, with the heading name as it's own title
-- Bulleted points within the heading will be shown within that respective accordion
-- Add the title, icon, and file path to manifest.json, which is in the in the root directory.
-- Title should match the name of the markdown file, icon will be the classes used for the desired icon from Font Awesome, and file is the relative file path to the markdown file.
+- See [docs/CONTENT_GUIDE.md](docs/CONTENT_GUIDE.md) for the content format, citation guidance, and Markdown-vs-YAML recommendation.
+- Create a markdown file in the `Markdown/<Ruleset>/` subdirectory.
+- Add the card title, Font Awesome icon classes, and repo-relative file path to the matching root manifest, such as `personnel_manifest.json` or `vehicle_manifest.json`.
+- Before publishing content changes, run `node tools/validate-content.js`.
+
+# Quick Format Note
+- Keep prose in Markdown and structure/metadata in JSON manifests. Avoid YAML for now because this static browser app would need a YAML parser dependency or custom parsing without a clear benefit for the current content.
 
 # Credits
 - Font Awesome used for icons.
