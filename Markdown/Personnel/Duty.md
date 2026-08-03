@@ -1,12 +1,12 @@
 # Duty Mechanics
-- Duty is a character's focus within the Rebellion and a numeric measure of contribution, reputation, or standing. (AoR Core, p.46)
-- Each PC has a Duty focus. Starting Duty depends on party size, and players can trade some starting Duty for extra starting credits or XP. (AoR Core, p.47)
-- Duty can affect how the Rebellion views the characters and what support they may receive. (AoR Core, p.325)
+- Duty is a character's focus within the Rebellion and a numeric measure of contribution, reputation, or standing. ([p. 46](https://online.anyflip.com/ziisf/jobq/mobile/index.html#p=46))
+- Each PC has a Duty focus. Starting Duty depends on party size, and players can trade some starting Duty for extra starting credits or XP. ([p. 47](https://online.anyflip.com/ziisf/jobq/mobile/index.html#p=47))
+- Duty can affect how the Rebellion views the characters and what support they may receive. ([p. 325](https://online.anyflip.com/ziisf/jobq/mobile/index.html#p=325))
 
 # Duty Roll
-- Before each session, the GM rolls percentile dice and compares the result to the party's total Duty. If the result is equal to or under the total, Duty triggers for that session; if it is higher, Duty does not trigger. (AoR Core, p.49)
-- When Duty triggers, the group gains a temporary wound-threshold bonus for that session, and the character whose Duty range matched the roll gains a larger bonus. (AoR Core, p.49)
-- If the triggering Duty roll is doubles, double that session's wound-threshold bonus. (AoR Core, p.49)
+- Before each session, the GM rolls percentile dice and compares the result to the party's total Duty. If the result is equal to or under the total, Duty triggers for that session; if it is higher, Duty does not trigger. ([p. 49](https://online.anyflip.com/ziisf/jobq/mobile/index.html#p=49))
+- When Duty triggers, the group gains a temporary wound-threshold bonus for that session, and the character whose Duty range matched the roll gains a larger bonus. ([p. 49](https://online.anyflip.com/ziisf/jobq/mobile/index.html#p=49))
+- If the triggering Duty roll is doubles, double that session's wound-threshold bonus. ([p. 49](https://online.anyflip.com/ziisf/jobq/mobile/index.html#p=49))
 
 # Duty Rewards
-- When the party's combined Duty exceeds 100, Contribution rank increases and the Alliance grants a reward such as equipment, vehicle support, or a strategic asset. (AoR Core, pp.50-51)
+- When the party's combined Duty exceeds 100, Contribution rank increases and the Alliance grants a reward such as equipment, vehicle support, or a strategic asset. ([pp. 50-51](https://online.anyflip.com/ziisf/jobq/mobile/index.html#p=50))

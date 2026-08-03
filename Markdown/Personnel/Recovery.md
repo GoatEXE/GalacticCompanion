@@ -24,7 +24,7 @@
 - No effect on critical injuries.
 
 # Emergency Patch Repairs
-- 5 uses per day. (p.233)
+- 5 uses per day. ([p. 233](https://online.anyflip.com/ziisf/jobq/mobile/index.html#p=233))
 - Each restores 3 wounds.
 - 1 maneuver required for use.
 - No effect on critical injuries.

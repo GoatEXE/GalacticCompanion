@@ -287,13 +287,35 @@ function createCard(entry, entryId, sections) {
     return cardCol;
 }
 
+function createSafeMarkdownLink(label, href) {
+    let parsedUrl;
+    try {
+        parsedUrl = new URL(href);
+    } catch (error) {
+        return null;
+    }
+
+    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+        return null;
+    }
+
+    const link = document.createElement("a");
+    link.href = parsedUrl.href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = label;
+    return link;
+}
+
 function appendSafeInlineContent(parent, value) {
-    const parts = String(value).split(/(<\/?b>|<\/?br\s*\/?>)/gi);
+    const parts = String(value).split(/(<\/?b>|<\/?br\s*\/?>|\[[^\]\n]+\]\([^\s)]+\))/gi);
     const strongStack = [];
     let currentParent = parent;
 
     parts.forEach((part) => {
         const token = part.toLowerCase();
+        const markdownLink = part.match(/^\[([^\]\n]+)\]\(([^\s)]+)\)$/);
+
         if (token === "<b>") {
             const strong = document.createElement("strong");
             currentParent.appendChild(strong);
@@ -303,10 +325,23 @@ function appendSafeInlineContent(parent, value) {
             currentParent = strongStack.pop() || parent;
         } else if (token === "<br>" || token === "<br/>" || token === "<br />" || token === "</br>") {
             currentParent.appendChild(document.createElement("br"));
+        } else if (markdownLink) {
+            const link = createSafeMarkdownLink(markdownLink[1], markdownLink[2]);
+            currentParent.appendChild(link || document.createTextNode(part));
         } else if (part) {
             currentParent.append(part);
         }
     });
+}
+
+function splitTrailingCitationLink(value) {
+    const match = String(value).match(/^(.*?)(\s*\(\[[^\]\n]+\]\([^\s)]+\)\))\s*$/);
+    if (!match) return { title: String(value), citation: null };
+
+    return {
+        title: match[1].trim(),
+        citation: match[2].trim()
+    };
 }
 
 function createAccordionItem(accordionId, section, index) {
@@ -319,6 +354,8 @@ function createAccordionItem(accordionId, section, index) {
     const header = document.createElement("h2");
     header.className = "accordion-header";
 
+    const headingContent = splitTrailingCitationLink(section.title);
+
     const button = document.createElement("button");
     button.className = "accordion-button collapsed";
     button.type = "button";
@@ -327,9 +364,16 @@ function createAccordionItem(accordionId, section, index) {
     button.setAttribute("data-bs-target", `#${sectionId}`);
     button.setAttribute("aria-expanded", "false");
     button.setAttribute("aria-controls", sectionId);
-    button.textContent = section.title;
+    button.textContent = headingContent.title;
 
     header.appendChild(button);
+
+    if (headingContent.citation) {
+        const citation = document.createElement("span");
+        citation.className = "accordion-heading-citation";
+        appendSafeInlineContent(citation, headingContent.citation);
+        header.appendChild(citation);
+    }
 
     const collapse = document.createElement("div");
     collapse.id = sectionId;

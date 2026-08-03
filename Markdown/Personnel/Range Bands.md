@@ -1,5 +1,5 @@
 # Engaged
-- Close enough for direct physical interaction, including melee combat or using nearby objects. (p.221)
+- Close enough for direct physical interaction, including melee combat or using nearby objects. ([p. 221](https://online.anyflip.com/ziisf/jobq/mobile/index.html#p=221))
 - Required for melee combat.
 - 1 maneuver required to move from short to engaged.
 - Engaged is not a normal ranged attack difficulty. Use the close-combat ranged penalties below.

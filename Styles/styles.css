@@ -128,10 +128,30 @@ button.card-header-toggle:focus-visible {
     margin-bottom: 2rem;
 }
 
-.accordion-button {
+.accordion-header {
+    align-items: stretch;
     background: var(--dark-bg);
-    color: white;
     border: 1px solid #444;
+    display: flex;
+}
+
+.accordion-button {
+    background: transparent;
+    color: white;
+    border: 0;
+    flex: 1 1 auto;
+}
+
+.accordion-heading-citation {
+    align-items: center;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 0.875rem;
+    padding: var(--bs-accordion-btn-padding-y) var(--bs-accordion-btn-padding-x);
+}
+
+.accordion-heading-citation a {
+    color: white;
 }
 
 .accordion-button:not(.collapsed) {
