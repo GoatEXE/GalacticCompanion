@@ -9,18 +9,32 @@
     --sw-red-hover: #FF3333;
     --sw-red-gradient: linear-gradient(90deg, var(--sw-red) 0%, var(--sw-red-hover));
     --sw-dark: #1a1a1a;
-    --dark-bg: rgba(26, 26, 26, 0.8);
+    --dark-bg: rgba(26, 26, 26, 0.86);
     --bg-image: url('../Resources/Pursuit.jpg');
+    --bg-overlay: linear-gradient(rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.34));
+}
+
+html {
+    background: #000;
+    min-height: 100%;
 }
 
 body {
-    background:
-        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.01)),
-        var(--bg-image) no-repeat center center;
-    background-size: cover;
     color: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
+    position: relative;
+    z-index: 0;
+}
+
+body::before {
+    background: var(--bg-overlay), var(--bg-image) no-repeat center center;
+    background-size: cover;
+    content: "";
+    inset: 0;
+    pointer-events: none;
+    position: fixed;
+    z-index: -1;
 }
 
 h2 {
@@ -45,6 +59,19 @@ h2 {
 
 .nav-link:hover {
     color: var(--sw-red) !important;
+}
+
+.dropdown-item[data-background] {
+    padding-right: 2rem;
+    position: relative;
+}
+
+.dropdown-item[data-background].active::after {
+    color: var(--sw-yellow);
+    content: "\2713";
+    font-weight: bold;
+    position: absolute;
+    right: 0.75rem;
 }
 
 .card {

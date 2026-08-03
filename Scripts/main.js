@@ -1,5 +1,7 @@
 const manifestCache = new Map();
 const sectionsCache = new Map();
+const BACKGROUND_STORAGE_KEY = "aor-selected-background";
+const DEFAULT_BACKGROUND = "Resources/Pursuit.jpg";
 let latestRenderToken = 0;
 
 function createSafeId(value, suffix = "") {
@@ -153,6 +155,8 @@ document.addEventListener("DOMContentLoaded", () => {
             renderCards(link.dataset.ruleset);
         });
     });
+
+    restoreBackgroundSelection();
 
     document.querySelectorAll("[data-background]").forEach((link) => {
         link.addEventListener("click", (event) => {
@@ -413,9 +417,70 @@ function createMenuItem(entry, entryId) {
     return menuItem;
 }
 
-function changeBackground(imageURL) {
+function getBackgroundOptions() {
+    return Array.from(document.querySelectorAll("[data-background]"));
+}
+
+function getKnownBackgrounds() {
+    return new Set(getBackgroundOptions().map((option) => option.dataset.background));
+}
+
+function getStoredBackground() {
+    try {
+        return window.localStorage.getItem(BACKGROUND_STORAGE_KEY);
+    } catch (error) {
+        return null;
+    }
+}
+
+function setStoredBackground(imageURL) {
+    try {
+        window.localStorage.setItem(BACKGROUND_STORAGE_KEY, imageURL);
+    } catch (error) {
+        // Ignore storage failures so background selection still works in private or locked-down contexts.
+    }
+}
+
+function removeStoredBackground() {
+    try {
+        window.localStorage.removeItem(BACKGROUND_STORAGE_KEY);
+    } catch (error) {
+        // Ignore storage failures.
+    }
+}
+
+function updateBackgroundSelection(imageURL) {
+    getBackgroundOptions().forEach((option) => {
+        const isSelected = option.dataset.background === imageURL;
+        option.classList.toggle("active", isSelected);
+        option.setAttribute("aria-pressed", String(isSelected));
+    });
+}
+
+function restoreBackgroundSelection() {
+    const knownBackgrounds = getKnownBackgrounds();
+    const storedBackground = getStoredBackground();
+    const backgroundToUse = knownBackgrounds.has(storedBackground) ? storedBackground : DEFAULT_BACKGROUND;
+
+    if (storedBackground && !knownBackgrounds.has(storedBackground)) {
+        removeStoredBackground();
+    }
+
+    changeBackground(backgroundToUse, { persist: false });
+}
+
+function changeBackground(imageURL, { persist = true } = {}) {
+    if (!getKnownBackgrounds().has(imageURL)) return false;
+
     const resolvedImageUrl = new URL(imageURL, document.baseURI).href;
     document.documentElement.style.setProperty("--bg-image", `url("${resolvedImageUrl}")`);
+    updateBackgroundSelection(imageURL);
+
+    if (persist) {
+        setStoredBackground(imageURL);
+    }
+
+    return true;
 }
 
 function prefersReducedMotion() {
