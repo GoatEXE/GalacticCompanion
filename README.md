@@ -13,6 +13,41 @@
 # Quick Format Note
 - Keep prose in Markdown and structure/metadata in JSON manifests. Avoid YAML for now because this static browser app would need a YAML parser dependency or custom parsing without a clear benefit for the current content.
 
+# React companion foundation
+
+The static site is now a Vite + React SPA. It keeps the root manifests and Markdown files as the source of truth; Vite copies those files and the existing `Resources/` directory into the production output without rewriting their content.
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+Vite is configured for GitHub Pages at `/AoRQuickReference/`. The development server also serves the existing root content through that base path.
+
+## Validation
+
+```bash
+npm run check
+npm test
+npm run build
+node tools/validate-content.js
+```
+
+The foundation is organized into `src/shell/` (dossier shell and character-sheet dialog), `src/reference/` (manifest/Markdown cards), `src/dice/` (roller UI), and `src/domain/` (content, dice, and background behavior). The dice-domain tests cover Triumph/Despair contributions and cancellation behavior.
+
+## Local character companion
+
+**Characters** opens a browser-local personnel-file companion. It supports multiple draft or playable characters, a seven-step starter creator, budget checks, JSON import/export, and a sheet with skill/weapon rolls, play-state trackers, and source-cautious talent review.
+
+- The versioned roster is stored under `aor-companion-roster` in browser localStorage. Use **Export active** before clearing site data or changing browsers.
+- The normalized starter catalogue and its source notes are in `src/companion/catalog.js`; validation, migrations, calculations, and persistence are split into the other `src/companion/` modules.
+- It intentionally covers a compact starter roster (eight core species and four core careers) rather than claiming a complete rules compendium. Talent connector diagrams and talent effects are explicitly not modeled; verify them in the Core Rulebook with the GM.
+- Starter species, career, and gear entries are concise data aids, not replacement rule text. The in-app source note identifies the relevant Core Rulebook chapters.
+
+`npm test` includes catalogue/schema/migration/budget/persistence/import tests plus Vite SSR component smoke coverage for the creator and playable sheet.
+
 # Credits
 - Font Awesome used for icons.
 - Favicon from svgrepo.com .
