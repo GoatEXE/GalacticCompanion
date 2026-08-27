@@ -82,6 +82,12 @@ function ReferenceCard({ card }) {
   );
 }
 
+export function ReferenceCardList({ cards }) {
+  return <div className="reference-grid" aria-busy="false">
+    {cards.map((card) => <ReferenceCard card={card} key={card.entryId} />)}
+  </div>;
+}
+
 export function ReferencePanel() {
   const [ruleset, setRuleset] = useState("personnel");
   const [state, setState] = useState({ phase: "loading", cards: [], error: null });
@@ -118,16 +124,7 @@ export function ReferencePanel() {
         </div>
         {state.phase === "loading" && <div className="reference-status" role="status">Loading {ruleset} quick reference…</div>}
         {state.phase === "error" && <div className="reference-status error" role="alert">The quick reference could not be loaded. Please refresh the page or try another ruleset.</div>}
-        {state.phase === "ready" && (
-          <>
-            <nav className="reference-index" aria-label={`${ruleset} quick reference cards`}>
-              {state.cards.map((card) => <a key={card.entryId} href={`#${card.entryId}`}>{card.entry.title}</a>)}
-            </nav>
-            <div className="reference-grid" aria-busy="false">
-              {state.cards.map((card) => <ReferenceCard card={card} key={card.entryId} />)}
-            </div>
-          </>
-        )}
+        {state.phase === "ready" && <ReferenceCardList cards={state.cards} />}
       </div>
     </section>
   );

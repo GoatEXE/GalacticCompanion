@@ -114,9 +114,6 @@ p { text-wrap: pretty; }
 .ruleset-tabs button:hover, .ruleset-tabs button:focus, .ruleset-tabs button.active { background: rgba(241,31,17,.14); border-color: var(--alliance-red); color: #fff; }
 .reference-status { background: var(--raised); border: 1px solid var(--line); border-radius: .6rem; color: var(--text-secondary); margin: 1rem auto; max-width: 48rem; padding: 1rem; text-align: center; }
 .reference-status.error { background: rgba(241,31,17,.11); border-color: rgba(241,31,17,.45); color: #ffaaa2; }
-.reference-index { display: flex; flex-wrap: wrap; gap: .45rem; justify-content: center; margin: 0 auto 1rem; max-width: 62rem; }
-.reference-index a { background: rgba(20,24,29,.94); border: 1px solid var(--line); border-radius: 999px; color: var(--text-secondary); font-size: .8rem; padding: .35rem .65rem; text-decoration: none; }
-.reference-index a:hover, .reference-index a:focus { border-color: var(--alliance-red); color: #fff; }
 .reference-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2,minmax(0,1fr)); }
 .reference-card { align-self: start; background: var(--panel); border: 1px solid var(--line); border-radius: .75rem; overflow: hidden; scroll-margin-top: 7.5rem; }
 .reference-card-header { appearance: none; background: var(--alliance-red); border: 0; border-bottom: 1px solid rgba(255,255,255,.12); color: #fff; cursor: pointer; display: block; font-size: 1.25rem; font-weight: 600; letter-spacing: .075em; line-height: 1.2; min-height: 3.15rem; padding: .85rem 3.1rem .85rem 1rem; position: relative; text-align: left; text-transform: uppercase; width: 100%; }
@@ -198,6 +195,5 @@ p { text-wrap: pretty; }
   .dossier-file-state { padding-inline: .85rem; }
   .file-actions .button { width: 100%; }
   .ruleset-tabs { justify-content: center; }
-  .reference-index { justify-content: flex-start; max-height: 7.5rem; overflow-y: auto; }
 }
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
