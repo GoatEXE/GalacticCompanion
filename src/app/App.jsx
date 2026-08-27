@@ -1,57 +1,168 @@
-import React, { useEffect, useState } from "react";
-import { restoreBackground, storeBackground } from "../domain/backgrounds.js";
-import { contentUrl } from "../domain/content.js";
+import React, { useEffect, useRef, useState } from "react";
 import { DiceRoller } from "../dice/DiceRoller.jsx";
 import { ReferencePanel } from "../reference/ReferencePanel.jsx";
-import { CharacterDialog } from "../shell/CharacterDialog.jsx";
+import { createCharacter, exportCharacter, parseCharacterImport } from "../companion/schema.js";
+import { addImportedCharacter, deleteCharacter, loadRoster, saveRoster, upsertCharacter } from "../companion/persistence.js";
+import { CreateView, DossierHome, SheetView } from "../shell/CompanionViews.jsx";
 import { DossierShell } from "../shell/DossierShell.jsx";
 
-function Hero({ onCharacters }) {
-  return (
-    <section className="hero-section dossier-section" id="home" aria-labelledby="home-title">
-      <div className="page-width">
-        <div className="dossier-hero">
-          <p className="dossier-kicker"><i className="fa-brands fa-rebel" aria-hidden="true" /> Field reference // Alliance issue</p>
-          <h1 id="home-title">Star Wars: Age of Rebellion</h1>
-          <p className="hero-lead">Quick Reference Guide &amp; Dice Roller</p>
-          <div className="hero-actions">
-            <a className="button button-secondary" href="#rules-reference"><i className="fa-solid fa-asterisk" aria-hidden="true" /> References</a>
-            <a className="button button-secondary" href="https://imadeyoursite.com/edge.html" target="_blank" rel="noopener noreferrer"><i className="fa-solid fa-book" aria-hidden="true" /> Sources</a>
-            <a className="button button-secondary" href="https://online.anyflip.com/ziisf/jobq/mobile/index.html" target="_blank" rel="noopener noreferrer"><i className="fa-solid fa-scale-balanced" aria-hidden="true" /> Core Rules</a>
-            <button className="button button-secondary" type="button" onClick={onCharacters}><i className="fa-solid fa-sheet-plastic" aria-hidden="true" /> Characters</button>
-            <a className="button button-primary dice-hero-action" href="#dice-roller"><i className="fa-solid fa-dice" aria-hidden="true" /> Dice Roller</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+const VIEWS = new Set(["dossier", "create", "sheet", "rules"]);
+const LEGACY_RULES_TARGETS = new Set(["rules-reference", "dice-roller"]);
+
+function hashTarget(hash = "") {
+  const value = String(hash).replace(/^#\/?/, "");
+  try { return decodeURIComponent(value).toLowerCase(); } catch { return value.toLowerCase(); }
+}
+
+export function routeFromHash(hash = "") {
+  const target = hashTarget(hash);
+  const view = target.split("/")[0];
+  if (VIEWS.has(view)) return { view, scrollTarget: null };
+  if (LEGACY_RULES_TARGETS.has(target) || target.startsWith("quick-ref-")) return { view: "rules", scrollTarget: target };
+  return { view: "dossier", scrollTarget: null };
+}
+
+export function viewFromHash(hash = "") {
+  return routeFromHash(hash).view;
+}
+
+function activeCharacter(roster) {
+  return roster.characters.find((character) => character.id === roster.activeCharacterId) ?? null;
+}
+
+export function initializeAppState(hash, storage) {
+  const loaded = loadRoster(storage);
+  const route = routeFromHash(hash);
+  if (route.view !== "create" || activeCharacter(loaded.roster)) return { ...loaded, route };
+
+  const saved = saveRoster(upsertCharacter(loaded.roster, createCharacter()), storage);
+  return { roster: saved.roster, error: saved.error ?? loaded.error, route };
+}
+
+function currentHash() {
+  return typeof window === "undefined" ? "" : window.location.hash;
+}
+
+function downloadCharacter(character) {
+  const blob = new Blob([exportCharacter(character)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${character.name.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") || "operative"}.aor-character.json`;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 export default function App() {
-  const [background, setBackground] = useState(() => restoreBackground());
-  const [characterDialogOpen, setCharacterDialogOpen] = useState(false);
+  const [initialState] = useState(() => initializeAppState(currentHash()));
+  const [roster, setRoster] = useState(initialState.roster);
+  const [storageError, setStorageError] = useState(initialState.error);
+  const [notice, setNotice] = useState("");
+  const [route, setRoute] = useState(initialState.route);
+  const importInput = useRef(null);
+  const creatingDraft = useRef(false);
+  const view = route.view;
+  const active = activeCharacter(roster);
 
   useEffect(() => {
-    document.documentElement.style.setProperty("--bg-image", `url("${contentUrl(background)}")`);
-  }, [background]);
+    const syncRoute = () => setRoute(routeFromHash(currentHash()));
+    window.addEventListener("hashchange", syncRoute);
+    return () => window.removeEventListener("hashchange", syncRoute);
+  }, []);
 
-  const selectBackground = (path) => {
-    setBackground(path);
-    storeBackground(path);
+  useEffect(() => {
+    if (!route.scrollTarget || view !== "rules") return undefined;
+    const timeout = window.setTimeout(() => document.getElementById(route.scrollTarget)?.scrollIntoView({ block: "start" }), 100);
+    return () => window.clearTimeout(timeout);
+  }, [route, view]);
+
+  useEffect(() => {
+    if (active) creatingDraft.current = false;
+  }, [active]);
+
+  useEffect(() => {
+    if (!notice && !storageError) return undefined;
+    const timeout = window.setTimeout(() => setNotice(""), 5000);
+    return () => window.clearTimeout(timeout);
+  }, [notice, storageError]);
+
+  const commit = (nextRoster) => {
+    const result = saveRoster(nextRoster);
+    setRoster(result.roster);
+    setStorageError(result.error);
   };
+
+  const navigate = (nextView, scrollTarget) => {
+    if (typeof window === "undefined") return;
+    const hash = `#${scrollTarget || nextView}`;
+    if (window.location.hash === hash) setRoute(routeFromHash(hash));
+    else window.location.hash = hash;
+  };
+
+  const create = () => {
+    const character = createCharacter();
+    commit(upsertCharacter(roster, character));
+    setNotice("New local personnel file created.");
+    navigate("create");
+  };
+
+  useEffect(() => {
+    if (view !== "create" || active || creatingDraft.current) return;
+    creatingDraft.current = true;
+    const character = createCharacter();
+    commit(upsertCharacter(roster, character));
+    setNotice("New local personnel file created.");
+  }, [view, active]);
+
+  const openView = (nextView) => {
+    if (nextView === "create" && !active) {
+      create();
+      return;
+    }
+    navigate(nextView);
+  };
+
+  const updateActive = (character) => commit(upsertCharacter(roster, character));
+  const removeActive = () => {
+    if (!active || !window.confirm(`Delete ${active.name}? This only removes its local browser copy.`)) return;
+    commit(deleteCharacter(roster, active.id));
+    setNotice("Local personnel file deleted.");
+    navigate("dossier");
+  };
+
+  const importFile = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    try {
+      const character = parseCharacterImport(await file.text());
+      commit(addImportedCharacter(roster, character));
+      setNotice(`Imported ${character.name}.`);
+      navigate("create");
+    } catch (error) {
+      setNotice(`Import rejected: ${error.message}`);
+    }
+  };
+
+  const content = view === "dossier"
+    ? <DossierHome roster={roster} active={active} onCreate={create} onEdit={() => navigate("create")} onDelete={removeActive} onOpenSheet={() => navigate("sheet")} onOpenRules={() => navigate("rules")} onOpenDice={() => navigate("rules", "dice-roller")} onSelectCharacter={(id) => commit({ ...roster, activeCharacterId: id })} />
+    : view === "create"
+      ? <CreateView active={active} onChange={updateActive} onOpenSheet={() => navigate("sheet")} />
+      : view === "sheet"
+        ? <SheetView active={active} onCreate={create} onEdit={() => navigate("create")} onChange={updateActive} />
+        : <main className="rules-view" id="main-content"><ReferencePanel /><DiceRoller /></main>;
 
   return (
     <DossierShell
-      background={background}
-      onBackgroundChange={selectBackground}
-      onCharacters={() => setCharacterDialogOpen(true)}
+      view={view}
+      onNavigate={openView}
+      onImport={() => importInput.current?.click()}
+      onExport={() => active && downloadCharacter(active)}
+      canExport={Boolean(active)}
     >
-      <main id="main-content">
-        <Hero onCharacters={() => setCharacterDialogOpen(true)} />
-        <ReferencePanel />
-        <DiceRoller />
-      </main>
-      <CharacterDialog open={characterDialogOpen} onClose={() => setCharacterDialogOpen(false)} />
+      <input ref={importInput} className="sr-only" type="file" accept="application/json,.json" onChange={importFile} />
+      {(storageError || notice) && <p className={storageError ? "app-notice error" : "app-notice"} role="status">{storageError || notice}</p>}
+      {content}
     </DossierShell>
   );
 }

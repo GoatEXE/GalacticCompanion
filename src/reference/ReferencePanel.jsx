@@ -99,6 +99,12 @@ export function ReferencePanel() {
     return () => { current = false; };
   }, [ruleset]);
 
+  useEffect(() => {
+    if (state.phase !== "ready" || typeof window === "undefined") return;
+    const target = window.location.hash.replace(/^#\/?/, "").toLowerCase();
+    if (target.startsWith("quick-ref-")) document.getElementById(target)?.scrollIntoView({ block: "start" });
+  }, [state]);
+
   return (
     <section className="dossier-section reference-section" id="rules-reference" aria-labelledby="reference-title">
       <div className="page-width">

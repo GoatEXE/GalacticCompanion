@@ -1,15 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { contentUrl } from "../domain/content.js";
+import { LegacySheetArchive } from "../companion/LegacySheetArchive.jsx";
 import { CharacterCreator } from "../companion/CharacterCreator.jsx";
 import { CharacterSheet } from "../companion/CharacterSheet.jsx";
 import { deriveCharacter } from "../companion/calculations.js";
 import { createCharacter, exportCharacter, parseCharacterImport } from "../companion/schema.js";
 import { addImportedCharacter, deleteCharacter, loadRoster, saveRoster, upsertCharacter } from "../companion/persistence.js";
-
-const archiveSheets = [
-  ["B1-3B4", "Soldier", "B1 Battle Droid"], ["B1-OOM-69", "Commander", "B1 Battle Droid"], ["B2-4TY", "Ace", "B2 Super Battle Droid"],
-  ["IG-96", "Spy", "IG Assassin Droid"], ["MSE-6B9", "Engineer", "Mouse Droid"], ["R5-B8", "Ace", "R5 Astromech Droid"], ["TC-42", "Diplomat", "TC Protocol Droid"]
-];
 
 function downloadCharacter(character) {
   const blob = new Blob([exportCharacter(character)], { type: "application/json" });
@@ -78,7 +73,7 @@ export function CharacterDialog({ open, onClose }) {
       {mode === "dashboard" && <section aria-labelledby="roster-title"><div className="dashboard-heading"><div><h3 id="roster-title">Local roster</h3><p>Characters are stored in this browser. Export JSON to move or back up a file.</p></div><span>{roster.characters.length} file{roster.characters.length === 1 ? "" : "s"}</span></div>{!roster.characters.length ? <div className="empty-state large"><h4>No local personnel files</h4><p>Create a character or import a previously exported file. No account or network connection is used.</p><button className="button button-primary" type="button" onClick={create}>Create first character</button></div> : <div className="character-roster">{roster.characters.map((character) => { const derived = deriveCharacter(character); return <article key={character.id} className={character.id === roster.activeCharacterId ? "roster-card active" : "roster-card"}><div><p className="dossier-kicker">{derived.isPlayable ? "Ready for field use" : "Draft"}</p><h4>{character.name}</h4><p>{derived.species?.name ?? "Species pending"} · {derived.isPlayable ? "Playable" : `${derived.errors.length} file check${derived.errors.length === 1 ? "" : "s"}`}</p></div><div className="roster-actions"><button className="button button-secondary" type="button" onClick={() => { editCharacter(character); setMode("creator"); }}>Edit</button><button className="button button-secondary" type="button" onClick={() => { editCharacter(character); setMode("sheet"); }} disabled={!derived.isPlayable}>Sheet</button><button className="icon-button" type="button" aria-label={`Delete ${character.name}`} onClick={() => remove(character)}>×</button></div></article>; })}</div>}</section>}
       {mode === "creator" && active && <CharacterCreator character={active} onChange={updateActive} onOpenSheet={() => setMode("sheet")} />}
       {mode === "sheet" && active && <CharacterSheet character={active} onChange={updateActive} onEdit={() => setMode("creator")} />}
-      <details className="archive-sheets"><summary>Legacy PDF character sheets</summary><ul>{archiveSheets.map(([name, career, sheet]) => <li key={name}><a href={contentUrl(`Resources/Character Sheets/${name}.pdf`)} target="_blank" rel="noopener noreferrer">{sheet}</a> <span>{career}</span></li>)}</ul></details>
+      <LegacySheetArchive />
     </div>
     <div className="modal-footer"><p>Starter data is concise and source-reviewable; use the Core Rulebook with your GM for anything not represented.</p><button className="button button-secondary" type="button" onClick={onClose}>Close</button></div>
   </dialog>;
