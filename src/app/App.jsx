@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { DiceRoller } from "../dice/DiceRoller.jsx";
+import { DiceModal } from "../dice/DiceModal.jsx";
 import { ReferencePanel } from "../reference/ReferencePanel.jsx";
 import { createCharacter, exportCharacter, parseCharacterImport } from "../companion/schema.js";
 import { addImportedCharacter, deleteCharacter, loadRoster, saveRoster, upsertCharacter } from "../companion/persistence.js";
@@ -7,7 +7,8 @@ import { CreateView, DossierHome, SheetView } from "../shell/CompanionViews.jsx"
 import { DossierShell } from "../shell/DossierShell.jsx";
 
 const VIEWS = new Set(["dossier", "create", "sheet", "rules"]);
-const LEGACY_RULES_TARGETS = new Set(["rules-reference", "dice-roller"]);
+const LEGACY_RULES_TARGETS = new Set(["rules-reference"]);
+const LEGACY_DICE_TARGETS = new Set(["dice-roller"]);
 
 function hashTarget(hash = "") {
   const value = String(hash).replace(/^#\/?/, "");
@@ -18,6 +19,7 @@ export function routeFromHash(hash = "") {
   const target = hashTarget(hash);
   const view = target.split("/")[0];
   if (VIEWS.has(view)) return { view, scrollTarget: null };
+  if (LEGACY_DICE_TARGETS.has(target)) return { view: "dossier", scrollTarget: null, diceModal: true };
   if (LEGACY_RULES_TARGETS.has(target) || target.startsWith("quick-ref-")) return { view: "rules", scrollTarget: target };
   return { view: "dossier", scrollTarget: null };
 }
@@ -61,6 +63,7 @@ export default function App() {
   const [route, setRoute] = useState(initialState.route);
   const importInput = useRef(null);
   const creatingDraft = useRef(false);
+  const diceWasOpen = useRef(Boolean(initialState.route.diceModal));
   const view = route.view;
   const active = activeCharacter(roster);
 
@@ -75,6 +78,15 @@ export default function App() {
     const timeout = window.setTimeout(() => document.getElementById(route.scrollTarget)?.scrollIntoView({ block: "start" }), 100);
     return () => window.clearTimeout(timeout);
   }, [route, view]);
+
+  useEffect(() => {
+    const diceOpen = route.diceModal === true;
+    if (diceWasOpen.current && !diceOpen) {
+      const trigger = document.querySelector('[aria-controls="dice-roller"]');
+      if (trigger instanceof HTMLElement) window.setTimeout(() => trigger.focus(), 0);
+    }
+    diceWasOpen.current = diceOpen;
+  }, [route.diceModal]);
 
   useEffect(() => {
     if (active) creatingDraft.current = false;
@@ -122,6 +134,8 @@ export default function App() {
     navigate(nextView);
   };
 
+  const openDice = () => navigate("dossier", "dice-roller");
+  const closeDice = () => navigate("dossier");
   const updateActive = (character) => commit(upsertCharacter(roster, character));
   const removeActive = () => {
     if (!active || !window.confirm(`Delete ${active.name}? This only removes its local browser copy.`)) return;
@@ -145,12 +159,15 @@ export default function App() {
   };
 
   const content = view === "dossier"
-    ? <DossierHome roster={roster} active={active} onCreate={create} onEdit={() => navigate("create")} onDelete={removeActive} onOpenSheet={() => navigate("sheet")} onOpenRules={() => navigate("rules")} onOpenDice={() => navigate("rules", "dice-roller")} onSelectCharacter={(id) => commit({ ...roster, activeCharacterId: id })} />
+    ? <>
+        <DossierHome roster={roster} active={active} onCreate={create} onEdit={() => navigate("create")} onDelete={removeActive} onOpenSheet={() => navigate("sheet")} onOpenRules={() => navigate("rules")} onOpenDice={openDice} onSelectCharacter={(id) => commit({ ...roster, activeCharacterId: id })} diceOpen={route.diceModal === true} />
+        <DiceModal open={route.diceModal === true} onClose={closeDice} />
+      </>
     : view === "create"
       ? <CreateView active={active} onChange={updateActive} onOpenSheet={() => navigate("sheet")} />
       : view === "sheet"
         ? <SheetView active={active} onCreate={create} onEdit={() => navigate("create")} onChange={updateActive} />
-        : <main className="rules-view" id="main-content"><ReferencePanel /><DiceRoller /></main>;
+        : <main className="rules-view" id="main-content"><ReferencePanel /></main>;
 
   return (
     <DossierShell

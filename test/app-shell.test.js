@@ -17,14 +17,15 @@ async function withShell(run) {
   }
 }
 
-test("primary navigation distinguishes application routes from Rules anchors and exposes persistent file controls", async () => {
+test("primary navigation distinguishes application routes, Rules anchors, and the legacy dice modal hash", async () => {
   await withShell(async ({ DossierShell, routeFromHash, viewFromHash }) => {
     assert.equal(viewFromHash("#create"), "create");
     assert.equal(viewFromHash("#/sheet"), "sheet");
     assert.equal(viewFromHash("#rules"), "rules");
     assert.equal(viewFromHash("#legacy-reference"), "dossier");
+    assert.equal(viewFromHash("#dice-roller"), "dossier");
     assert.deepEqual(routeFromHash("#rules-reference"), { view: "rules", scrollTarget: "rules-reference" });
-    assert.deepEqual(routeFromHash("#dice-roller"), { view: "rules", scrollTarget: "dice-roller" });
+    assert.deepEqual(routeFromHash("#dice-roller"), { view: "dossier", scrollTarget: null, diceModal: true });
     assert.deepEqual(routeFromHash("#quick-ref-personnel-0-markdown-personnel-character-development-md-character-development"), {
       view: "rules", scrollTarget: "quick-ref-personnel-0-markdown-personnel-character-development-md-character-development"
     });
@@ -35,6 +36,24 @@ test("primary navigation distinguishes application routes from Rules anchors and
     ["Dossier", "Create", "Sheet", "Rules", "Export", "Import"].forEach((label) => assert.match(html, new RegExp(`>${label}<`, "i")));
     assert.match(html, /aria-current="page"/);
     assert.match(html, /disabled=""/);
+  });
+});
+
+test("Rules only renders Personnel and Vehicle quick-reference controls, without a dice region", async () => {
+  await withShell(async ({ default: App }) => {
+    const originalWindow = globalThis.window;
+    const storage = { getItem: () => null, setItem: () => {} };
+    globalThis.window = { location: { hash: "#rules" }, localStorage: storage };
+    try {
+      const html = renderToStaticMarkup(React.createElement(App));
+      assert.match(html, />Personnel</);
+      assert.match(html, />Vehicle</);
+      assert.doesNotMatch(html, /id="dice-roller"/);
+      assert.doesNotMatch(html, /dice-modal/);
+    } finally {
+      if (originalWindow === undefined) delete globalThis.window;
+      else globalThis.window = originalWindow;
+    }
   });
 });
 
@@ -65,6 +84,35 @@ test("a fresh direct Create route synchronously opens a draft and never renders 
     const pending = renderToStaticMarkup(React.createElement(CreateView, { active: null, onChange: () => {}, onOpenSheet: () => {} }));
     assert.match(pending, /Opening Personnel File/);
     assert.doesNotMatch(pending, /Character budgets/);
+  });
+});
+
+test("the Dossier Dice Pool trigger and legacy dice hash render an accessible modal outside Rules", async () => {
+  await withShell(async ({ default: App, DossierHome }) => {
+    const common = { onCreate: () => {}, onEdit: () => {}, onDelete: () => {}, onOpenSheet: () => {}, onOpenRules: () => {}, onOpenDice: () => {}, onSelectCharacter: () => {} };
+    const home = renderToStaticMarkup(React.createElement(DossierHome, { roster: createRoster(), active: null, ...common, diceOpen: false }));
+    assert.match(home, /Dice Pool/);
+    assert.match(home, /aria-controls="dice-roller"/);
+    assert.match(home, /aria-haspopup="dialog"/);
+    assert.match(home, /aria-expanded="false"/);
+
+    const originalWindow = globalThis.window;
+    const storage = { getItem: () => null, setItem: () => {} };
+    globalThis.window = { location: { hash: "#dice-roller" }, localStorage: storage };
+    try {
+      const html = renderToStaticMarkup(React.createElement(App));
+      assert.match(html, /class="[^\"]*dossier-home/);
+      assert.match(html, /class="dice-modal"/);
+      assert.match(html, /id="dice-roller"/);
+      assert.match(html, /id="dice-pool-title"/);
+      assert.match(html, /Close dice pool/);
+      assert.match(html, /Positive Dice/);
+      assert.match(html, /Negative Dice/);
+      assert.doesNotMatch(html, /class="rules-view"/);
+    } finally {
+      if (originalWindow === undefined) delete globalThis.window;
+      else globalThis.window = originalWindow;
+    }
   });
 });
 

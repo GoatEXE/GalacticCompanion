@@ -16,14 +16,15 @@ function ViewHeading({ title, children }) {
   </div>;
 }
 
-function EntryCard({ icon, tone, title, children, onClick }) {
-  return <button className="dossier-entry-card" type="button" onClick={onClick}>
+function EntryCard({ icon, tone, title, children, onClick, modalOpen = false }) {
+  const modalTrigger = title === "Dice Pool";
+  return <button className="dossier-entry-card" type="button" onClick={onClick} aria-controls={modalTrigger ? "dice-roller" : undefined} aria-expanded={modalTrigger ? modalOpen : undefined} aria-haspopup={modalTrigger ? "dialog" : undefined}>
     <Icon className={`${icon} ${tone}`} />
     <span><strong>{title}</strong><small>{children}</small></span>
   </button>;
 }
 
-export function DossierHome({ roster, active, onCreate, onEdit, onDelete, onOpenSheet, onOpenRules, onOpenDice, onSelectCharacter }) {
+export function DossierHome({ roster, active, onCreate, onEdit, onDelete, onOpenSheet, onOpenRules, onOpenDice, onSelectCharacter, diceOpen = false }) {
   const derived = active ? deriveCharacter(active) : null;
   const career = active ? findCareer(active.careerId) : null;
   const specialization = active ? findSpecialization(active.careerId, active.specializationId) : null;
@@ -55,7 +56,7 @@ export function DossierHome({ roster, active, onCreate, onEdit, onDelete, onOpen
         )}
         <div className="dossier-entry-grid" aria-label="Dossier tools">
           <EntryCard icon="fa-solid fa-book-open" tone="reference-icon" title="Quick Reference" onClick={onOpenRules}>Personnel and vehicle rules, pulled from your markdown library.</EntryCard>
-          <EntryCard icon="fa-solid fa-dice" tone="dice-icon" title="Dice Pool" onClick={onOpenDice}>Narrative dice roller with success, advantage, triumph and despair.</EntryCard>
+          <EntryCard icon="fa-solid fa-dice" tone="dice-icon" title="Dice Pool" onClick={onOpenDice} modalOpen={diceOpen}>Narrative dice roller with success, advantage, triumph and despair.</EntryCard>
         </div>
         <LegacySheetArchive className="dossier-archive-sheets" />
       </div>
