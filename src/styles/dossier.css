@@ -19,7 +19,7 @@
 
 * { box-sizing: border-box; }
 html { background: var(--void); scroll-behavior: smooth; }
-body { background: var(--void); color: var(--text); font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: .9375rem; line-height: 1.6; margin: 0; min-width: 20rem; overflow-x: hidden; }
+body { background: var(--void); color: var(--text); font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: .9375rem; line-height: 1.6; margin: 0; overflow-x: hidden; }
 body::before { background: var(--void); content: ""; inset: 0; pointer-events: none; position: fixed; z-index: -1; }
 ::selection { background: var(--crawl-yellow); color: var(--void); }
 a { color: var(--crawl-yellow); text-decoration-color: rgba(255,232,31,.55); text-underline-offset: .17em; }
@@ -39,20 +39,20 @@ p { text-wrap: pretty; }
 .skip-link:focus { color: var(--void); top: .75rem; }
 
 /* Primary Rebel Dossier shell */
-.dossier-nav { background: rgba(9,11,13,.98); border-bottom: 1px solid var(--line); min-height: 6.75rem; position: sticky; top: 0; z-index: 20; }
-.dossier-nav-inner { align-items: start; display: grid; grid-template-columns: minmax(13rem,1fr) auto; min-height: 6.75rem; position: relative; }
-.brand { align-items: center; color: var(--text); display: inline-flex; font-size: 1.35rem; font-weight: 700; gap: .65rem; letter-spacing: .075em; line-height: .9; text-decoration: none; text-transform: uppercase; }
+.dossier-nav { background: rgba(9,11,13,.98); border-bottom: 1px solid var(--line); min-height: 7.875rem; position: sticky; top: 0; z-index: 20; }
+.dossier-nav-inner { align-items: center; display: grid; gap: .4rem 1rem; grid-template-areas: "brand actions" "navigation navigation"; grid-template-columns: minmax(13rem,1fr) auto; grid-template-rows: minmax(3.15rem,auto) auto; min-height: 7.875rem; padding-block: .6rem; }
+.brand { align-items: center; color: var(--text); display: inline-flex; font-size: 1.35rem; font-weight: 700; gap: .65rem; grid-area: brand; letter-spacing: .075em; line-height: .9; text-decoration: none; text-transform: uppercase; }
 .brand:hover { color: #fff; }
 .brand > i { color: var(--alliance-red); font-size: 1.55rem; }
 .brand > span > strong { display: block; font-weight: 700; }
 .brand-button { align-self: center; background: transparent; border: 0; cursor: pointer; justify-self: start; padding: 0; text-align: left; }
-.primary-nav { align-items: center; bottom: .65rem; display: flex; gap: .45rem; left: 0; position: absolute; }
+.primary-nav { align-items: center; display: flex; gap: .45rem; grid-area: navigation; position: static; }
 .primary-nav button, .shell-action { align-items: center; background: transparent; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--text-secondary); cursor: pointer; display: inline-flex; font-family: "Barlow Condensed", Impact, sans-serif; font-size: 1rem; font-weight: 600; gap: .45rem; justify-content: center; letter-spacing: .1em; min-height: 2.3rem; padding: .45rem .85rem; text-transform: uppercase; }
 .primary-nav button:hover, .primary-nav button:focus { background: rgba(241,31,17,.12); border-color: rgba(241,31,17,.72); color: #fff; }
 .primary-nav button.active { background: rgba(241,31,17,.11); border-color: var(--alliance-red); color: #fff; }
 .primary-nav button.active > i { color: #fff; }
-.shell-actions { align-items: center; align-self: center; display: flex; gap: .65rem; }
-.shell-action { font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: .75rem; font-weight: 600; letter-spacing: .04em; min-height: 2rem; padding: .35rem .8rem; }
+.shell-actions { align-items: center; display: flex; gap: .65rem; grid-area: actions; justify-self: end; }
+.shell-action { font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: .75rem; font-weight: 600; letter-spacing: .04em; min-height: 2.5rem; padding: .35rem .8rem; }
 .shell-action:hover:not(:disabled), .shell-action:focus:not(:disabled) { background: var(--raised-hover); border-color: var(--text-secondary); color: #fff; }
 .shell-action:disabled { cursor: not-allowed; opacity: .55; }
 
@@ -170,14 +170,14 @@ p { text-wrap: pretty; }
 @media (max-width: 700px) {
   .page-width { padding-inline: .75rem; }
   .dossier-nav { min-height: 0; position: static; }
-  .dossier-nav-inner { align-items: center; column-gap: .65rem; grid-template-columns: minmax(0,1fr) auto; min-height: 0; padding-bottom: .55rem; padding-top: .7rem; }
-  .brand { font-size: 1.13rem; gap: .45rem; }
+  .dossier-nav-inner { column-gap: .65rem; grid-template-columns: minmax(0,1fr) auto; grid-template-rows: auto auto; min-height: 0; padding-bottom: .55rem; padding-top: .7rem; row-gap: .55rem; }
+  .brand { min-width: 0; font-size: 1.13rem; gap: .45rem; }
   .brand > i { font-size: 1.3rem; }
   .dossier-eyebrow { font-size: .5rem; }
-  .primary-nav { bottom: auto; grid-column: 1 / -1; left: auto; max-width: 100%; overflow-x: auto; padding: .05rem 0; position: static; scrollbar-width: thin; width: 100%; }
-  .primary-nav button { flex: 1 0 auto; font-size: .9rem; min-height: 2.2rem; padding-inline: .7rem; }
+  .primary-nav { display: grid; gap: .3rem; grid-template-columns: repeat(4,minmax(0,1fr)); max-width: 100%; overflow: visible; padding: .05rem 0; width: 100%; }
+  .primary-nav button { font-size: .9rem; min-height: 2.75rem; min-width: 0; padding-inline: .45rem; }
   .shell-actions { gap: .4rem; }
-  .shell-action { font-size: 0; gap: 0; min-height: 2.2rem; min-width: 2.2rem; padding: .35rem; }
+  .shell-action { font-size: 0; gap: 0; min-height: 2.75rem; min-width: 2.75rem; padding: .35rem; }
   .shell-action i { font-size: .8rem; }
   .app-view { min-height: calc(100vh - 8.6rem); padding-top: 1.3rem; }
   .view-heading { align-items: flex-start; flex-direction: column; gap: .35rem; margin-bottom: 1rem; }
@@ -194,8 +194,7 @@ p { text-wrap: pretty; }
 }
 @media (max-width: 440px) {
   .brand > span > strong { font-size: 1rem; }
-  .primary-nav { gap: .3rem; }
-  .primary-nav button { font-size: .78rem; gap: .3rem; padding-inline: .55rem; }
+  .primary-nav button { font-size: .78rem; gap: .25rem; min-height: 2.75rem; padding-inline: .25rem; }
   .dossier-file-state { padding-inline: .85rem; }
   .file-actions .button { width: 100%; }
   .ruleset-tabs { justify-content: center; }
