@@ -1,0 +1,27 @@
+[
+    {
+        "title": "Vehicle Characteristics",
+        "icon": "fas fa-chart-simple",
+        "file": "Markdown/Vehicle/Vehicle Characteristics.md"
+    },
+    {
+        "title": "Vehicle Combat",
+        "icon": "fas fa-crosshairs",
+        "file": "Markdown/Vehicle/Vehicle Combat.md"
+    },
+    {
+        "title": "Vehicle Maneuvers and Actions",
+        "icon": "fas fa-gauge-high",
+        "file": "Markdown/Vehicle/Vehicle Maneuvers and Actions.md"
+    },
+    {
+        "title": "Vehicle Damage and Repairs",
+        "icon": "fas fa-screwdriver-wrench",
+        "file": "Markdown/Vehicle/Vehicle Damage and Repairs.md"
+    },
+    {
+        "title": "Vehicle Encounters",
+        "icon": "fas fa-route",
+        "file": "Markdown/Vehicle/Vehicle Encounters.md"
+    }
+]

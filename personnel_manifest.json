@@ -1,0 +1,62 @@
+[
+    {
+        "title": "Character Development",
+        "icon": "fas fa-user-plus",
+        "file": "Markdown/Personnel/Character Development.md"
+    },
+    {
+        "title": "Dice",
+        "icon": "fa-solid fa-dice-d20",
+        "file": "Markdown/Personnel/Dice.md"
+    },
+    {
+        "title": "Skill Checks",
+        "icon": "fa-solid fa-screwdriver",
+        "file": "Markdown/Personnel/Skill Checks.md"
+    },
+    {
+        "title": "Attributes",
+        "icon": "fa-solid fa-chart-column",
+        "file": "Markdown/Personnel/Attributes.md"
+    },
+    {
+        "title": "Destiny Points",
+        "icon": "fa-solid fa-arrows-turn-to-dots",
+        "file": "Markdown/Personnel/Destiny Points.md"
+    },
+    {
+        "title": "Duty",
+        "icon": "fa-solid fa-gavel",
+        "file": "Markdown/Personnel/Duty.md"
+    },
+    {
+        "title": "Equipment",
+        "icon": "fa-solid fa-toolbox",
+        "file": "Markdown/Personnel/Equipment.md"
+    },
+    {
+        "title": "Encounters",
+        "icon": "fa-solid fa-chess-knight",
+        "file": "Markdown/Personnel/Encounters.md"
+    },
+    {
+        "title": "Combat Check",
+        "icon": "fa-solid fa-gun",
+        "file": "Markdown/Personnel/Combat Check.md"
+    },
+    {
+        "title": "Range Bands",
+        "icon": "fa-solid fa-ruler",
+        "file": "Markdown/Personnel/Range Bands.md"
+    },
+    {
+        "title": "Status Effects",
+        "icon": "fa-solid fa-virus",
+        "file": "Markdown/Personnel/Status Effects.md"
+    },
+        {
+        "title": "Recovery",
+        "icon": "fa-solid fa-heart-pulse",
+        "file": "Markdown/Personnel/Recovery.md"
+    }
+]
