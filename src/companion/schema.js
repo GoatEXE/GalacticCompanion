@@ -28,6 +28,7 @@ export function createCharacter() {
     updatedAt: timestamp,
     name: "New operative",
     backgroundId: "",
+    backgroundText: "",
     dutyId: "",
     startingDuty: 10,
     dutyXpExchange: false,
@@ -63,6 +64,7 @@ export function migrateCharacter(value) {
     updatedAt: string(value.updatedAt, base.updatedAt),
     name: string(value.name, base.name).trim().slice(0, 80) || base.name,
     backgroundId: string(value.backgroundId),
+    backgroundText: string(value.backgroundText).slice(0, 2000),
     dutyId: string(value.dutyId),
     startingDuty: integer(value.startingDuty, 10, 0, 20),
     dutyXpExchange: value.dutyXpExchange === true,
@@ -98,6 +100,7 @@ export function validateCharacter(character, { requireComplete = false } = {}) {
   if (!character.id || typeof character.id !== "string") errors.push("Character id is required.");
   if (!character.name || typeof character.name !== "string") errors.push("Character name is required.");
   if (character.backgroundId && !backgroundIds.has(character.backgroundId)) errors.push("Unknown background.");
+  if (typeof character.backgroundText !== "string") errors.push("Background narrative must be text.");
   if (character.dutyId && !dutyIds.has(character.dutyId)) errors.push("Unknown Duty.");
   if (!Number.isInteger(character.startingDuty) || character.startingDuty < 0 || character.startingDuty > 20) errors.push("Starting Duty must be between 0 and 20.");
   if (character.dutyXpExchange && character.startingDuty < 5) errors.push("Not enough Duty for the XP exchange.");
@@ -120,7 +123,7 @@ export function validateCharacter(character, { requireComplete = false } = {}) {
   if (selectedSpecies?.setup?.kind !== "human" && character.humanBonusTraining.length) errors.push("Only humans receive human bonus skills.");
   if (selectedSpecies?.setup?.kind === "human" && (career || specialization) && character.humanBonusTraining.some((skillId) => career?.skillIds.includes(skillId) || specialization?.skillIds.includes(skillId))) errors.push("Human bonus skills must be non-career skills.");
   if (requireComplete) {
-    if (!character.backgroundId) errors.push("Choose a background.");
+    if (!character.backgroundId && !(typeof character.backgroundText === "string" && character.backgroundText.trim())) errors.push("Write a Background narrative.");
     if (!character.dutyId) errors.push("Choose a Duty.");
     if (!selectedSpecies) errors.push("Choose a species.");
     if (!career) errors.push("Choose a career.");

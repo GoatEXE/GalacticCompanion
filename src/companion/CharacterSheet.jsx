@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { SKILLS, findCareer, findSpecialization } from "./catalog.js";
+import { SKILLS, findBackground, findCareer, findSpecialization } from "./catalog.js";
 import { clampTracker, deriveCharacter, characteristicLabels, skillPoolFor } from "./calculations.js";
 import { createInterpretation, normalizeResults, simulateRoll } from "../domain/dice.js";
 
@@ -23,6 +23,7 @@ export function CharacterSheet({ character, onChange, onEdit, initialTab = "Skil
   const derived = useMemo(() => deriveCharacter(character), [character]);
   const career = findCareer(character.careerId);
   const specialization = findSpecialization(character.careerId, character.specializationId);
+  const background = findBackground(character.backgroundId);
   const setPlay = (patch) => onChange({ ...character, play: { ...character.play, ...patch } });
   const rollSkill = (skillId, label) => {
     const pool = skillPoolFor(character, skillId);
@@ -40,7 +41,7 @@ export function CharacterSheet({ character, onChange, onEdit, initialTab = "Skil
       {tab === "Combat" && <><p className="companion-help">Weapon rolls use the listed skill and linked characteristic with a standard two-difficulty starting pool. Range, defense, talents, and qualities remain table decisions.</p><div className="weapon-list">{derived.gear.filter((gear) => gear.skill).map((weapon) => <div key={weapon.id}><div><h4>{weapon.name}</h4><p>{weapon.skill} · Damage {weapon.damage} · Critical {weapon.critical} · {weapon.range}</p></div><button className="button button-primary" type="button" onClick={() => rollSkill(SKILLS.find((skill) => skill.name === weapon.skill)?.id, weapon.name)}>Roll attack</button></div>)}{!derived.gear.some((gear) => gear.skill) && <p className="empty-state">No weapon is recorded. Add one in Gear to make a combat roll.</p>}</div></>}
       {tab === "Talents" && <div className="talent-review"><h4>{specialization?.name} talent tree</h4><p>Talent connectors, purchase eligibility, and effects are <b>not verified or automated</b> in this MVP. Use the Core Rulebook tree at the table before recording a talent.</p><div className="talent-placeholder"><span>Core source review required</span><span>Connector diagram not reproduced</span><span>Effect text not inferred</span></div></div>}
       {tab === "Gear" && <><div className="sheet-gear-list">{derived.gear.map((gear) => <div key={gear.id}><b>{gear.name}</b><span>{gear.cost} cr · Enc {gear.encumbrance}</span></div>)}</div>{!derived.gear.length && <p className="empty-state">No gear recorded.</p>}<section className="critical-tracker"><div><h4>Critical injuries</h4><button className="button button-secondary" type="button" onClick={addCritical}>Add critical</button></div>{character.play.criticals.map((critical) => <label key={critical.id}><input aria-label="Critical injury" value={critical.label} onChange={(event) => updateCritical(critical.id, event.target.value)} /><button className="icon-button" type="button" aria-label={`Remove ${critical.label}`} onClick={() => setPlay({ criticals: character.play.criticals.filter((entry) => entry.id !== critical.id) })}>×</button></label>)}{!character.play.criticals.length && <p className="empty-state">No critical injuries tracked.</p>}</section></>}
-      {tab === "Bio" && <dl className="bio-list"><div><dt>Background</dt><dd>{character.backgroundId || "Not selected"}</dd></div><div><dt>Duty</dt><dd>{character.dutyId || "Not selected"} · {derived.dutyRemaining} starting Duty remaining</dd></div><div><dt>Motivation</dt><dd>{character.bio.motivation || "Not recorded"}</dd></div><div><dt>Notes</dt><dd>{character.bio.notes || "Not recorded"}</dd></div></dl>}
+      {tab === "Bio" && <dl className="bio-list"><div><dt>Background</dt><dd>{character.backgroundText || background?.name || "Not recorded"}</dd></div><div><dt>Duty</dt><dd>{character.dutyId || "Not selected"} · {derived.dutyRemaining} starting Duty remaining</dd></div><div><dt>Motivation</dt><dd>{character.bio.motivation || "Not recorded"}</dd></div><div><dt>Notes</dt><dd>{character.bio.notes || "Not recorded"}</dd></div></dl>}
     </div>
     {rollResult && <section className="sheet-roll-log" aria-label="Most recent roll"><p><b>{rollResult.label}</b> pool: {rollResult.pool.proficiency} proficiency, {rollResult.pool.ability} ability, {rollResult.pool.difficulty} difficulty.</p><RollResult result={rollResult} /></section>}
   </section>;

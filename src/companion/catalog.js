@@ -36,8 +36,13 @@ const skillIds = (names) => names.map((name) => {
 });
 
 export const BACKGROUNDS = [
-  "Alliance recruit", "Displaced civilian", "Former Imperial", "Outer Rim native", "Independent spacer", "Local resistance"
-].map((name) => ({ id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), name }));
+  ["Alliance recruit", "I joined the Alliance after seeing the Empire harm people I care about."],
+  ["Displaced civilian", "I am rebuilding after Imperial forces drove me from home."],
+  ["Former Imperial", "I left Imperial service when its cost became impossible to ignore."],
+  ["Outer Rim native", "I grew up on the frontier, where survival meant relying on my community."],
+  ["Independent spacer", "I made a living moving people or cargo before choosing the Rebellion."],
+  ["Local resistance", "I learned to resist through a small fight on my homeworld."]
+].map(([name, prompt]) => ({ id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), name, prompt }));
 
 const DUTY_SOURCE = "Age of Rebellion Core Rulebook, p. 47";
 const DUTY_SOURCE_URL = "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=48";
@@ -160,6 +165,7 @@ export function validateCatalog(catalog = CATALOG) {
   return errors;
 }
 
+export function findBackground(id) { return BACKGROUNDS.find((entry) => entry.id === id) ?? null; }
 export function findSpecies(id) { return SPECIES.find((entry) => entry.id === id) ?? null; }
 export function findCareer(id) { return CAREERS.find((entry) => entry.id === id) ?? null; }
 export function findSpecialization(careerId, specializationId) { return findCareer(careerId)?.specializations.find((entry) => entry.id === specializationId) ?? null; }

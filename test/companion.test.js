@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CATALOG, CAREERS, CATALOG_VERSION, DUTIES, SPECIES, validateCatalog } from "../src/companion/catalog.js";
+import { BACKGROUNDS, CATALOG, CAREERS, CATALOG_VERSION, DUTIES, SPECIES, validateCatalog } from "../src/companion/catalog.js";
 import { createSkillPool, deriveCharacter, purchasedSkillCost, selectedSkillRanks, skillPoolFor, xpSpent } from "../src/companion/calculations.js";
 import { addImportedCharacter, deleteCharacter, loadRoster, saveRoster, upsertCharacter } from "../src/companion/persistence.js";
 import { CHARACTER_EXPORT_KIND, CHARACTER_SCHEMA_VERSION, createCharacter, createRoster, exportCharacter, migrateCharacter, migrateRoster, parseCharacterImport, validateCharacter } from "../src/companion/schema.js";
@@ -103,6 +103,22 @@ test("all six careers and eighteen starting specializations match the Core Ruleb
   ]);
 });
 
+test("background inspirations retain concise labels and narrative starter prompts", () => {
+  const allianceRecruit = BACKGROUNDS.find((entry) => entry.id === "alliance-recruit");
+  assert.deepEqual(allianceRecruit, {
+    id: "alliance-recruit", name: "Alliance recruit",
+    prompt: "I joined the Alliance after seeing the Empire harm people I care about."
+  });
+  assert.equal(BACKGROUNDS.every((entry) => entry.prompt.length > entry.name.length), true);
+});
+
+test("freeform background narrative can complete a character without an official background category", () => {
+  const character = completeCharacter({ backgroundId: "", backgroundText: "A farmhand joined the Alliance after Imperial confiscations." });
+  assert.deepEqual(validateCharacter(character, { requireComplete: true }), []);
+  const blankNarrative = completeCharacter({ backgroundId: "", backgroundText: "" });
+  assert.equal(validateCharacter(blankNarrative, { requireComplete: true }).includes("Write a Background narrative."), true);
+});
+
 test("valid core character passes schema completion and derives starter budgets", () => {
   const character = completeCharacter();
   assert.deepEqual(validateCharacter(character, { requireComplete: true }), []);
@@ -181,6 +197,7 @@ test("version-one drafts migrate safely: fixed grants apply and Gran remains edi
   const legacyBothan = { ...completeCharacter(), schemaVersion: 1 };
   const migratedBothan = migrateCharacter(legacyBothan);
   assert.equal(migratedBothan.schemaVersion, 2);
+  assert.equal(migratedBothan.backgroundText, "");
   assert.deepEqual(migratedBothan.speciesTraining, []);
   assert.equal(selectedSkillRanks(migratedBothan).streetwise, 1);
 
