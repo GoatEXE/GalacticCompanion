@@ -69,7 +69,7 @@ function referenceContentPlugin() {
 }
 
 export default defineConfig({
-  // GitHub Pages serves this repository from /AoRQuickReference/.
-  base: "/AoRQuickReference/",
+  // GitHub Pages serves Galactic Companion from /GalacticCompanion/.
+  base: "/GalacticCompanion/",
   plugins: [referenceContentPlugin()]
 });

@@ -38,7 +38,7 @@ p { text-wrap: pretty; }
 .skip-link { background: var(--crawl-yellow); color: var(--void); font-family: "IBM Plex Mono", monospace; font-size: .75rem; font-weight: 600; left: 1rem; padding: .55rem .75rem; position: fixed; text-decoration: none; top: -4rem; z-index: 100; }
 .skip-link:focus { color: var(--void); top: .75rem; }
 
-/* Primary Rebel Dossier shell */
+/* Primary Galactic Companion shell */
 .dossier-nav { background: rgba(9,11,13,.98); border-bottom: 1px solid var(--line); min-height: 7.875rem; position: sticky; top: 0; z-index: 20; }
 .dossier-nav-inner { align-items: center; display: grid; gap: .4rem 1rem; grid-template-areas: "brand actions" "navigation navigation"; grid-template-columns: minmax(13rem,1fr) auto; grid-template-rows: minmax(3.15rem,auto) auto; min-height: 7.875rem; padding-block: .6rem; }
 .brand { align-items: center; color: var(--text); display: inline-flex; font-size: 1.35rem; font-weight: 700; gap: .65rem; grid-area: brand; letter-spacing: .075em; line-height: .9; text-decoration: none; text-transform: uppercase; }

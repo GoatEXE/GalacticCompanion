@@ -17,9 +17,9 @@ export function DossierShell({ view, onNavigate, onImport, onExport, canExport, 
       <a className="skip-link" href="#main-content">Skip to main content</a>
       <header className="dossier-nav">
         <div className="page-width dossier-nav-inner">
-          <button className="brand brand-button" type="button" onClick={() => onNavigate("dossier")} aria-label="Rebel Dossier home">
+          <button className="brand brand-button" type="button" onClick={() => onNavigate("dossier")} aria-label="Galactic Companion home">
             <Icon className="fa-brands fa-rebel" />
-            <span><strong>Rebel Dossier</strong><span className="dossier-eyebrow">Age of Rebellion</span></span>
+            <span><strong>Galactic Companion</strong><span className="dossier-eyebrow">Age of Rebellion</span></span>
           </button>
           <nav className="primary-nav" aria-label="Primary navigation">
             {navigation.map(([id, label, icon]) => (

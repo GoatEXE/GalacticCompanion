@@ -34,6 +34,10 @@ test("primary navigation distinguishes application routes, Rules anchors, and th
       view: "dossier", onNavigate: () => {}, onImport: () => {}, onExport: () => {}, canExport: false
     }, React.createElement("main", { id: "main-content" })));
     ["Dossier", "Create", "Sheet", "Rules", "Export", "Import"].forEach((label) => assert.match(html, new RegExp(`>${label}<`, "i")));
+    assert.match(html, />Galactic Companion</);
+    assert.match(html, />Age of Rebellion</);
+    assert.match(html, /aria-label="Galactic Companion home"/);
+    assert.doesNotMatch(html, /Rebel Dossier/);
     assert.match(html, /aria-current="page"/);
     assert.match(html, /disabled=""/);
   });

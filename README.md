@@ -1,8 +1,10 @@
-# About This Page
-- I've collected information about Star Wars: Age of Rebellion, a table top roleplaying game, and created a reference for it for nearseamless information gathering. 
+# Galactic Companion
+
+Galactic Companion is a personal quick reference and dice roller for *Star Wars: Age of Rebellion*.
+
 - I intend to use this web app for personal use only.
-- I am not affiliated with the linked content in any way
-- This page dynamically uses markdown files and translates them into JSON to populate cards in the Rules Reference section. 
+- I am not affiliated with the linked content in any way.
+- This page dynamically uses Markdown files and translates them into JSON to populate cards in the Rules Reference section.
 
 # Adding Cards to the References Documentation
 - See [docs/CONTENT_GUIDE.md](docs/CONTENT_GUIDE.md) for the content format, citation guidance, and Markdown-vs-YAML recommendation.
@@ -24,7 +26,7 @@ npm install
 npm run dev
 ```
 
-Vite is configured for GitHub Pages at `/AoRQuickReference/`. The development server also serves the existing root content through that base path.
+Vite is configured for the planned GitHub Pages path at `/GalacticCompanion/`. The development server also serves the existing root content through that base path, and the Pages workflow uploads the built `dist` directory.
 
 ## Validation
 
