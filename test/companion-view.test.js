@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createServer } from "vite";
+import { DUTIES } from "../src/companion/catalog.js";
 import { createCharacter } from "../src/companion/schema.js";
 
 async function withViews(run) {
@@ -30,6 +31,21 @@ test("creator smoke renders the seven accessible steps and starter budget", asyn
     assert.match(html, /Step 1 of 7/);
     ["Background", "Duty", "Species", "Career", "Specialization", "Experience", "Gear"].forEach((step) => assert.match(html, new RegExp(`>${step}<`)));
     assert.match(html, /Character budgets/);
+  });
+});
+
+test("selected Duty detail panel reveals a clean brief, including Support", async () => {
+  await withViews(async ({ DutyDetailPanel }) => {
+    const support = DUTIES.find((duty) => duty.id === "support");
+    const intelligence = DUTIES.find((duty) => duty.id === "intelligence");
+    const supportHtml = renderToStaticMarkup(React.createElement(DutyDetailPanel, { duty: support }));
+    const intelligenceHtml = renderToStaticMarkup(React.createElement(DutyDetailPanel, { duty: intelligence }));
+    assert.match(supportHtml, /<details class="duty-detail" open="" aria-live="polite">/);
+    assert.match(supportHtml, /Duty brief: Support/);
+    assert.match(supportHtml, /Help fellow Rebels fulfill their Duties/);
+    assert.doesNotMatch(supportHtml, /Source:|href=/);
+    assert.match(intelligenceHtml, /Duty brief: Intelligence/);
+    assert.notEqual(supportHtml, intelligenceHtml);
   });
 });
 

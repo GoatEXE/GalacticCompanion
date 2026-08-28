@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CATALOG, CAREERS, CATALOG_VERSION, SPECIES, validateCatalog } from "../src/companion/catalog.js";
+import { CATALOG, CAREERS, CATALOG_VERSION, DUTIES, SPECIES, validateCatalog } from "../src/companion/catalog.js";
 import { createSkillPool, deriveCharacter, purchasedSkillCost, selectedSkillRanks, skillPoolFor, xpSpent } from "../src/companion/calculations.js";
 import { addImportedCharacter, deleteCharacter, loadRoster, saveRoster, upsertCharacter } from "../src/companion/persistence.js";
 import { CHARACTER_EXPORT_KIND, CHARACTER_SCHEMA_VERSION, createCharacter, createRoster, exportCharacter, migrateCharacter, migrateRoster, parseCharacterImport, validateCharacter } from "../src/companion/schema.js";
@@ -35,6 +35,14 @@ test("versioned Core Rulebook catalogue is source-identified and structurally co
   assert.equal(CATALOG.careers.length, 6);
   assert.equal(CATALOG.careers.every((career) => career.skillIds.length === 8 && career.specializations.length === 3), true);
   assert.equal(CATALOG.careers.flatMap((career) => career.specializations).every((specialization) => specialization.skillIds.length === 4 && specialization.source.includes("Core Rulebook")), true);
+  assert.deepEqual(DUTIES.find((duty) => duty.id === "support"), {
+    id: "support", name: "Support",
+    description: "Help fellow Rebels fulfill their Duties by providing the assistance they need, creating more chances to advance the cause together.",
+    source: "Age of Rebellion Core Rulebook, p. 47",
+    sourceUrl: "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=48"
+  });
+  assert.equal(DUTIES.length, 12);
+  assert.equal(DUTIES.every((duty) => duty.description && duty.source && duty.sourceUrl), true);
   assert.deepEqual(validateCatalog({ ...CATALOG, careers: CATALOG.careers.slice(0, 5) }), ["Core catalogue must contain six unique careers."]);
 });
 

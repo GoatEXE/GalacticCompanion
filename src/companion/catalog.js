@@ -1,7 +1,8 @@
 /**
  * Compact, source-backed Core Rulebook catalogue.
- * This MVP intentionally records only names, skill metadata, and citations; it
- * does not reproduce talent trees, connector diagrams, or talent effects.
+ * This MVP intentionally records compact names, descriptions, skill metadata,
+ * and citations; it does not reproduce talent trees, connector diagrams, or
+ * talent effects.
  */
 export const CATALOG_VERSION = 2;
 export const CATALOG_SOURCES = {
@@ -38,9 +39,26 @@ export const BACKGROUNDS = [
   "Alliance recruit", "Displaced civilian", "Former Imperial", "Outer Rim native", "Independent spacer", "Local resistance"
 ].map((name) => ({ id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), name }));
 
+const DUTY_SOURCE = "Age of Rebellion Core Rulebook, p. 47";
+const DUTY_SOURCE_URL = "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=48";
+
 export const DUTIES = [
-  "Combat Victory", "Counter-intelligence", "Intelligence", "Internal Security", "Personnel", "Political Support", "Recruiting", "Resource Acquisition", "Sabotage", "Space Superiority", "Tech Procurement"
-].map((name) => ({ id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), name }));
+  ["Combat Victory", "Prove the Alliance can win ground engagements by seeking victories, bold raids, sound tactics, and stronger firepower."],
+  ["Counter-intelligence", "Protect the Alliance from Imperial scrutiny by finding enemy agents, spreading false information, and concealing Rebel movements."],
+  ["Intelligence", "Gather useful information about Imperial forces, research, policy, and other weaknesses so the Alliance can choose valuable targets."],
+  ["Internal Security", "Protect the Alliance from threats within its own ranks and stay alert for betrayal that could endanger an operation."],
+  ["Personnel", "Look after Rebel people, their safety, and their ability to succeed; a mission still matters when its people come home alive."],
+  ["Political Support", "Build the political will for rebellion by bringing more factions, systems, and sectors to the Alliance and its cause."],
+  ["Recruiting", "Find capable, trustworthy allies to fill the many roles the Rebellion needs, from soldiers and pilots to technicians and medics."],
+  ["Resource Acquisition", "Secure the supplies, materials, weapons, and equipment Rebel operations need, using whatever legitimate means are available."],
+  ["Sabotage", "Disrupt Imperial operations and deny key assets so the Empire moves more slowly and acts less effectively."],
+  ["Space Superiority", "Help the Alliance prevail in ship-to-ship war by advancing its pilots and proving Rebel forces can win in the stars."],
+  ["Tech Procurement", "Use scientific and technical expertise to improve equipment, develop useful solutions, and acquire advances from the Empire."],
+  ["Support", "Help fellow Rebels fulfill their Duties by providing the assistance they need, creating more chances to advance the cause together."]
+].map(([name, description]) => ({
+  id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), name, description,
+  source: DUTY_SOURCE, sourceUrl: DUTY_SOURCE_URL
+}));
 
 const species = [
   ["human", "Human", 110, [2, 2, 2, 2, 2, 2], 10, 10, { kind: "human" }, "p. 56"],
