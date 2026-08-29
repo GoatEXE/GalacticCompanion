@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createServer } from "vite";
-import { BACKGROUNDS, DUTIES, SPECIES } from "../src/companion/catalog.js";
+import { BACKGROUNDS, DUTIES, SKILLS, SPECIES } from "../src/companion/catalog.js";
 import { createCharacter } from "../src/companion/schema.js";
 
 async function withViews(run) {
@@ -64,6 +64,31 @@ test("training skill badges use pressed buttons without visible checkbox inputs"
     assert.doesNotMatch(html, /type="checkbox"/);
     assert.doesNotMatch(html, /<input/);
     assert.match(html, /disabled=""/);
+  });
+});
+
+test("experience skill rows use compact career indicators and an accessible legend", async () => {
+  await withViews(async ({ SkillPurchaseList }) => {
+    const character = { ...createCharacter(), careerId: "soldier", specializationId: "commando" };
+    const ranks = Object.fromEntries(SKILLS.map((skill) => [skill.id, 0]));
+    const html = renderToStaticMarkup(React.createElement(SkillPurchaseList, { character, ranks, remainingXp: 100, onPurchase: () => {} }));
+    assert.match(html, /aria-label="Skill pricing legend"/);
+    assert.match(html, /Career skill/);
+    assert.match(html, /Non-career skill/);
+    assert.match(html, /class="career-skill"/);
+    assert.match(html, /class="non-career-skill"/);
+    assert.equal((html.match(/class="purchase-skill-column"/g) ?? []).length, 2);
+    assert.equal((html.match(/class="purchase-skill-group"/g) ?? []).length, 6);
+    ["Brawn", "Agility", "Intellect", "Cunning", "Willpower", "Presence"].forEach((characteristic) => assert.match(html, new RegExp(`>${characteristic}<`)));
+    const firstColumnStart = html.indexOf("<div class=\"purchase-skill-column\">");
+    const secondColumnStart = html.indexOf("<div class=\"purchase-skill-column\">", firstColumnStart + 1);
+    const firstColumn = html.slice(firstColumnStart, secondColumnStart);
+    const secondColumn = html.slice(secondColumnStart);
+    ["Brawn", "Agility", "Cunning"].forEach((characteristic) => assert.match(firstColumn, new RegExp(`>${characteristic}<`)));
+    ["Intellect", "Willpower", "Presence"].forEach((characteristic) => assert.match(secondColumn, new RegExp(`>${characteristic}<`)));
+    assert.doesNotMatch(firstColumn, />Intellect<|>Willpower<|>Presence</);
+    assert.doesNotMatch(secondColumn, />Brawn<|>Agility<|>Cunning</);
+    assert.doesNotMatch(html, /<small>career<\/small>|<small>non-career<\/small>/);
   });
 });
 
