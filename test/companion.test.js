@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { BACKGROUNDS, CATALOG, CAREERS, CATALOG_VERSION, DUTIES, SPECIES, validateCatalog } from "../src/companion/catalog.js";
-import { createSkillPool, deriveCharacter, purchasedSkillCost, selectedSkillRanks, skillPoolFor, xpSpent } from "../src/companion/calculations.js";
+import { BACKGROUNDS, CATALOG, CAREERS, CATALOG_VERSION, DUTIES, SPECIALIZATIONS, SPECIES, UNIVERSAL_SPECIALIZATIONS, validateCatalog } from "../src/companion/catalog.js";
+import { additionalSpecializationCost, additionalSpecializationCosts, additionalSpecializationUndoBlockReason, createSkillPool, deriveCharacter, isCareerSkill, purchasedSkillCost, purchasedSkillCostEntries, selectedSkillRanks, skillPoolFor, specializationCost, xpSpent } from "../src/companion/calculations.js";
 import { addImportedCharacter, deleteCharacter, loadRoster, saveRoster, upsertCharacter } from "../src/companion/persistence.js";
 import { CHARACTER_EXPORT_KIND, CHARACTER_SCHEMA_VERSION, createCharacter, createRoster, exportCharacter, migrateCharacter, migrateRoster, parseCharacterImport, validateCharacter } from "../src/companion/schema.js";
 
@@ -144,6 +144,65 @@ test("valid core character passes schema completion and derives starter budgets"
   assert.equal(selectedSkillRanks(character).streetwise, 1);
 });
 
+test("additional specializations use ordered costs, grant career skills, and never grant free ranks", () => {
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const pilot = SPECIALIZATIONS.find((entry) => entry.id === "pilot");
+  const recruit = UNIVERSAL_SPECIALIZATIONS[0];
+  const character = completeCharacter();
+  assert.equal(specializationCost(character, medic.globalId), 20);
+  assert.equal(specializationCost(character, pilot.globalId), 30);
+  assert.equal(specializationCost(character, recruit.globalId), 20);
+  const purchased = completeCharacter({ additionalSpecializationIds: [medic.globalId, pilot.globalId] });
+  assert.deepEqual(additionalSpecializationCosts(purchased).map((entry) => entry.cost), [20, 40]);
+  assert.equal(specializationCost(purchased, medic.globalId), 40);
+  assert.equal(xpSpent(purchased), 60);
+  assert.equal(isCareerSkill(purchased, "knowledge-xenology"), true);
+  assert.equal(isCareerSkill(purchased, "astrogation"), true);
+  assert.equal(selectedSkillRanks(purchased)["knowledge-xenology"], 0);
+  assert.equal(deriveCharacter(purchased).errors.includes("XP spending exceeds the available budget."), false);
+});
+
+test("skill purchase snapshots preserve historical pricing across specialization changes", () => {
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const beforeSpecialization = completeCharacter({ purchasedSkillRanks: { "knowledge-xenology": 1 }, purchasedSkillCosts: { "knowledge-xenology": [{ cost: 10, career: false }] } });
+  const afterSpecialization = { ...beforeSpecialization, additionalSpecializationIds: [medic.globalId] };
+  assert.equal(purchasedSkillCost(afterSpecialization, "knowledge-xenology"), 10);
+  const laterRank = { ...afterSpecialization, purchasedSkillRanks: { "knowledge-xenology": 2 }, purchasedSkillCosts: { "knowledge-xenology": [{ cost: 10, career: false }, { cost: 10, career: true }] } };
+  assert.deepEqual(purchasedSkillCostEntries(laterRank, "knowledge-xenology").map((entry) => entry.cost), [10, 10]);
+  assert.equal(purchasedSkillCost(laterRank, "knowledge-xenology"), 20);
+  const legacy = completeCharacter({ additionalSpecializationIds: [medic.globalId], purchasedSkillRanks: { "knowledge-xenology": 1 } });
+  assert.equal(purchasedSkillCost(legacy, "knowledge-xenology"), 10);
+});
+
+test("specialization undo blocks dependent career-priced ranks but allows safe history", () => {
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const recruit = UNIVERSAL_SPECIALIZATIONS[0];
+  const dependent = completeCharacter({ additionalSpecializationIds: [medic.globalId], purchasedSkillRanks: { "knowledge-xenology": 1 }, purchasedSkillCosts: { "knowledge-xenology": [{ cost: 5, career: true }] } });
+  assert.match(additionalSpecializationUndoBlockReason(dependent), /Remove purchased Knowledge \(Xenology\) ranks/);
+  const boughtBefore = completeCharacter({ additionalSpecializationIds: [medic.globalId], purchasedSkillRanks: { "knowledge-xenology": 1 }, purchasedSkillCosts: { "knowledge-xenology": [{ cost: 15, career: false }] } });
+  assert.equal(additionalSpecializationUndoBlockReason(boughtBefore), "");
+  const retainedByOther = completeCharacter({ additionalSpecializationIds: [medic.globalId, recruit.globalId], purchasedSkillRanks: { "knowledge-xenology": 1 }, purchasedSkillCosts: { "knowledge-xenology": [{ cost: 5, career: true }] } });
+  assert.equal(additionalSpecializationUndoBlockReason(retainedByOther), "");
+});
+
+test("Human bonus skills remain based on starting career and specialization", () => {
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const human = completeCharacter({ speciesId: "human", humanBonusTraining: ["knowledge-xenology", "charm"], additionalSpecializationIds: [medic.globalId] });
+  assert.deepEqual(validateCharacter(human, { requireComplete: true }), []);
+  assert.equal(isCareerSkill(human, "knowledge-xenology"), true);
+});
+
+test("duplicate additional specialization ownership is rejected, including the starting specialization", () => {
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const commando = SPECIALIZATIONS.find((entry) => entry.id === "commando");
+  const duplicate = completeCharacter({ additionalSpecializationIds: [medic.globalId, medic.globalId] });
+  assert.throws(() => migrateCharacter(duplicate), /distinct known specializations/);
+  assert.throws(() => parseCharacterImport(JSON.stringify({ kind: CHARACTER_EXPORT_KIND, schemaVersion: CHARACTER_SCHEMA_VERSION, character: duplicate })), /distinct known specializations/);
+  assert.throws(() => migrateCharacter(completeCharacter({ additionalSpecializationIds: [commando.globalId] })), /purchased twice/);
+  assert.equal(validateCharacter(completeCharacter({ additionalSpecializationIds: [medic.globalId, medic.globalId] })).some((error) => error.includes("distinct known")), true);
+  assert.equal(new Set(SPECIALIZATIONS.map((entry) => entry.globalId)).size, SPECIALIZATIONS.length);
+});
+
 test("automatic and selected species ranks affect caps, XP, and roll pools without charging a free rank", () => {
   const bothan = completeCharacter({ purchasedSkillRanks: { streetwise: 1 } });
   assert.equal(selectedSkillRanks(bothan).streetwise, 2);
@@ -211,6 +270,8 @@ test("version-one drafts migrate safely: fixed grants apply and Gran remains edi
   assert.equal(migratedBothan.backgroundText, "");
   assert.deepEqual(migratedBothan.speciesTraining, []);
   assert.equal(selectedSkillRanks(migratedBothan).streetwise, 1);
+  const migratedSkill = migrateCharacter({ ...completeCharacter({ purchasedSkillRanks: { "knowledge-xenology": 1 } }), schemaVersion: 1 });
+  assert.deepEqual(migratedSkill.purchasedSkillCosts["knowledge-xenology"], [{ cost: 10, career: false }]);
 
   const migratedGran = migrateCharacter({ ...completeCharacter({ speciesId: "gran" }), schemaVersion: 1 });
   assert.deepEqual(migratedGran.speciesTraining, []);
@@ -242,10 +303,12 @@ test("local persistence saves multiple files and deletion adjusts the active sel
 });
 
 test("JSON export/import round-trips current and version-one files and rejects untrusted content", () => {
-  const character = completeCharacter();
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const character = completeCharacter({ additionalSpecializationIds: [medic.globalId] });
   const exported = exportCharacter(character);
   const imported = parseCharacterImport(exported);
   assert.equal(imported.name, character.name);
+  assert.deepEqual(imported.additionalSpecializationIds, character.additionalSpecializationIds);
   assert.equal(JSON.parse(exported).kind, CHARACTER_EXPORT_KIND);
   assert.equal(JSON.parse(exported).schemaVersion, CHARACTER_SCHEMA_VERSION);
   const versionOne = parseCharacterImport(JSON.stringify({ kind: CHARACTER_EXPORT_KIND, schemaVersion: 1, character: { ...character, schemaVersion: 1 } }));

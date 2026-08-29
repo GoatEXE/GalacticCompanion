@@ -1,10 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createServer } from "vite";
-import { BACKGROUNDS, DUTIES, SKILLS, SPECIES } from "../src/companion/catalog.js";
+import { BACKGROUNDS, DUTIES, SKILLS, SPECIALIZATIONS, SPECIES } from "../src/companion/catalog.js";
 import { createCharacter } from "../src/companion/schema.js";
+
+const companionCss = readFileSync(new URL("../src/styles/companion.css", import.meta.url), "utf8");
 
 async function withViews(run) {
   const server = await createServer({ server: { middlewareMode: true }, appType: "custom" });
@@ -65,6 +68,59 @@ test("training skill badges use pressed buttons without visible checkbox inputs"
     assert.doesNotMatch(html, /<input/);
     assert.match(html, /disabled=""/);
   });
+});
+
+test("specialization undo is disabled with an accessible dependent-rank explanation", async () => {
+  await withViews(async ({ AdditionalSpecializations }) => {
+    const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+    const character = { ...createCharacter(), careerId: "soldier", specializationId: "commando", additionalSpecializationIds: [medic.globalId], purchasedSkillRanks: { "knowledge-xenology": 1 }, purchasedSkillCosts: { "knowledge-xenology": [{ cost: 5, career: true }] } };
+    const html = renderToStaticMarkup(React.createElement(AdditionalSpecializations, { character, remainingXp: 100, onChange: () => {} }));
+    assert.match(html, /disabled=""[^>]*aria-describedby="specialization-undo-help"/);
+    assert.match(html, /Remove purchased Knowledge \(Xenology\) ranks/);
+  });
+});
+
+test("additional specialization picker uses a visible legend and accessible row classifications", async () => {
+  await withViews(async ({ AdditionalSpecializations }) => {
+    const character = { ...createCharacter(), careerId: "soldier", specializationId: "commando" };
+    const html = renderToStaticMarkup(React.createElement(AdditionalSpecializations, { character, remainingXp: 100, onChange: () => {} }));
+    assert.match(html, /id="experience-specializations-title">Specializations/);
+    assert.match(html, /aria-label="Specialization pricing legend"/);
+    assert.match(html, />In-career</);
+    assert.match(html, /Out-of-career/);
+    assert.match(html, /class="career-key"/);
+    assert.match(html, /class="non-career-key"/);
+    const outerMenu = html.indexOf('<details class="out-career-menu"><summary aria-expanded="false">Other careers</summary>');
+    assert.ok(outerMenu > 0);
+    assert.ok(html.indexOf("<b>Sharpshooter</b>") < outerMenu);
+    assert.ok(html.indexOf("<b>Recruit</b>") < outerMenu);
+    assert.match(html, /<details class="out-career-group"><summary aria-expanded="false">Ace<\/summary>.*<b>Driver<\/b><small>Ace<\/small>/s);
+    assert.match(html, /<details class="out-career-group"><summary aria-expanded="false">Commander<\/summary>/);
+    assert.doesNotMatch(html, /<summary[^>]*>Soldier<\/summary>/);
+    assert.match(html, /class="out-career-specialization"[^>]*>.*<b>Driver<\/b><small>Ace<\/small>/s);
+    assert.match(html, /class="in-career-specialization"[^>]*>.*<b>Medic<\/b><small>Soldier<\/small>/s);
+    assert.match(html, /class="in-career-specialization"[^>]*>.*<b>Recruit<\/b><small>Universal<\/small>/s);
+    assert.match(html, /<span class="sr-only">Universal specialization, In-Career\.<\/span>/);
+    assert.match(html, /<span class="sr-only">Out-of-Career\.<\/span>/);
+    assert.doesNotMatch(html, /Universal · in-career cost|Out-of-career · Ace|<small>In-career<\/small>|<small>Out-of-career/);
+    assert.match(html, /aria-label="Purchase Recruit for 20 XP"/);
+    assert.doesNotMatch(html, />Commando<|Purchase Commando/);
+    const aceIds = SPECIALIZATIONS.filter((entry) => entry.careerId === "ace").map((entry) => entry.globalId);
+    const withoutAce = renderToStaticMarkup(React.createElement(AdditionalSpecializations, { character: { ...character, additionalSpecializationIds: aceIds }, remainingXp: 100, onChange: () => {} }));
+    assert.doesNotMatch(withoutAce, /<summary[^>]*>Ace<\/summary>/);
+    const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+    const ownedMedic = renderToStaticMarkup(React.createElement(AdditionalSpecializations, { character: { ...character, additionalSpecializationIds: [medic.globalId] }, remainingXp: 100, onChange: () => {} }));
+    assert.match(ownedMedic, /Owned additions[\s\S]*Medic/);
+    assert.doesNotMatch(ownedMedic, /<b>Medic<\/b><small>Soldier<\/small>/);
+  });
+});
+
+test("specialization hierarchy has open/close motion, rotating indicators, and reduced-motion coverage", () => {
+  assert.match(companionCss, /out-career-menu\[open\] > \.hierarchy-details-content[\s\S]*specialization-hierarchy-open/);
+  assert.match(companionCss, /out-career-menu\.is-closing > \.hierarchy-details-content[\s\S]*specialization-hierarchy-close/);
+  assert.match(companionCss, /out-career-menu > summary::before,\.out-career-group > summary::before[\s\S]*transition: transform \.2s ease/);
+  assert.match(companionCss, /@media \(prefers-reduced-motion: reduce\)[\s\S]*hierarchy-details-content \{ animation: none !important;/);
+  assert.match(companionCss, /@media \(prefers-reduced-motion: reduce\)[\s\S]*summary::before \{ transition: none;/);
 });
 
 test("experience skill rows use compact career indicators and an accessible legend", async () => {

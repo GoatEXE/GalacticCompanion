@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from "react";
-import { BACKGROUNDS, CAREERS, CATALOG_SOURCES, CHARACTERISTICS, DUTIES, GEAR, SKILLS, SPECIES, findCareer, findSpecialization, speciesGrantedSkillIds } from "./catalog.js";
-import { characteristicLabels, deriveCharacter, isCareerSkill, selectedSkillRanks, skillRankCost } from "./calculations.js";
+import React, { useEffect, useMemo, useState } from "react";
+import { BACKGROUNDS, CAREERS, CATALOG_SOURCES, CHARACTERISTICS, DUTIES, GEAR, SKILLS, SPECIALIZATIONS, SPECIES, findAnySpecialization, findCareer, findSpecialization, speciesGrantedSkillIds } from "./catalog.js";
+import { additionalSpecializationCost, additionalSpecializationCosts, additionalSpecializationUndoBlockReason, characteristicLabels, deriveCharacter, isCareerSkill, purchasedSkillCostEntries, selectedSkillRanks, skillRankCost } from "./calculations.js";
 
 const steps = ["Background", "Duty", "Species", "Career", "Specialization", "Experience", "Gear"];
 const skillCharacteristicColumns = [
@@ -97,6 +97,66 @@ export function SkillPurchaseList({ character, ranks, remainingXp, onPurchase })
   </>;
 }
 
+function AnimatedDetails({ className, summary, children }) {
+  const [open, setOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() => typeof window !== "undefined" && Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches));
+  useEffect(() => {
+    const query = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    if (!query) return undefined;
+    const update = () => setReducedMotion(query.matches);
+    update();
+    query.addEventListener?.("change", update);
+    return () => query.removeEventListener?.("change", update);
+  }, []);
+  const toggle = (event) => {
+    event.preventDefault();
+    if (closing) return;
+    if (!open) {
+      setOpen(true);
+      return;
+    }
+    if (reducedMotion) {
+      setOpen(false);
+      return;
+    }
+    setClosing(true);
+    window.setTimeout(() => { setOpen(false); setClosing(false); }, 200);
+  };
+  const detailsClass = [className, closing ? "is-closing" : ""].filter(Boolean).join(" ");
+  return <details className={detailsClass} open={open || closing}><summary onClick={toggle} aria-expanded={open && !closing}>{summary}</summary><div className="hierarchy-details-content"><div className="hierarchy-details-content-inner">{children}</div></div></details>;
+}
+
+export function AdditionalSpecializations({ character, remainingXp, onChange }) {
+  const additionalIds = Array.isArray(character.additionalSpecializationIds) ? character.additionalSpecializationIds : [];
+  const startingSpecialization = findSpecialization(character.careerId, character.specializationId);
+  const ownedIds = [startingSpecialization?.globalId, ...additionalIds].filter(Boolean);
+  const available = SPECIALIZATIONS.filter((specialization) => !ownedIds.includes(specialization.globalId ?? specialization.id));
+  const hasStartingSpecialization = Boolean(startingSpecialization);
+  const costs = additionalSpecializationCosts(character);
+  const undoBlockReason = additionalSpecializationUndoBlockReason(character);
+  const add = (id) => { if (!additionalIds.includes(id)) onChange([...additionalIds, id]); };
+  const renderSpecialization = (specialization) => {
+    const inCareer = Boolean(specialization.universal || specialization.careerId === character.careerId);
+    const id = specialization.globalId ?? specialization.id;
+    const cost = additionalSpecializationCost(character, id);
+    const classification = specialization.universal ? "Universal specialization, In-Career." : inCareer ? "In-Career." : "Out-of-Career.";
+    return <div key={id} role="listitem" className={inCareer ? "in-career-specialization" : "out-career-specialization"}><div><b>{specialization.name}</b><small>{specialization.universal ? "Universal" : findCareer(specialization.careerId)?.name}</small><span className="sr-only">{classification}</span></div><strong>{cost} XP</strong><button type="button" className="button button-secondary" onClick={() => add(id)} disabled={!hasStartingSpecialization || remainingXp < cost} aria-label={`Purchase ${specialization.name} for ${cost} XP`}>Purchase</button></div>;
+  };
+  const inCareerSpecializations = available.filter((specialization) => specialization.universal || specialization.careerId === character.careerId);
+  const otherCareerGroups = CAREERS.filter((careerEntry) => careerEntry.id !== character.careerId).map((careerEntry) => ({ career: careerEntry, specializations: available.filter((specialization) => specialization.careerId === careerEntry.id) })).filter((group) => group.specializations.length > 0);
+  return <section className="experience-subsection additional-specializations" aria-labelledby="experience-specializations-title">
+    <h5 id="experience-specializations-title">Specializations</h5>
+    <p className="companion-help">Starting specialization is free. Additional specializations grant career skills but no free ranks; purchases are ordered so mixed career and out-of-career costs remain deterministic.</p>
+    <div className="skill-pricing-legend specialization-pricing-legend" aria-label="Specialization pricing legend"><span className="career-key"><i aria-hidden="true" />In-career</span><span className="non-career-key"><i aria-hidden="true" />Out-of-career</span></div>
+    {additionalIds.length > 0 && <div className="owned-specializations" aria-label="Owned additional specializations"><span className="dossier-kicker">Owned additions</span>{additionalIds.map((id, index) => { const specialization = findAnySpecialization(id); return <div key={id}><span>{specialization?.name ?? id}<small>{costs[index]?.cost ?? 0} XP paid{specialization?.universal ? " · Universal" : ""}</small></span>{index === additionalIds.length - 1 && <button type="button" className="button button-secondary" onClick={() => onChange(additionalIds.slice(0, -1))} disabled={Boolean(undoBlockReason)} aria-describedby={undoBlockReason ? "specialization-undo-help" : undefined}>Undo last</button>}</div>; })}</div>}
+    {undoBlockReason && <p id="specialization-undo-help" className="specialization-undo-warning" role="status">{undoBlockReason}</p>}
+    <div className="additional-specialization-list" role="list" aria-label="Available in-career specializations">{inCareerSpecializations.map(renderSpecialization)}</div>
+    {otherCareerGroups.length > 0 && <AnimatedDetails className="out-career-menu" summary="Other careers"><div className="out-career-groups">{otherCareerGroups.map(({ career: otherCareer, specializations }) => <AnimatedDetails key={otherCareer.id} className="out-career-group" summary={otherCareer.name}><div className="additional-specialization-list" role="list" aria-label={`${otherCareer.name} specializations`}>{specializations.map(renderSpecialization)}</div></AnimatedDetails>)}</div></AnimatedDetails>}
+    {!hasStartingSpecialization && <p className="empty-state">Choose a career and starting specialization before buying an additional specialization.</p>}
+  </section>;
+}
+
 export function CharacterCreator({ character, onChange, onOpenSheet }) {
   const [step, setStep] = useState(0);
   const derived = useMemo(() => deriveCharacter(character), [character]);
@@ -109,7 +169,7 @@ export function CharacterCreator({ character, onChange, onOpenSheet }) {
   const setCareer = (careerId) => {
     const nextCareer = findCareer(careerId);
     update({
-      careerId, specializationId: "", careerTraining: [], specializationTraining: [], purchasedSkillRanks: {},
+      careerId, specializationId: "", additionalSpecializationIds: [], careerTraining: [], specializationTraining: [], purchasedSkillRanks: {}, purchasedSkillCosts: {},
       humanBonusTraining: character.humanBonusTraining.filter((id) => !nextCareer.skillIds.includes(id))
     });
   };
@@ -117,8 +177,10 @@ export function CharacterCreator({ character, onChange, onOpenSheet }) {
     const nextSpecialization = findSpecialization(character.careerId, specializationId);
     update({
       specializationId,
+      additionalSpecializationIds: (character.additionalSpecializationIds ?? []).filter((id) => id !== nextSpecialization?.globalId && id !== nextSpecialization?.id),
       specializationTraining: [],
       purchasedSkillRanks: {},
+      purchasedSkillCosts: {},
       humanBonusTraining: character.humanBonusTraining.filter((id) => !nextSpecialization?.skillIds.includes(id))
     });
   };
@@ -128,7 +190,12 @@ export function CharacterCreator({ character, onChange, onOpenSheet }) {
   };
   const updateSkillPurchase = (skill, direction) => {
     const current = character.purchasedSkillRanks[skill.id] ?? 0;
-    update({ purchasedSkillRanks: { ...character.purchasedSkillRanks, [skill.id]: Math.max(0, current + direction) } });
+    const nextCost = skillRankCost({ currentRank: ranks[skill.id], career: isCareerSkill(character, skill.id) });
+    if (direction > 0 && (current >= 2 || derived.xp.remaining < nextCost)) return;
+    if (direction < 0 && current <= 0) return;
+    const recorded = purchasedSkillCostEntries(character, skill.id);
+    const nextCosts = direction > 0 ? [...recorded, { cost: nextCost, career: isCareerSkill(character, skill.id) }] : recorded.slice(0, -1);
+    update({ purchasedSkillRanks: { ...character.purchasedSkillRanks, [skill.id]: Math.max(0, current + direction) }, purchasedSkillCosts: { ...character.purchasedSkillCosts, [skill.id]: nextCosts } });
   };
   const updateGear = (gearId) => update({ gearIds: character.gearIds.includes(gearId) ? character.gearIds.filter((id) => id !== gearId) : [...character.gearIds, gearId] });
   const droid = derived.species?.setup.kind === "droid";
@@ -148,7 +215,7 @@ export function CharacterCreator({ character, onChange, onOpenSheet }) {
       {step === 2 && <section className="creator-step" aria-labelledby="step-species"><h4 id="step-species">Species</h4><p id="species-help" className="companion-help">Choose a species. The current catalogue includes the Core Rulebook entries below; review starting characteristics, skills, and special abilities before continuing. Abilities marked for table review are not automated.</p><SpeciesSelect value={character.speciesId} onChange={(speciesId) => update({ speciesId, speciesTraining: [], humanBonusTraining: speciesId === "human" ? character.humanBonusTraining : [] })} describedBy="species-help" /><SpeciesDetailPanel key={derived.species?.id ?? "no-species"} species={derived.species} selectedSkillIds={speciesGranted} />{derived.species && speciesChoice && <TrainingChooser title="Species starting rank" skills={speciesChoice.skillIds} selected={character.speciesTraining} count={speciesChoice.count} onChange={(speciesTraining) => update({ speciesTraining })} help="Choose the free species rank." />}</section>}
       {step === 3 && <section className="creator-step" aria-labelledby="step-career"><h4 id="step-career">Career</h4><p className="companion-help">Select a starter career, then choose the free career ranks. Career and specialization skills are tracked for XP pricing.</p><ChoiceGrid entries={CAREERS} value={character.careerId} onChange={setCareer} labelledBy="step-career" />{career && <><TrainingChooser title="Career training" skills={career.skillIds} selected={character.careerTraining} count={droid ? 6 : 4} onChange={(careerTraining) => update({ careerTraining })} help="Select free starting ranks." />{human && <TrainingChooser title="Human bonus training" skills={humanEligible.map((skill) => skill.id)} selected={character.humanBonusTraining} count={2} onChange={(humanBonusTraining) => update({ humanBonusTraining })} help="Select two non-career skills." />}</>}</section>}
       {step === 4 && <section className="creator-step" aria-labelledby="step-specialization"><h4 id="step-specialization">Specialization</h4>{!career ? <p className="empty-state">Choose a career first.</p> : <><p className="companion-help">Choose one starting specialization and its free ranks. Talent tree wiring and effects are intentionally left for book review.</p><ChoiceGrid entries={career.specializations} value={character.specializationId} onChange={setSpecialization} labelledBy="step-specialization" />{specialization && <TrainingChooser title="Specialization training" skills={specialization.skillIds} selected={character.specializationTraining} count={droid ? 3 : 2} onChange={(specializationTraining) => update({ specializationTraining })} help="Select free starting ranks." />}</>}</section>}
-      {step === 5 && <section className="creator-step" aria-labelledby="step-experience"><h4 id="step-experience">Experience</h4><p className="companion-help">Spend starting XP. Characteristics cost 10 × their next rating; skill ranks use career/non-career pricing. Starting ranks cannot exceed 2.</p>{!derived.species ? <p className="empty-state">Choose a species before investing XP.</p> : <><div className="advancement-grid">{Object.entries(derived.characteristics).map(([key, value]) => { const nextCost = 10 * (value + 1); return <div className="advance-control" key={key}><span>{characteristicLabels[key]}</span><div><button type="button" onClick={() => updateAdvance(key, -1)} disabled={!character.characteristicAdvances[key]}>−</button><b>{value}</b><button type="button" onClick={() => updateAdvance(key, 1)} disabled={value >= 5 || derived.xp.remaining < nextCost}>+</button></div><small>Next: {nextCost} XP</small></div>; })}</div><SkillPurchaseList character={character} ranks={ranks} remainingXp={derived.xp.remaining} onPurchase={updateSkillPurchase} /></>}</section>}
+      {step === 5 && <section className="creator-step" aria-labelledby="step-experience"><h4 id="step-experience">Experience</h4><p className="companion-help">Spend starting XP. Characteristics cost 10 × their next rating; skill ranks use career/non-career pricing. Starting ranks cannot exceed 2.</p>{!derived.species ? <p className="empty-state">Choose a species before investing XP.</p> : <div className="experience-sections"><section className="experience-subsection" aria-labelledby="experience-characteristics-title"><h5 id="experience-characteristics-title">Characteristics</h5><div className="advancement-grid">{Object.entries(derived.characteristics).map(([key, value]) => { const nextCost = 10 * (value + 1); return <div className="advance-control" key={key}><span>{characteristicLabels[key]}</span><div><button type="button" onClick={() => updateAdvance(key, -1)} disabled={!character.characteristicAdvances[key]}>−</button><b>{value}</b><button type="button" onClick={() => updateAdvance(key, 1)} disabled={value >= 5 || derived.xp.remaining < nextCost}>+</button></div><small>Next: {nextCost} XP</small></div>; })}</div></section><section className="experience-subsection" aria-labelledby="experience-skills-title"><h5 id="experience-skills-title">Skills</h5><SkillPurchaseList character={character} ranks={ranks} remainingXp={derived.xp.remaining} onPurchase={updateSkillPurchase} /></section><AdditionalSpecializations character={character} remainingXp={derived.xp.remaining} onChange={(additionalSpecializationIds) => update({ additionalSpecializationIds })} /></div>}</section>}
       {step === 6 && <section className="creator-step" aria-labelledby="step-gear"><h4 id="step-gear">Gear</h4><p className="companion-help">Starter budget begins at 500 credits. Catalogue entries are a compact starter list; verify availability and item details with your GM.</p><div className="gear-picker">{GEAR.map((gear) => { const checked = character.gearIds.includes(gear.id); return <label key={gear.id} className={checked ? "selected" : ""}><input type="checkbox" checked={checked} disabled={!checked && gear.cost > derived.credits.remaining} onChange={() => updateGear(gear.id)} /><span>{gear.name}</span><b>{gear.cost} cr</b><small>Enc {gear.encumbrance}</small></label>; })}</div><section className="bio-fields"><label className="field-label">Motivation<input value={character.bio.motivation} maxLength="240" onChange={(event) => update({ bio: { ...character.bio, motivation: event.target.value } })} /></label><label className="field-label">Notes<textarea value={character.bio.notes} maxLength="2000" onChange={(event) => update({ bio: { ...character.bio, notes: event.target.value } })} /></label></section></section>}
       <div className="creator-footer"><button className="button button-secondary" type="button" onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0}>Previous</button><span>Step {step + 1} of {steps.length}</span>{step < steps.length - 1 ? <button className="button button-secondary" type="button" onClick={() => setStep((current) => Math.min(steps.length - 1, current + 1))}>Next</button> : <button className="button button-primary" type="button" onClick={onOpenSheet} disabled={!derived.isPlayable}>Open playable sheet</button>}</div>
       {derived.errors.length > 0 && <div className="validation-summary" role="status"><b>File checks</b><ul>{derived.errors.map((error) => <li key={error}>{error}</li>)}</ul></div>}

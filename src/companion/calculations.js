@@ -1,4 +1,4 @@
-import { CHARACTERISTICS, SKILLS, findCareer, findGear, findSpecialization, findSpecies, speciesGrantedSkillIds } from "./catalog.js";
+import { CHARACTERISTICS, SKILLS, findAnySpecialization, findCareer, findGear, findSpecialization, findSpecies, speciesGrantedSkillIds } from "./catalog.js";
 import { getCharacterCompletionErrors } from "./schema.js";
 
 const characteristicLabels = Object.fromEntries(CHARACTERISTICS.map((key) => [key, key[0].toUpperCase() + key.slice(1)]));
@@ -38,23 +38,75 @@ export function skillRankCost({ currentRank, career }) {
   return (5 * (currentRank + 1)) + (career ? 0 : 5);
 }
 
+export function ownedSpecializationIds(character) {
+  const starting = findSpecialization(character.careerId, character.specializationId);
+  return [starting?.globalId ?? character.specializationId, ...(Array.isArray(character.additionalSpecializationIds) ? character.additionalSpecializationIds : [])].filter(Boolean);
+}
+
+export function isCareerSpecialization(character, specializationId) {
+  const specialization = findAnySpecialization(specializationId);
+  return Boolean(specialization && (specialization.universal || specialization.careerId === character.careerId));
+}
+
+export function specializationCost(character, specializationId, ownedCount = ownedSpecializationIds(character).length) {
+  if (!findAnySpecialization(specializationId)) return 0;
+  return (ownedCount + 1) * 10 + (isCareerSpecialization(character, specializationId) ? 0 : 10);
+}
+
+export function additionalSpecializationCosts(character) {
+  let ownedCount = character.specializationId ? 1 : 0;
+  return (Array.isArray(character.additionalSpecializationIds) ? character.additionalSpecializationIds : []).map((id) => {
+    const cost = specializationCost(character, id, ownedCount);
+    ownedCount += 1;
+    return { id, cost };
+  });
+}
+
+export function additionalSpecializationCost(character, specializationId) {
+  return specializationCost(character, specializationId, ownedSpecializationIds(character).length);
+}
+
 export function isCareerSkill(character, skillId) {
   const career = findCareer(character.careerId);
+  const specializationIds = ownedSpecializationIds(character);
+  return Boolean(skillId && (career?.skillIds.includes(skillId) || specializationIds.some((id) => findAnySpecialization(id)?.skillIds.includes(skillId))));
+}
+
+function isStartingCareerSkill(character, skillId) {
+  const career = findCareer(character.careerId);
   const specialization = findSpecialization(character.careerId, character.specializationId);
-  return Boolean(skillId && (career?.skillIds.includes(skillId) || specialization?.skillIds.includes(skillId)));
+  return Boolean(career?.skillIds.includes(skillId) || specialization?.skillIds.includes(skillId));
+}
+
+export function purchasedSkillCostEntries(character, skillId) {
+  const count = character.purchasedSkillRanks?.[skillId] ?? 0;
+  const recorded = character.purchasedSkillCosts?.[skillId];
+  if (Array.isArray(recorded) && recorded.length === count && recorded.every((entry) => entry && typeof entry === "object" && Number.isFinite(entry.cost) && typeof entry.career === "boolean")) return recorded;
+  const ranks = selectedSkillRanks({ ...character, purchasedSkillRanks: {}, purchasedSkillCosts: {} });
+  const career = isStartingCareerSkill(character, skillId);
+  return Array.from({ length: count }, (_, index) => ({ cost: skillRankCost({ currentRank: ranks[skillId] + index, career }), career }));
 }
 
 export function purchasedSkillCost(character, skillId) {
-  const ranks = selectedSkillRanks({ ...character, purchasedSkillRanks: {} });
-  const count = character.purchasedSkillRanks?.[skillId] ?? 0;
-  return Array.from({ length: count }, (_, index) => skillRankCost({ currentRank: ranks[skillId] + index, career: isCareerSkill(character, skillId) }))
-    .reduce((sum, cost) => sum + cost, 0);
+  return purchasedSkillCostEntries(character, skillId).reduce((sum, entry) => sum + entry.cost, 0);
+}
+
+export function additionalSpecializationUndoBlockReason(character) {
+  const additionalIds = Array.isArray(character.additionalSpecializationIds) ? character.additionalSpecializationIds : [];
+  if (!additionalIds.length) return "";
+  const afterUndo = { ...character, additionalSpecializationIds: additionalIds.slice(0, -1) };
+  for (const skill of SKILLS) {
+    if (isCareerSkill(afterUndo, skill.id) || !isCareerSkill(character, skill.id)) continue;
+    if (purchasedSkillCostEntries(character, skill.id).some((entry) => entry.career === true)) return `Undo unavailable: Remove purchased ${skill.name} ranks before undoing this specialization.`;
+  }
+  return "";
 }
 
 export function xpSpent(character) {
   const characteristics = CHARACTERISTICS.reduce((sum, key) => sum + characteristicCost(character, key), 0);
   const skills = SKILLS.reduce((sum, skill) => sum + purchasedSkillCost(character, skill.id), 0);
-  return characteristics + skills;
+  const specializations = additionalSpecializationCosts(character).reduce((sum, entry) => sum + entry.cost, 0);
+  return characteristics + skills + specializations;
 }
 
 export function xpBudget(character) {

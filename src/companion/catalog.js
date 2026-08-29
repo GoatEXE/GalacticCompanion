@@ -11,7 +11,8 @@ export const CATALOG_SOURCES = {
   characterCreation: "Age of Rebellion Core Rulebook, Chapter II (pp. 39–111)",
   species: "Age of Rebellion Core Rulebook, species chapter (pp. 51–60)",
   careers: "Age of Rebellion Core Rulebook, careers (pp. 64–101)",
-  gear: "Age of Rebellion Core Rulebook, gear chapter; compact starter selection"
+  gear: "Age of Rebellion Core Rulebook, gear chapter; compact starter selection",
+  specializations: "Age of Rebellion Core Rulebook, specializations (pp. 64–103)"
 };
 
 export const CHARACTERISTICS = ["brawn", "agility", "intellect", "cunning", "willpower", "presence"];
@@ -110,10 +111,19 @@ export const CAREERS = careers.map(([id, name, names, specializations, page]) =>
   specializations: specializations.map(([specializationId, specializationName, specializationSkills, specializationPage]) => ({
     id: specializationId,
     name: specializationName,
+    careerId: id,
+    globalId: `${id}:${specializationId}`,
+    universal: false,
     skillIds: skillIds(specializationSkills),
     source: `Age of Rebellion Core Rulebook, ${specializationPage}`
   }))
 }));
+
+export const UNIVERSAL_SPECIALIZATIONS = [
+  { id: "recruit", globalId: "universal:recruit", name: "Recruit", careerId: null, universal: true, skillIds: skillIds(["Athletics", "Discipline", "Survival", "Vigilance"]), source: "Age of Rebellion Core Rulebook, p. 103" }
+];
+
+export const SPECIALIZATIONS = [...CAREERS.flatMap((career) => career.specializations), ...UNIVERSAL_SPECIALIZATIONS];
 
 export const GEAR = [
   ["comlink", "Comlink", 25, 1], ["stimpack", "Stimpack", 25, 0], ["utility-belt", "Utility belt", 25, 1],
@@ -124,7 +134,7 @@ export const GEAR = [
   ["blaster-rifle", "Blaster rifle", 900, 4, "Ranged (Heavy)", "agility", 9, 3, "Long"]
 ].map(([id, name, cost, encumbrance, skill, characteristic, damage, critical, range]) => ({ id, name, cost, encumbrance, skill, characteristic, damage, critical, range }));
 
-export const CATALOG = { version: CATALOG_VERSION, sources: CATALOG_SOURCES, species: SPECIES, careers: CAREERS, gear: GEAR };
+export const CATALOG = { version: CATALOG_VERSION, sources: CATALOG_SOURCES, species: SPECIES, careers: CAREERS, universalSpecializations: UNIVERSAL_SPECIALIZATIONS, gear: GEAR };
 
 export function speciesGrantedSkillIds(entry, selectedChoices = []) {
   if (!entry) return [];
@@ -158,8 +168,12 @@ export function validateCatalog(catalog = CATALOG) {
   });
   catalog.careers?.forEach((career) => {
     if (!career.source || career.skillIds?.length !== 8 || !career.skillIds?.every(validSkill)) errors.push(`Invalid career skill in ${career.id}.`);
-    if (career.specializations?.length !== 3 || !idsAreUnique(career.specializations ?? []) || !career.specializations?.every((specialization) => specialization.source && specialization.skillIds.length === 4 && specialization.skillIds.every(validSkill))) errors.push(`Invalid specialization in ${career.id}.`);
+    if (career.specializations?.length !== 3 || !idsAreUnique(career.specializations ?? []) || !career.specializations?.every((specialization) => specialization.globalId && specialization.source && specialization.skillIds.length === 4 && specialization.skillIds.every(validSkill))) errors.push(`Invalid specialization in ${career.id}.`);
   });
+  const careerSpecializations = catalog.careers?.flatMap((career) => career.specializations ?? []) ?? [];
+  const universalSpecializations = catalog.universalSpecializations;
+  if (!Array.isArray(universalSpecializations) || !universalSpecializations.length || !universalSpecializations.every((specialization) => specialization.id && specialization.globalId && specialization.name && specialization.universal === true && specialization.source && specialization.skillIds?.length === 4 && specialization.skillIds.every(validSkill))) errors.push("Invalid universal specialization catalogue.");
+  if (Array.isArray(universalSpecializations) && !idsAreUnique([...careerSpecializations, ...universalSpecializations].map((specialization) => specialization.globalId ?? specialization.id).map((id) => ({ id })))) errors.push("Specialization global ids must be unique.");
   return errors;
 }
 
@@ -167,4 +181,10 @@ export function findBackground(id) { return BACKGROUNDS.find((entry) => entry.id
 export function findSpecies(id) { return SPECIES.find((entry) => entry.id === id) ?? null; }
 export function findCareer(id) { return CAREERS.find((entry) => entry.id === id) ?? null; }
 export function findSpecialization(careerId, specializationId) { return findCareer(careerId)?.specializations.find((entry) => entry.id === specializationId) ?? null; }
+export function findAnySpecialization(id) {
+  const exact = SPECIALIZATIONS.find((entry) => entry.globalId === id);
+  if (exact) return exact;
+  const matches = SPECIALIZATIONS.filter((entry) => entry.id === id);
+  return matches.length === 1 ? matches[0] : null;
+}
 export function findGear(id) { return GEAR.find((entry) => entry.id === id) ?? null; }

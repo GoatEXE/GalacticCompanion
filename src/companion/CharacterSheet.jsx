@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { SKILLS, findBackground, findCareer, findSpecialization } from "./catalog.js";
+import { SKILLS, findAnySpecialization, findBackground, findCareer, findSpecialization } from "./catalog.js";
 import { clampTracker, deriveCharacter, characteristicLabels, skillPoolFor } from "./calculations.js";
 import { createInterpretation, normalizeResults, simulateRoll } from "../domain/dice.js";
 
@@ -23,6 +23,7 @@ export function CharacterSheet({ character, onChange, onEdit, initialTab = "Skil
   const derived = useMemo(() => deriveCharacter(character), [character]);
   const career = findCareer(character.careerId);
   const specialization = findSpecialization(character.careerId, character.specializationId);
+  const additionalSpecializations = (character.additionalSpecializationIds ?? []).map(findAnySpecialization).filter(Boolean);
   const background = findBackground(character.backgroundId);
   const setPlay = (patch) => onChange({ ...character, play: { ...character.play, ...patch } });
   const rollSkill = (skillId, label) => {
@@ -33,7 +34,7 @@ export function CharacterSheet({ character, onChange, onEdit, initialTab = "Skil
   const updateCritical = (id, label) => setPlay({ criticals: character.play.criticals.map((critical) => critical.id === id ? { ...critical, label } : critical) });
 
   return <section className="playable-sheet" aria-labelledby="sheet-title">
-    <header className="sheet-header"><div><p className="dossier-kicker">Active personnel file // local only</p><h3 id="sheet-title">{character.name}</h3><p>{derived.species?.name} · {career?.name} · {specialization?.name}</p></div><button className="button button-secondary" type="button" onClick={onEdit}>Edit file</button></header>
+    <header className="sheet-header"><div><p className="dossier-kicker">Active personnel file // local only</p><h3 id="sheet-title">{character.name}</h3><p>{derived.species?.name} · {career?.name} · {specialization?.name}{additionalSpecializations.length > 0 && <> · Additional: {additionalSpecializations.map((entry) => entry.name).join(", ")}</>}</p></div><button className="button button-secondary" type="button" onClick={onEdit}>Edit file</button></header>
     <div className="sheet-summary"><div className="characteristics">{Object.entries(derived.characteristics).map(([key, value]) => <span key={key}><small>{characteristicLabels[key]}</small><b>{value}</b></span>)}</div><div className="trackers"><Tracker label="Wounds" value={character.play.wounds} threshold={derived.woundThreshold} onChange={(wounds) => setPlay({ wounds: clampTracker(wounds, derived.woundThreshold) })} /><Tracker label="Strain" value={character.play.strain} threshold={derived.strainThreshold} onChange={(strain) => setPlay({ strain: clampTracker(strain, derived.strainThreshold) })} /></div></div>
     <div className="sheet-tabs" role="tablist" aria-label="Character sheet sections">{tabs.map((entry) => <button key={entry} type="button" role="tab" aria-selected={tab === entry} className={tab === entry ? "active" : ""} onClick={() => setTab(entry)}>{entry}</button>)}</div>
     <div className="sheet-panel" role="tabpanel">
