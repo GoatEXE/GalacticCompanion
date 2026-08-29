@@ -4,6 +4,8 @@
  * and citations; it does not reproduce talent trees, connector diagrams, or
  * talent effects.
  */
+import speciesData from "./species.json" with { type: "json" };
+
 export const CATALOG_VERSION = 2;
 export const CATALOG_SOURCES = {
   characterCreation: "Age of Rebellion Core Rulebook, Chapter II (pp. 39–111)",
@@ -13,6 +15,7 @@ export const CATALOG_SOURCES = {
 };
 
 export const CHARACTERISTICS = ["brawn", "agility", "intellect", "cunning", "willpower", "presence"];
+const REQUIRED_CORE_SPECIES_IDS = ["human", "bothan", "droid", "duros", "gran", "ithorian", "mon-calamari", "sullustan"];
 
 export const SKILLS = [
   ["Astrogation", "intellect"], ["Athletics", "brawn"], ["Brawl", "brawn"], ["Charm", "presence"],
@@ -65,22 +68,9 @@ export const DUTIES = [
   source: DUTY_SOURCE, sourceUrl: DUTY_SOURCE_URL
 }));
 
-const species = [
-  ["human", "Human", 110, [2, 2, 2, 2, 2, 2], 10, 10, { kind: "human" }, "p. 56"],
-  ["bothan", "Bothan", 100, [1, 2, 2, 3, 2, 2], 10, 11, { kind: "none", startingSkillIds: ["streetwise"] }, "p. 51"],
-  ["droid", "Droid", 175, [1, 1, 2, 1, 1, 1], 10, 10, { kind: "droid" }, "pp. 52–53"],
-  ["duros", "Duros", 110, [1, 2, 2, 2, 2, 2], 10, 10, { kind: "none", startingSkillIds: ["piloting-space"] }, "p. 54"],
-  ["gran", "Gran", 100, [2, 1, 2, 2, 2, 3], 10, 11, { kind: "none", startingSkillChoice: { count: 1, skillIds: ["charm", "negotiation"] } }, "p. 55"],
-  ["ithorian", "Ithorian", 100, [3, 1, 2, 2, 2, 2], 12, 9, { kind: "none", startingSkillIds: ["survival"] }, "p. 57"],
-  ["mon-calamari", "Mon Calamari", 100, [1, 2, 3, 2, 2, 2], 10, 10, { kind: "none", startingSkillIds: ["knowledge-education"] }, "pp. 58–59"],
-  ["sullustan", "Sullustan", 100, [1, 3, 2, 2, 2, 2], 10, 11, { kind: "none", startingSkillIds: ["astrogation"] }, "p. 60"]
-];
-
-export const SPECIES = species.map(([id, name, startingXp, values, woundBase, strainBase, setup, page]) => ({
-  id, name, startingXp, woundBase, strainBase, setup,
-  source: `Age of Rebellion Core Rulebook, ${page}`,
-  characteristics: Object.fromEntries(CHARACTERISTICS.map((key, index) => [key, values[index]]))
-}));
+// Keep the species catalogue machine-readable so the creator UI, validation, and
+// future content tooling share one source of truth.
+export const SPECIES = speciesData;
 
 const careers = [
   ["ace", "Ace", ["Astrogation", "Cool", "Gunnery", "Mechanics", "Perception", "Piloting (Planetary)", "Piloting (Space)", "Ranged (Light)"], [
@@ -147,16 +137,24 @@ export function speciesGrantedSkillIds(entry, selectedChoices = []) {
 export function validateCatalog(catalog = CATALOG) {
   const errors = [];
   const idsAreUnique = (entries) => new Set(entries.map((entry) => entry.id)).size === entries.length;
+  const abilitiesAreUnique = (entries) => new Set(entries.map((entry) => entry.name)).size === entries.length;
   const validSkill = (id) => SKILLS.some((skill) => skill.id === id);
   if (catalog.version !== CATALOG_VERSION) errors.push("Unsupported catalogue version.");
   if (!catalog.sources?.characterCreation) errors.push("Catalogue must identify its character-creation source.");
-  if (!Array.isArray(catalog.species) || catalog.species.length !== 8 || !idsAreUnique(catalog.species)) errors.push("Core catalogue must contain eight unique species.");
+  const speciesListValid = Array.isArray(catalog.species);
+  if (!speciesListValid || REQUIRED_CORE_SPECIES_IDS.some((id) => !catalog.species.some((entry) => entry.id === id))) errors.push("Core catalogue must include all eight required Core Rulebook species.");
+  if (speciesListValid && !idsAreUnique(catalog.species)) errors.push("Species ids must be unique.");
   if (!Array.isArray(catalog.careers) || catalog.careers.length !== 6 || !idsAreUnique(catalog.careers)) errors.push("Core catalogue must contain six unique careers.");
   if (!Array.isArray(catalog.gear) || !idsAreUnique(catalog.gear)) errors.push("Gear ids must be unique.");
   catalog.species?.forEach((entry) => {
     const fixed = entry.setup?.startingSkillIds ?? [];
     const choice = entry.setup?.startingSkillChoice;
-    if (!Number.isInteger(entry.startingXp) || entry.startingXp <= 0 || CHARACTERISTICS.some((key) => !Number.isInteger(entry.characteristics?.[key])) || !entry.source || !fixed.every(validSkill) || (choice && (!Number.isInteger(choice.count) || choice.count < 1 || !choice.skillIds?.every(validSkill)))) errors.push(`Invalid species: ${entry.id}.`);
+    const setupKindValid = ["human", "droid", "none"].includes(entry.setup?.kind);
+    const abilitiesValid = Array.isArray(entry.abilities) && entry.abilities.length > 0 && abilitiesAreUnique(entry.abilities) && entry.abilities.every((ability) => Boolean(ability?.name && ability?.summary) && (typeof ability.tableReview === "undefined" || typeof ability.tableReview === "boolean"));
+    const characteristicsValid = CHARACTERISTICS.every((key) => Number.isInteger(entry.characteristics?.[key]) && entry.characteristics[key] >= 1 && entry.characteristics[key] <= 5);
+    const fixedValid = fixed.every(validSkill) && new Set(fixed).size === fixed.length;
+    const choiceValid = !choice || (Number.isInteger(choice.count) && choice.count >= 1 && choice.count <= (choice.skillIds?.length ?? 0) && new Set(choice.skillIds).size === choice.skillIds.length && choice.skillIds.every(validSkill));
+    if (!Number.isInteger(entry.startingXp) || entry.startingXp <= 0 || !Number.isInteger(entry.woundBase) || entry.woundBase <= 0 || !Number.isInteger(entry.strainBase) || entry.strainBase <= 0 || !characteristicsValid || !setupKindValid || !entry.description || !entry.source || !entry.sourcePage || !entry.sourceUrl || !abilitiesValid || !fixedValid || !choiceValid) errors.push(`Invalid species: ${entry.id}.`);
   });
   catalog.careers?.forEach((career) => {
     if (!career.source || career.skillIds?.length !== 8 || !career.skillIds?.every(validSkill)) errors.push(`Invalid career skill in ${career.id}.`);

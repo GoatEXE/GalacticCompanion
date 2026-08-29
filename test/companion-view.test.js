@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createServer } from "vite";
-import { BACKGROUNDS, DUTIES } from "../src/companion/catalog.js";
+import { BACKGROUNDS, DUTIES, SPECIES } from "../src/companion/catalog.js";
 import { createCharacter } from "../src/companion/schema.js";
 
 async function withViews(run) {
@@ -26,8 +26,9 @@ function playableCharacter() {
 }
 
 test("creator smoke renders the seven accessible steps and starter budget", async () => {
-  await withViews(async ({ CharacterCreator }) => {
+  await withViews(async ({ CharacterCreator, SpeciesSelect }) => {
     const html = renderToStaticMarkup(React.createElement(CharacterCreator, { character: playableCharacter(), onChange: () => {}, onOpenSheet: () => {} }));
+    const speciesSelectHtml = renderToStaticMarkup(React.createElement(SpeciesSelect, { value: "gran", onChange: () => {}, describedBy: "species-help" }));
     assert.match(html, /Step 1 of 7/);
     ["Background", "Duty", "Species", "Career", "Specialization", "Experience", "Gear"].forEach((step) => assert.match(html, new RegExp(`>${step}<`)));
     assert.match(html, /Character budgets/);
@@ -36,6 +37,10 @@ test("creator smoke renders the seven accessible steps and starter budget", asyn
     assert.match(html, /Optional inspiration/);
     assert.match(html, /class="inspiration-chip"/);
     assert.doesNotMatch(html, /class="choice-grid"/);
+    assert.match(speciesSelectHtml, /id="species-select"/);
+    assert.match(speciesSelectHtml, /aria-describedby="species-help"/);
+    assert.match(speciesSelectHtml, /<option value="gran"(?: selected="")?>Gran<\/option>/);
+    assert.doesNotMatch(speciesSelectHtml, /species-choice-grid|species-card/);
     assert.ok(html.indexOf("Operative name") < html.indexOf("Optional inspiration"));
     assert.ok(html.indexOf("Optional inspiration") < html.indexOf("Background narrative"));
   });
@@ -46,6 +51,22 @@ test("background inspiration prompts append as concise local narrative starters"
     const allianceRecruit = BACKGROUNDS.find((entry) => entry.id === "alliance-recruit");
     assert.equal(appendBackgroundPrompt("", allianceRecruit.prompt), allianceRecruit.prompt);
     assert.equal(appendBackgroundPrompt("A former courier.", allianceRecruit.prompt), `A former courier.\n\n${allianceRecruit.prompt}`);
+  });
+});
+
+test("species detail panel exposes source-linked stats, skills, and ability review notes", async () => {
+  await withViews(async ({ SpeciesDetailPanel }) => {
+    const gran = SPECIES.find((species) => species.id === "gran");
+    const html = renderToStaticMarkup(React.createElement(SpeciesDetailPanel, { species: gran, selectedSkillIds: ["charm"] }));
+    assert.match(html, /class="species-detail"/);
+    assert.match(html, /Selected species/);
+    assert.match(html, /Starting XP/);
+    assert.match(html, /Characteristics/);
+    assert.match(html, /Choose 1: Charm or Negotiation/);
+    assert.match(html, /Chosen: Charm/);
+    assert.match(html, /Enhanced Vision/);
+    assert.match(html, /Table review/);
+    assert.match(html, /href="https:\/\/online\.anyflip\.com\/ziisf\/jobq\/mobile\/index\.html#page=56"/);
   });
 });
 

@@ -62,6 +62,17 @@ test("all eight Core Rulebook species have audited bases and starting-rank metad
     { id: "mon-calamari", startingXp: 100, woundBase: 10, strainBase: 10, characteristics: [1, 2, 3, 2, 2, 2], fixed: ["knowledge-education"], choice: [], kind: "none", source: "Age of Rebellion Core Rulebook, pp. 58–59" },
     { id: "sullustan", startingXp: 100, woundBase: 10, strainBase: 11, characteristics: [1, 3, 2, 2, 2, 2], fixed: ["astrogation"], choice: [], kind: "none", source: "Age of Rebellion Core Rulebook, p. 60" }
   ]);
+  assert.equal(SPECIES.every((entry) => entry.sourcePage && entry.sourceUrl && entry.abilities.length > 0), true);
+  assert.equal(SPECIES.find((entry) => entry.id === "droid").abilities.some((ability) => ability.name === "Mechanical Being"), true);
+  assert.equal(SPECIES.find((entry) => entry.id === "gran").abilities.some((ability) => ability.name === "Enhanced Vision" && ability.tableReview), true);
+});
+
+test("species validation keeps the required Core baseline while allowing future additions", () => {
+  const extraSpecies = { ...SPECIES[0], id: "future-species", name: "Future species" };
+  assert.deepEqual(validateCatalog({ ...CATALOG, species: [...CATALOG.species, extraSpecies] }), []);
+  assert.deepEqual(validateCatalog({ ...CATALOG, species: [...CATALOG.species, { ...extraSpecies, id: "human" }] }), ["Species ids must be unique."]);
+  assert.equal(validateCatalog({ ...CATALOG, species: CATALOG.species.filter((entry) => entry.id !== "human") }).includes("Core catalogue must include all eight required Core Rulebook species."), true);
+  assert.equal(validateCatalog({ ...CATALOG, species: [...CATALOG.species, { ...extraSpecies, startingXp: 0 }] }).includes("Invalid species: future-species."), true);
 });
 
 test("all six careers and eighteen starting specializations match the Core Rulebook skill catalogue", () => {
