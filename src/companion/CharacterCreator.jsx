@@ -65,14 +65,15 @@ export function DutyDetailPanel({ duty }) {
   </details>;
 }
 
-function TrainingChooser({ title, skills, selected, count, onChange, help }) {
+export function TrainingChooser({ title, skills, selected, count, onChange, help }) {
   return <section className="training-chooser" aria-label={title}>
     <div><h4>{title}</h4><p>{help} <b>{selected.length}/{count}</b></p></div>
-    <div className="skill-choice-list">
+    <div className="skill-choice-list" role="group" aria-label={`${title} options`}>
       {skills.map((id) => {
         const skill = SKILLS.find((entry) => entry.id === id);
         const checked = selected.includes(id);
-        return <label key={id} className={checked ? "selected" : ""}><input type="checkbox" checked={checked} onChange={() => onChange(toggleChoice(selected, id, count))} disabled={!checked && selected.length >= count} /> {skill?.name ?? id}</label>;
+        const name = skill?.name ?? id;
+        return <button key={id} type="button" className={checked ? "selected" : ""} aria-pressed={checked} aria-label={`${name}${checked ? ", selected" : ""}`} onClick={() => onChange(toggleChoice(selected, id, count))} disabled={!checked && selected.length >= count}>{name}</button>;
       })}
     </div>
   </section>;

@@ -54,6 +54,19 @@ test("background inspiration prompts append as concise local narrative starters"
   });
 });
 
+test("training skill badges use pressed buttons without visible checkbox inputs", async () => {
+  await withViews(async ({ TrainingChooser }) => {
+    const html = renderToStaticMarkup(React.createElement(TrainingChooser, { title: "Career training", skills: ["coercion", "cool"], selected: ["cool"], count: 1, onChange: () => {}, help: "Select free starting ranks." }));
+    assert.match(html, /role="group" aria-label="Career training options"/);
+    assert.match(html, /aria-pressed="false"/);
+    assert.match(html, /aria-pressed="true"/);
+    assert.match(html, /class="selected"/);
+    assert.doesNotMatch(html, /type="checkbox"/);
+    assert.doesNotMatch(html, /<input/);
+    assert.match(html, /disabled=""/);
+  });
+});
+
 test("species detail panel exposes source-linked stats, skills, and ability review notes", async () => {
   await withViews(async ({ SpeciesDetailPanel }) => {
     const gran = SPECIES.find((species) => species.id === "gran");
