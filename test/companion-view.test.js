@@ -49,6 +49,23 @@ test("creator smoke renders the seven accessible steps and starter budget", asyn
   });
 });
 
+test("Experience copy uses accessible section naming, callout placement, and concise skill/specialization notes", async () => {
+  await withViews(async ({ CharacterCreator }) => {
+    const html = renderToStaticMarkup(React.createElement(CharacterCreator, { character: playableCharacter(), initialStep: 5, onChange: () => {}, onOpenSheet: () => {} }));
+    assert.match(html, /<section class="creator-step" aria-label="Experience">/);
+    assert.doesNotMatch(html, /<h4[^>]*>Experience<\/h4>/);
+    assert.doesNotMatch(html, /Spend starting XP\. Characteristics cost 10/);
+    assert.match(html, /<h5 id="experience-characteristics-title">Characteristics<\/h5><p class="experience-rule-callout" role="note">Characteristics can only be increased during character creation\. They cannot exceed 5 unless otherwise noted\.<\/p>/);
+    assert.match(html, /<h5 id="experience-skills-title">Skills<\/h5><p class="experience-skill-note">Starting ranks cannot exceed 2\.<\/p>/);
+    assert.ok(html.indexOf("experience-characteristics-title") < html.indexOf("experience-rule-callout"));
+    assert.ok(html.indexOf("experience-rule-callout") < html.indexOf("experience-skills-title"));
+    assert.ok(html.indexOf("experience-skills-title") < html.indexOf("Skill pricing legend"));
+    assert.ok(html.indexOf("experience-specializations-title") < html.indexOf("Specialization pricing legend"));
+    assert.match(html, /<h5 id="experience-specializations-title">Specializations<\/h5><p class="experience-skill-note">Starting specialization is free\. Purchasing an additional specialization unlocks its skill tree\.<\/p><div class="skill-pricing-legend specialization-pricing-legend"/);
+    assert.doesNotMatch(html, /Starting specialization is free\. Additional specializations grant career skills/);
+  });
+});
+
 test("background inspiration prompts append as concise local narrative starters", async () => {
   await withViews(async ({ appendBackgroundPrompt }) => {
     const allianceRecruit = BACKGROUNDS.find((entry) => entry.id === "alliance-recruit");
@@ -115,7 +132,9 @@ test("additional specialization picker uses a visible legend and accessible row 
   });
 });
 
-test("specialization hierarchy has open/close motion, rotating indicators, and reduced-motion coverage", () => {
+test("specialization hierarchy keeps shared legend rhythm and has open/close motion", () => {
+  assert.match(companionCss, /\.skill-pricing-legend \{[\s\S]*margin-top: 1rem/);
+  assert.doesNotMatch(companionCss, /\.specialization-pricing-legend\s*\{[^}]*margin-top/);
   assert.match(companionCss, /out-career-menu\[open\] > \.hierarchy-details-content[\s\S]*specialization-hierarchy-open/);
   assert.match(companionCss, /out-career-menu\.is-closing > \.hierarchy-details-content[\s\S]*specialization-hierarchy-close/);
   assert.match(companionCss, /out-career-menu > summary::before,\.out-career-group > summary::before[\s\S]*transition: transform \.2s ease/);
