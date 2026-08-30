@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "view": "npm run build && vite preview --host 0.0.0.0 --port 4174 --strictPort",
     "check": "node Scripts/check.mjs",
     "test": "node --test test/*.test.js",
     "validate-content": "node tools/validate-content.js"

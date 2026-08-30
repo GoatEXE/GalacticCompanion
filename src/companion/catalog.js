@@ -1,17 +1,22 @@
 /**
  * Compact, source-backed Core Rulebook catalogue.
- * This MVP intentionally records only names, skill metadata, and citations; it
- * does not reproduce talent trees, connector diagrams, or talent effects.
+ * This MVP intentionally records compact names, descriptions, skill metadata,
+ * and citations; it does not reproduce talent trees, connector diagrams, or
+ * talent effects.
  */
+import speciesData from "./species.json" with { type: "json" };
+
 export const CATALOG_VERSION = 2;
 export const CATALOG_SOURCES = {
   characterCreation: "Age of Rebellion Core Rulebook, Chapter II (pp. 39–111)",
   species: "Age of Rebellion Core Rulebook, species chapter (pp. 51–60)",
   careers: "Age of Rebellion Core Rulebook, careers (pp. 64–101)",
-  gear: "Age of Rebellion Core Rulebook, gear chapter; compact starter selection"
+  gear: "Age of Rebellion Core Rulebook, gear chapter; compact starter selection",
+  specializations: "Age of Rebellion Core Rulebook, specializations (pp. 64–103)"
 };
 
 export const CHARACTERISTICS = ["brawn", "agility", "intellect", "cunning", "willpower", "presence"];
+const REQUIRED_CORE_SPECIES_IDS = ["human", "bothan", "droid", "duros", "gran", "ithorian", "mon-calamari", "sullustan"];
 
 export const SKILLS = [
   ["Astrogation", "intellect"], ["Athletics", "brawn"], ["Brawl", "brawn"], ["Charm", "presence"],
@@ -35,29 +40,38 @@ const skillIds = (names) => names.map((name) => {
 });
 
 export const BACKGROUNDS = [
-  "Alliance recruit", "Displaced civilian", "Former Imperial", "Outer Rim native", "Independent spacer", "Local resistance"
-].map((name) => ({ id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), name }));
+  ["Alliance recruit", "I joined the Alliance after seeing the Empire harm people I care about."],
+  ["Displaced civilian", "I am rebuilding after Imperial forces drove me from home."],
+  ["Former Imperial", "I left Imperial service when its cost became impossible to ignore."],
+  ["Outer Rim native", "I grew up on the frontier, where survival meant relying on my community."],
+  ["Independent spacer", "I made a living moving people or cargo before choosing the Rebellion."],
+  ["Local resistance", "I learned to resist through a small fight on my homeworld."]
+].map(([name, prompt]) => ({ id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), name, prompt }));
+
+const DUTY_SOURCE = "Age of Rebellion Core Rulebook, p. 47";
+const DUTY_SOURCE_URL = "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=48";
 
 export const DUTIES = [
-  "Combat Victory", "Counter-intelligence", "Intelligence", "Internal Security", "Personnel", "Political Support", "Recruiting", "Resource Acquisition", "Sabotage", "Space Superiority", "Tech Procurement"
-].map((name) => ({ id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), name }));
-
-const species = [
-  ["human", "Human", 110, [2, 2, 2, 2, 2, 2], 10, 10, { kind: "human" }, "p. 56"],
-  ["bothan", "Bothan", 100, [1, 2, 2, 3, 2, 2], 10, 11, { kind: "none", startingSkillIds: ["streetwise"] }, "p. 51"],
-  ["droid", "Droid", 175, [1, 1, 2, 1, 1, 1], 10, 10, { kind: "droid" }, "pp. 52–53"],
-  ["duros", "Duros", 110, [1, 2, 2, 2, 2, 2], 10, 10, { kind: "none", startingSkillIds: ["piloting-space"] }, "p. 54"],
-  ["gran", "Gran", 100, [2, 1, 2, 2, 2, 3], 10, 11, { kind: "none", startingSkillChoice: { count: 1, skillIds: ["charm", "negotiation"] } }, "p. 55"],
-  ["ithorian", "Ithorian", 100, [3, 1, 2, 2, 2, 2], 12, 9, { kind: "none", startingSkillIds: ["survival"] }, "p. 57"],
-  ["mon-calamari", "Mon Calamari", 100, [1, 2, 3, 2, 2, 2], 10, 10, { kind: "none", startingSkillIds: ["knowledge-education"] }, "pp. 58–59"],
-  ["sullustan", "Sullustan", 100, [1, 3, 2, 2, 2, 2], 10, 11, { kind: "none", startingSkillIds: ["astrogation"] }, "p. 60"]
-];
-
-export const SPECIES = species.map(([id, name, startingXp, values, woundBase, strainBase, setup, page]) => ({
-  id, name, startingXp, woundBase, strainBase, setup,
-  source: `Age of Rebellion Core Rulebook, ${page}`,
-  characteristics: Object.fromEntries(CHARACTERISTICS.map((key, index) => [key, values[index]]))
+  ["Combat Victory", "Prove the Alliance can win ground engagements by seeking victories, bold raids, sound tactics, and stronger firepower."],
+  ["Counter-intelligence", "Protect the Alliance from Imperial scrutiny by finding enemy agents, spreading false information, and concealing Rebel movements."],
+  ["Intelligence", "Gather useful information about Imperial forces, research, policy, and other weaknesses so the Alliance can choose valuable targets."],
+  ["Internal Security", "Protect the Alliance from threats within its own ranks and stay alert for betrayal that could endanger an operation."],
+  ["Personnel", "Look after Rebel people, their safety, and their ability to succeed; a mission still matters when its people come home alive."],
+  ["Political Support", "Build the political will for rebellion by bringing more factions, systems, and sectors to the Alliance and its cause."],
+  ["Recruiting", "Find capable, trustworthy allies to fill the many roles the Rebellion needs, from soldiers and pilots to technicians and medics."],
+  ["Resource Acquisition", "Secure the supplies, materials, weapons, and equipment Rebel operations need, using whatever legitimate means are available."],
+  ["Sabotage", "Disrupt Imperial operations and deny key assets so the Empire moves more slowly and acts less effectively."],
+  ["Space Superiority", "Help the Alliance prevail in ship-to-ship war by advancing its pilots and proving Rebel forces can win in the stars."],
+  ["Tech Procurement", "Use scientific and technical expertise to improve equipment, develop useful solutions, and acquire advances from the Empire."],
+  ["Support", "Help fellow Rebels fulfill their Duties by providing the assistance they need, creating more chances to advance the cause together."]
+].map(([name, description]) => ({
+  id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), name, description,
+  source: DUTY_SOURCE, sourceUrl: DUTY_SOURCE_URL
 }));
+
+// Keep the species catalogue machine-readable so the creator UI, validation, and
+// future content tooling share one source of truth.
+export const SPECIES = speciesData;
 
 const careers = [
   ["ace", "Ace", ["Astrogation", "Cool", "Gunnery", "Mechanics", "Perception", "Piloting (Planetary)", "Piloting (Space)", "Ranged (Light)"], [
@@ -97,10 +111,19 @@ export const CAREERS = careers.map(([id, name, names, specializations, page]) =>
   specializations: specializations.map(([specializationId, specializationName, specializationSkills, specializationPage]) => ({
     id: specializationId,
     name: specializationName,
+    careerId: id,
+    globalId: `${id}:${specializationId}`,
+    universal: false,
     skillIds: skillIds(specializationSkills),
     source: `Age of Rebellion Core Rulebook, ${specializationPage}`
   }))
 }));
+
+export const UNIVERSAL_SPECIALIZATIONS = [
+  { id: "recruit", globalId: "universal:recruit", name: "Recruit", careerId: null, universal: true, skillIds: skillIds(["Athletics", "Discipline", "Survival", "Vigilance"]), source: "Age of Rebellion Core Rulebook, p. 103" }
+];
+
+export const SPECIALIZATIONS = [...CAREERS.flatMap((career) => career.specializations), ...UNIVERSAL_SPECIALIZATIONS];
 
 export const GEAR = [
   ["comlink", "Comlink", 25, 1], ["stimpack", "Stimpack", 25, 0], ["utility-belt", "Utility belt", 25, 1],
@@ -111,7 +134,7 @@ export const GEAR = [
   ["blaster-rifle", "Blaster rifle", 900, 4, "Ranged (Heavy)", "agility", 9, 3, "Long"]
 ].map(([id, name, cost, encumbrance, skill, characteristic, damage, critical, range]) => ({ id, name, cost, encumbrance, skill, characteristic, damage, critical, range }));
 
-export const CATALOG = { version: CATALOG_VERSION, sources: CATALOG_SOURCES, species: SPECIES, careers: CAREERS, gear: GEAR };
+export const CATALOG = { version: CATALOG_VERSION, sources: CATALOG_SOURCES, species: SPECIES, careers: CAREERS, universalSpecializations: UNIVERSAL_SPECIALIZATIONS, gear: GEAR };
 
 export function speciesGrantedSkillIds(entry, selectedChoices = []) {
   if (!entry) return [];
@@ -124,25 +147,44 @@ export function speciesGrantedSkillIds(entry, selectedChoices = []) {
 export function validateCatalog(catalog = CATALOG) {
   const errors = [];
   const idsAreUnique = (entries) => new Set(entries.map((entry) => entry.id)).size === entries.length;
+  const abilitiesAreUnique = (entries) => new Set(entries.map((entry) => entry.name)).size === entries.length;
   const validSkill = (id) => SKILLS.some((skill) => skill.id === id);
   if (catalog.version !== CATALOG_VERSION) errors.push("Unsupported catalogue version.");
   if (!catalog.sources?.characterCreation) errors.push("Catalogue must identify its character-creation source.");
-  if (!Array.isArray(catalog.species) || catalog.species.length !== 8 || !idsAreUnique(catalog.species)) errors.push("Core catalogue must contain eight unique species.");
+  const speciesListValid = Array.isArray(catalog.species);
+  if (!speciesListValid || REQUIRED_CORE_SPECIES_IDS.some((id) => !catalog.species.some((entry) => entry.id === id))) errors.push("Core catalogue must include all eight required Core Rulebook species.");
+  if (speciesListValid && !idsAreUnique(catalog.species)) errors.push("Species ids must be unique.");
   if (!Array.isArray(catalog.careers) || catalog.careers.length !== 6 || !idsAreUnique(catalog.careers)) errors.push("Core catalogue must contain six unique careers.");
   if (!Array.isArray(catalog.gear) || !idsAreUnique(catalog.gear)) errors.push("Gear ids must be unique.");
   catalog.species?.forEach((entry) => {
     const fixed = entry.setup?.startingSkillIds ?? [];
     const choice = entry.setup?.startingSkillChoice;
-    if (!Number.isInteger(entry.startingXp) || entry.startingXp <= 0 || CHARACTERISTICS.some((key) => !Number.isInteger(entry.characteristics?.[key])) || !entry.source || !fixed.every(validSkill) || (choice && (!Number.isInteger(choice.count) || choice.count < 1 || !choice.skillIds?.every(validSkill)))) errors.push(`Invalid species: ${entry.id}.`);
+    const setupKindValid = ["human", "droid", "none"].includes(entry.setup?.kind);
+    const abilitiesValid = Array.isArray(entry.abilities) && entry.abilities.length > 0 && abilitiesAreUnique(entry.abilities) && entry.abilities.every((ability) => Boolean(ability?.name && ability?.summary) && (typeof ability.tableReview === "undefined" || typeof ability.tableReview === "boolean"));
+    const characteristicsValid = CHARACTERISTICS.every((key) => Number.isInteger(entry.characteristics?.[key]) && entry.characteristics[key] >= 1 && entry.characteristics[key] <= 5);
+    const fixedValid = fixed.every(validSkill) && new Set(fixed).size === fixed.length;
+    const choiceValid = !choice || (Number.isInteger(choice.count) && choice.count >= 1 && choice.count <= (choice.skillIds?.length ?? 0) && new Set(choice.skillIds).size === choice.skillIds.length && choice.skillIds.every(validSkill));
+    if (!Number.isInteger(entry.startingXp) || entry.startingXp <= 0 || !Number.isInteger(entry.woundBase) || entry.woundBase <= 0 || !Number.isInteger(entry.strainBase) || entry.strainBase <= 0 || !characteristicsValid || !setupKindValid || !entry.description || !entry.source || !entry.sourcePage || !entry.sourceUrl || !abilitiesValid || !fixedValid || !choiceValid) errors.push(`Invalid species: ${entry.id}.`);
   });
   catalog.careers?.forEach((career) => {
     if (!career.source || career.skillIds?.length !== 8 || !career.skillIds?.every(validSkill)) errors.push(`Invalid career skill in ${career.id}.`);
-    if (career.specializations?.length !== 3 || !idsAreUnique(career.specializations ?? []) || !career.specializations?.every((specialization) => specialization.source && specialization.skillIds.length === 4 && specialization.skillIds.every(validSkill))) errors.push(`Invalid specialization in ${career.id}.`);
+    if (career.specializations?.length !== 3 || !idsAreUnique(career.specializations ?? []) || !career.specializations?.every((specialization) => specialization.globalId && specialization.source && specialization.skillIds.length === 4 && specialization.skillIds.every(validSkill))) errors.push(`Invalid specialization in ${career.id}.`);
   });
+  const careerSpecializations = catalog.careers?.flatMap((career) => career.specializations ?? []) ?? [];
+  const universalSpecializations = catalog.universalSpecializations;
+  if (!Array.isArray(universalSpecializations) || !universalSpecializations.length || !universalSpecializations.every((specialization) => specialization.id && specialization.globalId && specialization.name && specialization.universal === true && specialization.source && specialization.skillIds?.length === 4 && specialization.skillIds.every(validSkill))) errors.push("Invalid universal specialization catalogue.");
+  if (Array.isArray(universalSpecializations) && !idsAreUnique([...careerSpecializations, ...universalSpecializations].map((specialization) => specialization.globalId ?? specialization.id).map((id) => ({ id })))) errors.push("Specialization global ids must be unique.");
   return errors;
 }
 
+export function findBackground(id) { return BACKGROUNDS.find((entry) => entry.id === id) ?? null; }
 export function findSpecies(id) { return SPECIES.find((entry) => entry.id === id) ?? null; }
 export function findCareer(id) { return CAREERS.find((entry) => entry.id === id) ?? null; }
 export function findSpecialization(careerId, specializationId) { return findCareer(careerId)?.specializations.find((entry) => entry.id === specializationId) ?? null; }
+export function findAnySpecialization(id) {
+  const exact = SPECIALIZATIONS.find((entry) => entry.globalId === id);
+  if (exact) return exact;
+  const matches = SPECIALIZATIONS.filter((entry) => entry.id === id);
+  return matches.length === 1 ? matches[0] : null;
+}
 export function findGear(id) { return GEAR.find((entry) => entry.id === id) ?? null; }

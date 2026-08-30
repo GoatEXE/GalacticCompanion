@@ -1,4 +1,4 @@
-import { BACKGROUNDS, DUTIES, SKILLS, findCareer, findGear, findSpecialization, findSpecies, speciesGrantedSkillIds } from "./catalog.js";
+import { BACKGROUNDS, DUTIES, SKILLS, SPECIALIZATIONS, findCareer, findGear, findSpecialization, findSpecies, speciesGrantedSkillIds } from "./catalog.js";
 
 export const CHARACTER_SCHEMA_VERSION = 2;
 export const ROSTER_SCHEMA_VERSION = 1;
@@ -8,6 +8,7 @@ const characteristicKeys = ["brawn", "agility", "intellect", "cunning", "willpow
 const skillIds = new Set(SKILLS.map((skill) => skill.id));
 const backgroundIds = new Set(BACKGROUNDS.map((entry) => entry.id));
 const dutyIds = new Set(DUTIES.map((entry) => entry.id));
+const specializationIds = new Set(SPECIALIZATIONS.map((entry) => entry.globalId ?? entry.id));
 
 function now() { return new Date().toISOString(); }
 function id() { return `pc-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`; }
@@ -18,6 +19,28 @@ function integer(value, fallback = 0, min = 0, max = 999) {
   return Number.isInteger(parsed) && parsed >= min && parsed <= max ? parsed : fallback;
 }
 function unique(values) { return new Set(values).size === values.length; }
+function startingCareerSkill(value, skillId) {
+  return Boolean(findCareer(value.careerId)?.skillIds.includes(skillId) || findSpecialization(value.careerId, value.specializationId)?.skillIds.includes(skillId));
+}
+function startingSkillRanks(value) {
+  const ranks = Object.fromEntries(SKILLS.map((skill) => [skill.id, 0]));
+  [array(value.careerTraining), array(value.specializationTraining), array(value.humanBonusTraining), speciesGrantedSkillIds(findSpecies(value.speciesId), array(value.speciesTraining))].flat().forEach((skillId) => {
+    if (skillId in ranks) ranks[skillId] += 1;
+  });
+  return ranks;
+}
+function migratedPurchasedSkillCosts(value) {
+  const ranks = startingSkillRanks(value);
+  const purchasedRanks = value.purchasedSkillRanks && typeof value.purchasedSkillRanks === "object" ? value.purchasedSkillRanks : {};
+  const suppliedCosts = value.purchasedSkillCosts && typeof value.purchasedSkillCosts === "object" ? value.purchasedSkillCosts : {};
+  return Object.fromEntries(Object.entries(purchasedRanks).map(([skillId, rawRank]) => {
+    const count = integer(rawRank, 0, 0, 2);
+    const career = startingCareerSkill(value, skillId);
+    const supplied = Array.isArray(suppliedCosts[skillId]) && suppliedCosts[skillId].length === count ? suppliedCosts[skillId] : null;
+    const costs = supplied ? supplied.map((entry) => typeof entry === "object" && entry !== null ? { cost: integer(entry.cost, -1), career: typeof entry.career === "boolean" ? entry.career : career } : { cost: integer(entry, -1), career }) : Array.from({ length: count }, (_, index) => ({ cost: (5 * (ranks[skillId] + index + 1)) + (career ? 0 : 5), career }));
+    return [skillId, costs];
+  }));
+}
 
 export function createCharacter() {
   const timestamp = now();
@@ -28,6 +51,7 @@ export function createCharacter() {
     updatedAt: timestamp,
     name: "New operative",
     backgroundId: "",
+    backgroundText: "",
     dutyId: "",
     startingDuty: 10,
     dutyXpExchange: false,
@@ -35,12 +59,14 @@ export function createCharacter() {
     speciesId: "",
     careerId: "",
     specializationId: "",
+    additionalSpecializationIds: [],
     careerTraining: [],
     specializationTraining: [],
     humanBonusTraining: [],
     speciesTraining: [],
     characteristicAdvances: {},
     purchasedSkillRanks: {},
+    purchasedSkillCosts: {},
     gearIds: [],
     bio: { motivation: "", notes: "" },
     play: { wounds: 0, strain: 0, criticals: [] }
@@ -63,6 +89,7 @@ export function migrateCharacter(value) {
     updatedAt: string(value.updatedAt, base.updatedAt),
     name: string(value.name, base.name).trim().slice(0, 80) || base.name,
     backgroundId: string(value.backgroundId),
+    backgroundText: string(value.backgroundText).slice(0, 2000),
     dutyId: string(value.dutyId),
     startingDuty: integer(value.startingDuty, 10, 0, 20),
     dutyXpExchange: value.dutyXpExchange === true,
@@ -70,6 +97,7 @@ export function migrateCharacter(value) {
     speciesId: string(value.speciesId),
     careerId: string(value.careerId),
     specializationId: string(value.specializationId),
+    additionalSpecializationIds: array(value.additionalSpecializationIds).map(String),
     careerTraining: array(value.careerTraining).map(String),
     specializationTraining: array(value.specializationTraining).map(String),
     humanBonusTraining: array(value.humanBonusTraining).map(String),
@@ -79,6 +107,7 @@ export function migrateCharacter(value) {
     speciesTraining: array(value.speciesTraining).map(String),
     characteristicAdvances: Object.fromEntries(characteristicKeys.map((key) => [key, integer(value.characteristicAdvances?.[key], 0, 0, 4)])),
     purchasedSkillRanks: Object.fromEntries(Object.entries(value.purchasedSkillRanks ?? {}).map(([key, rank]) => [key, integer(rank, 0, 0, 2)])),
+    purchasedSkillCosts: migratedPurchasedSkillCosts(value),
     gearIds: array(value.gearIds).map(String),
     bio: { motivation: string(value.bio?.motivation).slice(0, 240), notes: string(value.bio?.notes).slice(0, 2000) },
     play: {
@@ -98,6 +127,7 @@ export function validateCharacter(character, { requireComplete = false } = {}) {
   if (!character.id || typeof character.id !== "string") errors.push("Character id is required.");
   if (!character.name || typeof character.name !== "string") errors.push("Character name is required.");
   if (character.backgroundId && !backgroundIds.has(character.backgroundId)) errors.push("Unknown background.");
+  if (typeof character.backgroundText !== "string") errors.push("Background narrative must be text.");
   if (character.dutyId && !dutyIds.has(character.dutyId)) errors.push("Unknown Duty.");
   if (!Number.isInteger(character.startingDuty) || character.startingDuty < 0 || character.startingDuty > 20) errors.push("Starting Duty must be between 0 and 20.");
   if (character.dutyXpExchange && character.startingDuty < 5) errors.push("Not enough Duty for the XP exchange.");
@@ -108,6 +138,10 @@ export function validateCharacter(character, { requireComplete = false } = {}) {
   if (character.careerId && !career) errors.push("Unknown career.");
   const specialization = character.specializationId && findSpecialization(character.careerId, character.specializationId);
   if (character.specializationId && !specialization) errors.push("Specialization does not belong to selected career.");
+  const additionalSpecializationIds = Array.isArray(character.additionalSpecializationIds) ? character.additionalSpecializationIds : [];
+  if (!Array.isArray(character.additionalSpecializationIds) || !additionalSpecializationIds.every((id) => specializationIds.has(id)) || !unique(additionalSpecializationIds)) errors.push("Additional specializations must contain distinct known specializations.");
+  const startingGlobalId = specialization?.globalId;
+  if (character.specializationId && (additionalSpecializationIds.includes(character.specializationId) || (startingGlobalId && additionalSpecializationIds.includes(startingGlobalId)))) errors.push("Starting specialization cannot be purchased twice.");
   const allTraining = [character.careerTraining, character.specializationTraining, character.humanBonusTraining, character.speciesTraining];
   allTraining.forEach((choices) => {
     if (!Array.isArray(choices) || !choices.every((skillId) => skillIds.has(skillId)) || !unique(choices)) errors.push("Training choices must contain distinct known skills.");
@@ -120,7 +154,7 @@ export function validateCharacter(character, { requireComplete = false } = {}) {
   if (selectedSpecies?.setup?.kind !== "human" && character.humanBonusTraining.length) errors.push("Only humans receive human bonus skills.");
   if (selectedSpecies?.setup?.kind === "human" && (career || specialization) && character.humanBonusTraining.some((skillId) => career?.skillIds.includes(skillId) || specialization?.skillIds.includes(skillId))) errors.push("Human bonus skills must be non-career skills.");
   if (requireComplete) {
-    if (!character.backgroundId) errors.push("Choose a background.");
+    if (!character.backgroundId && !(typeof character.backgroundText === "string" && character.backgroundText.trim())) errors.push("Write a Background narrative.");
     if (!character.dutyId) errors.push("Choose a Duty.");
     if (!selectedSpecies) errors.push("Choose a species.");
     if (!career) errors.push("Choose a career.");
@@ -139,6 +173,16 @@ export function validateCharacter(character, { requireComplete = false } = {}) {
   }
   if (!character.characteristicAdvances || Object.entries(character.characteristicAdvances).some(([key, amount]) => !characteristicKeys.includes(key) || !Number.isInteger(amount) || amount < 0 || amount > 4)) errors.push("Invalid characteristic advances.");
   if (!character.purchasedSkillRanks || Object.entries(character.purchasedSkillRanks).some(([key, rank]) => !skillIds.has(key) || !Number.isInteger(rank) || rank < 0 || rank > 2)) errors.push("Invalid purchased skill ranks.");
+  if (character.purchasedSkillCosts !== undefined) {
+    const costs = character.purchasedSkillCosts;
+    const costKeys = costs && typeof costs === "object" && !Array.isArray(costs) ? new Set(Object.keys(costs)) : new Set();
+    const validCosts = costs && typeof costs === "object" && !Array.isArray(costs) && [...costKeys].every((key) => {
+      const entries = Array.isArray(costs[key]) ? costs[key] : [];
+      const rank = character.purchasedSkillRanks?.[key] ?? 0;
+      return skillIds.has(key) && entries.length === rank && entries.every((entry) => entry && typeof entry === "object" && Number.isInteger(entry.cost) && entry.cost >= 5 && entry.cost <= 15 && typeof entry.career === "boolean");
+    });
+    if (!validCosts) errors.push("Purchased skill costs must match each purchased rank.");
+  }
   if (!Array.isArray(character.gearIds) || !character.gearIds.every((gearId) => findGear(gearId)) || !unique(character.gearIds)) errors.push("Gear must contain distinct catalogue items.");
   if (!character.play || !Number.isInteger(character.play.wounds) || !Number.isInteger(character.play.strain) || !Array.isArray(character.play.criticals)) errors.push("Invalid play trackers.");
   return errors;

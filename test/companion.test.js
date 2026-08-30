@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CATALOG, CAREERS, CATALOG_VERSION, SPECIES, validateCatalog } from "../src/companion/catalog.js";
-import { createSkillPool, deriveCharacter, purchasedSkillCost, selectedSkillRanks, skillPoolFor, xpSpent } from "../src/companion/calculations.js";
+import { BACKGROUNDS, CATALOG, CAREERS, CATALOG_VERSION, DUTIES, SPECIALIZATIONS, SPECIES, UNIVERSAL_SPECIALIZATIONS, validateCatalog } from "../src/companion/catalog.js";
+import { additionalSpecializationCost, additionalSpecializationCosts, additionalSpecializationUndoBlockReason, createSkillPool, deriveCharacter, isCareerSkill, purchasedSkillCost, purchasedSkillCostEntries, selectedSkillRanks, skillPoolFor, specializationCost, xpSpent } from "../src/companion/calculations.js";
 import { addImportedCharacter, deleteCharacter, loadRoster, saveRoster, upsertCharacter } from "../src/companion/persistence.js";
 import { CHARACTER_EXPORT_KIND, CHARACTER_SCHEMA_VERSION, createCharacter, createRoster, exportCharacter, migrateCharacter, migrateRoster, parseCharacterImport, validateCharacter } from "../src/companion/schema.js";
 
@@ -35,6 +35,14 @@ test("versioned Core Rulebook catalogue is source-identified and structurally co
   assert.equal(CATALOG.careers.length, 6);
   assert.equal(CATALOG.careers.every((career) => career.skillIds.length === 8 && career.specializations.length === 3), true);
   assert.equal(CATALOG.careers.flatMap((career) => career.specializations).every((specialization) => specialization.skillIds.length === 4 && specialization.source.includes("Core Rulebook")), true);
+  assert.deepEqual(DUTIES.find((duty) => duty.id === "support"), {
+    id: "support", name: "Support",
+    description: "Help fellow Rebels fulfill their Duties by providing the assistance they need, creating more chances to advance the cause together.",
+    source: "Age of Rebellion Core Rulebook, p. 47",
+    sourceUrl: "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=48"
+  });
+  assert.equal(DUTIES.length, 12);
+  assert.equal(DUTIES.every((duty) => duty.description && duty.source && duty.sourceUrl), true);
   assert.deepEqual(validateCatalog({ ...CATALOG, careers: CATALOG.careers.slice(0, 5) }), ["Core catalogue must contain six unique careers."]);
 });
 
@@ -54,6 +62,17 @@ test("all eight Core Rulebook species have audited bases and starting-rank metad
     { id: "mon-calamari", startingXp: 100, woundBase: 10, strainBase: 10, characteristics: [1, 2, 3, 2, 2, 2], fixed: ["knowledge-education"], choice: [], kind: "none", source: "Age of Rebellion Core Rulebook, pp. 58–59" },
     { id: "sullustan", startingXp: 100, woundBase: 10, strainBase: 11, characteristics: [1, 3, 2, 2, 2, 2], fixed: ["astrogation"], choice: [], kind: "none", source: "Age of Rebellion Core Rulebook, p. 60" }
   ]);
+  assert.equal(SPECIES.every((entry) => entry.sourcePage && entry.sourceUrl && entry.abilities.length > 0), true);
+  assert.equal(SPECIES.find((entry) => entry.id === "droid").abilities.some((ability) => ability.name === "Mechanical Being"), true);
+  assert.equal(SPECIES.find((entry) => entry.id === "gran").abilities.some((ability) => ability.name === "Enhanced Vision" && ability.tableReview), true);
+});
+
+test("species validation keeps the required Core baseline while allowing future additions", () => {
+  const extraSpecies = { ...SPECIES[0], id: "future-species", name: "Future species" };
+  assert.deepEqual(validateCatalog({ ...CATALOG, species: [...CATALOG.species, extraSpecies] }), []);
+  assert.deepEqual(validateCatalog({ ...CATALOG, species: [...CATALOG.species, { ...extraSpecies, id: "human" }] }), ["Species ids must be unique."]);
+  assert.equal(validateCatalog({ ...CATALOG, species: CATALOG.species.filter((entry) => entry.id !== "human") }).includes("Core catalogue must include all eight required Core Rulebook species."), true);
+  assert.equal(validateCatalog({ ...CATALOG, species: [...CATALOG.species, { ...extraSpecies, startingXp: 0 }] }).includes("Invalid species: future-species."), true);
 });
 
 test("all six careers and eighteen starting specializations match the Core Rulebook skill catalogue", () => {
@@ -95,6 +114,22 @@ test("all six careers and eighteen starting specializations match the Core Ruleb
   ]);
 });
 
+test("background inspirations retain concise labels and narrative starter prompts", () => {
+  const allianceRecruit = BACKGROUNDS.find((entry) => entry.id === "alliance-recruit");
+  assert.deepEqual(allianceRecruit, {
+    id: "alliance-recruit", name: "Alliance recruit",
+    prompt: "I joined the Alliance after seeing the Empire harm people I care about."
+  });
+  assert.equal(BACKGROUNDS.every((entry) => entry.prompt.length > entry.name.length), true);
+});
+
+test("freeform background narrative can complete a character without an official background category", () => {
+  const character = completeCharacter({ backgroundId: "", backgroundText: "A farmhand joined the Alliance after Imperial confiscations." });
+  assert.deepEqual(validateCharacter(character, { requireComplete: true }), []);
+  const blankNarrative = completeCharacter({ backgroundId: "", backgroundText: "" });
+  assert.equal(validateCharacter(blankNarrative, { requireComplete: true }).includes("Write a Background narrative."), true);
+});
+
 test("valid core character passes schema completion and derives starter budgets", () => {
   const character = completeCharacter();
   assert.deepEqual(validateCharacter(character, { requireComplete: true }), []);
@@ -107,6 +142,65 @@ test("valid core character passes schema completion and derives starter budgets"
   assert.equal(derived.strainThreshold, 13);
   assert.deepEqual(selectedSkillRanks(character).brawl, 2);
   assert.equal(selectedSkillRanks(character).streetwise, 1);
+});
+
+test("additional specializations use ordered costs, grant career skills, and never grant free ranks", () => {
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const pilot = SPECIALIZATIONS.find((entry) => entry.id === "pilot");
+  const recruit = UNIVERSAL_SPECIALIZATIONS[0];
+  const character = completeCharacter();
+  assert.equal(specializationCost(character, medic.globalId), 20);
+  assert.equal(specializationCost(character, pilot.globalId), 30);
+  assert.equal(specializationCost(character, recruit.globalId), 20);
+  const purchased = completeCharacter({ additionalSpecializationIds: [medic.globalId, pilot.globalId] });
+  assert.deepEqual(additionalSpecializationCosts(purchased).map((entry) => entry.cost), [20, 40]);
+  assert.equal(specializationCost(purchased, medic.globalId), 40);
+  assert.equal(xpSpent(purchased), 60);
+  assert.equal(isCareerSkill(purchased, "knowledge-xenology"), true);
+  assert.equal(isCareerSkill(purchased, "astrogation"), true);
+  assert.equal(selectedSkillRanks(purchased)["knowledge-xenology"], 0);
+  assert.equal(deriveCharacter(purchased).errors.includes("XP spending exceeds the available budget."), false);
+});
+
+test("skill purchase snapshots preserve historical pricing across specialization changes", () => {
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const beforeSpecialization = completeCharacter({ purchasedSkillRanks: { "knowledge-xenology": 1 }, purchasedSkillCosts: { "knowledge-xenology": [{ cost: 10, career: false }] } });
+  const afterSpecialization = { ...beforeSpecialization, additionalSpecializationIds: [medic.globalId] };
+  assert.equal(purchasedSkillCost(afterSpecialization, "knowledge-xenology"), 10);
+  const laterRank = { ...afterSpecialization, purchasedSkillRanks: { "knowledge-xenology": 2 }, purchasedSkillCosts: { "knowledge-xenology": [{ cost: 10, career: false }, { cost: 10, career: true }] } };
+  assert.deepEqual(purchasedSkillCostEntries(laterRank, "knowledge-xenology").map((entry) => entry.cost), [10, 10]);
+  assert.equal(purchasedSkillCost(laterRank, "knowledge-xenology"), 20);
+  const legacy = completeCharacter({ additionalSpecializationIds: [medic.globalId], purchasedSkillRanks: { "knowledge-xenology": 1 } });
+  assert.equal(purchasedSkillCost(legacy, "knowledge-xenology"), 10);
+});
+
+test("specialization undo blocks dependent career-priced ranks but allows safe history", () => {
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const recruit = UNIVERSAL_SPECIALIZATIONS[0];
+  const dependent = completeCharacter({ additionalSpecializationIds: [medic.globalId], purchasedSkillRanks: { "knowledge-xenology": 1 }, purchasedSkillCosts: { "knowledge-xenology": [{ cost: 5, career: true }] } });
+  assert.match(additionalSpecializationUndoBlockReason(dependent), /Remove purchased Knowledge \(Xenology\) ranks/);
+  const boughtBefore = completeCharacter({ additionalSpecializationIds: [medic.globalId], purchasedSkillRanks: { "knowledge-xenology": 1 }, purchasedSkillCosts: { "knowledge-xenology": [{ cost: 15, career: false }] } });
+  assert.equal(additionalSpecializationUndoBlockReason(boughtBefore), "");
+  const retainedByOther = completeCharacter({ additionalSpecializationIds: [medic.globalId, recruit.globalId], purchasedSkillRanks: { "knowledge-xenology": 1 }, purchasedSkillCosts: { "knowledge-xenology": [{ cost: 5, career: true }] } });
+  assert.equal(additionalSpecializationUndoBlockReason(retainedByOther), "");
+});
+
+test("Human bonus skills remain based on starting career and specialization", () => {
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const human = completeCharacter({ speciesId: "human", humanBonusTraining: ["knowledge-xenology", "charm"], additionalSpecializationIds: [medic.globalId] });
+  assert.deepEqual(validateCharacter(human, { requireComplete: true }), []);
+  assert.equal(isCareerSkill(human, "knowledge-xenology"), true);
+});
+
+test("duplicate additional specialization ownership is rejected, including the starting specialization", () => {
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const commando = SPECIALIZATIONS.find((entry) => entry.id === "commando");
+  const duplicate = completeCharacter({ additionalSpecializationIds: [medic.globalId, medic.globalId] });
+  assert.throws(() => migrateCharacter(duplicate), /distinct known specializations/);
+  assert.throws(() => parseCharacterImport(JSON.stringify({ kind: CHARACTER_EXPORT_KIND, schemaVersion: CHARACTER_SCHEMA_VERSION, character: duplicate })), /distinct known specializations/);
+  assert.throws(() => migrateCharacter(completeCharacter({ additionalSpecializationIds: [commando.globalId] })), /purchased twice/);
+  assert.equal(validateCharacter(completeCharacter({ additionalSpecializationIds: [medic.globalId, medic.globalId] })).some((error) => error.includes("distinct known")), true);
+  assert.equal(new Set(SPECIALIZATIONS.map((entry) => entry.globalId)).size, SPECIALIZATIONS.length);
 });
 
 test("automatic and selected species ranks affect caps, XP, and roll pools without charging a free rank", () => {
@@ -173,8 +267,11 @@ test("version-one drafts migrate safely: fixed grants apply and Gran remains edi
   const legacyBothan = { ...completeCharacter(), schemaVersion: 1 };
   const migratedBothan = migrateCharacter(legacyBothan);
   assert.equal(migratedBothan.schemaVersion, 2);
+  assert.equal(migratedBothan.backgroundText, "");
   assert.deepEqual(migratedBothan.speciesTraining, []);
   assert.equal(selectedSkillRanks(migratedBothan).streetwise, 1);
+  const migratedSkill = migrateCharacter({ ...completeCharacter({ purchasedSkillRanks: { "knowledge-xenology": 1 } }), schemaVersion: 1 });
+  assert.deepEqual(migratedSkill.purchasedSkillCosts["knowledge-xenology"], [{ cost: 10, career: false }]);
 
   const migratedGran = migrateCharacter({ ...completeCharacter({ speciesId: "gran" }), schemaVersion: 1 });
   assert.deepEqual(migratedGran.speciesTraining, []);
@@ -206,10 +303,12 @@ test("local persistence saves multiple files and deletion adjusts the active sel
 });
 
 test("JSON export/import round-trips current and version-one files and rejects untrusted content", () => {
-  const character = completeCharacter();
+  const medic = SPECIALIZATIONS.find((entry) => entry.id === "medic");
+  const character = completeCharacter({ additionalSpecializationIds: [medic.globalId] });
   const exported = exportCharacter(character);
   const imported = parseCharacterImport(exported);
   assert.equal(imported.name, character.name);
+  assert.deepEqual(imported.additionalSpecializationIds, character.additionalSpecializationIds);
   assert.equal(JSON.parse(exported).kind, CHARACTER_EXPORT_KIND);
   assert.equal(JSON.parse(exported).schemaVersion, CHARACTER_SCHEMA_VERSION);
   const versionOne = parseCharacterImport(JSON.stringify({ kind: CHARACTER_EXPORT_KIND, schemaVersion: 1, character: { ...character, schemaVersion: 1 } }));

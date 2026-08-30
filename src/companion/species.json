@@ -1,0 +1,140 @@
+[
+  {
+    "id": "human",
+    "name": "Human",
+    "description": "Ubiquitous and diverse throughout the galaxy, humans can find a place in nearly every Alliance role.",
+    "startingXp": 110,
+    "woundBase": 10,
+    "strainBase": 10,
+    "characteristics": { "brawn": 2, "agility": 2, "intellect": 2, "cunning": 2, "willpower": 2, "presence": 2 },
+    "setup": { "kind": "human" },
+    "source": "Age of Rebellion Core Rulebook, p. 56",
+    "sourcePage": "p. 56",
+    "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=57",
+    "abilities": [
+      { "name": "Starting skills", "summary": "Choose one rank in two different non-career skills; neither skill may exceed rank 2 during character creation." }
+    ]
+  },
+  {
+    "id": "bothan",
+    "name": "Bothan",
+    "description": "Data collectors and skilled manipulators, Bothans are natural fits for intelligence and diplomacy.",
+    "startingXp": 100,
+    "woundBase": 10,
+    "strainBase": 11,
+    "characteristics": { "brawn": 1, "agility": 2, "intellect": 2, "cunning": 3, "willpower": 2, "presence": 2 },
+    "setup": { "kind": "none", "startingSkillIds": ["streetwise"] },
+    "source": "Age of Rebellion Core Rulebook, p. 51",
+    "sourcePage": "p. 51",
+    "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=52",
+    "abilities": [
+      { "name": "Streetwise", "summary": "Begin with one rank in Streetwise; it may not exceed rank 2 during character creation." },
+      { "name": "Convincing Demeanor", "summary": "Begin with one rank in the Convincing Demeanor talent.", "tableReview": true }
+    ]
+  },
+  {
+    "id": "droid",
+    "name": "Droid",
+    "description": "Droids fill vital Alliance gaps across technical, medical, astrogation, and support roles.",
+    "startingXp": 175,
+    "woundBase": 10,
+    "strainBase": 10,
+    "characteristics": { "brawn": 1, "agility": 1, "intellect": 2, "cunning": 1, "willpower": 1, "presence": 1 },
+    "setup": { "kind": "droid" },
+    "source": "Age of Rebellion Core Rulebook, pp. 52–53",
+    "sourcePage": "pp. 52–53",
+    "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=53",
+    "abilities": [
+      { "name": "Machine needs", "summary": "Droids do not need to eat, sleep, or breathe and are unaffected by toxins and poisons." },
+      { "name": "Cybernetics", "summary": "The cybernetic implant cap is 6 instead of the droid's Brawn rating." },
+      { "name": "Additional training", "summary": "After choosing a career, train one rank in six career skills; after choosing a specialization, train one rank in three specialization skills." },
+      { "name": "Inorganic", "summary": "Bacta, stimpacks, and Medicine checks do not restore droid damage; rest, Mechanics checks, and repair patches are used instead. Begin with one rank in Enduring.", "tableReview": true },
+      { "name": "Mechanical Being", "summary": "Droids cannot become Force-sensitive, gain a Force rating, use Force powers, or be affected by mind-altering Force powers." },
+      { "name": "Integrated equipment", "summary": "With GM approval, equipment can be intrinsic to a droid's construction or installed as an upgrade.", "tableReview": true }
+    ]
+  },
+  {
+    "id": "duros",
+    "name": "Duros",
+    "description": "Revered pilots, explorers, storytellers, engineers, and mechanics, Duros bring hard-won knowledge to the Alliance.",
+    "startingXp": 110,
+    "woundBase": 10,
+    "strainBase": 10,
+    "characteristics": { "brawn": 1, "agility": 2, "intellect": 2, "cunning": 2, "willpower": 2, "presence": 2 },
+    "setup": { "kind": "none", "startingSkillIds": ["piloting-space"] },
+    "source": "Age of Rebellion Core Rulebook, p. 54",
+    "sourcePage": "p. 54",
+    "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=55",
+    "abilities": [
+      { "name": "Piloting (Space)", "summary": "Begin with one rank in Piloting (Space); it may not exceed rank 2 during character creation." }
+    ]
+  },
+  {
+    "id": "gran",
+    "name": "Gran",
+    "description": "Keen-sighted, peaceful, and community-minded, Gran are often drawn to service and support roles.",
+    "startingXp": 100,
+    "woundBase": 10,
+    "strainBase": 11,
+    "characteristics": { "brawn": 2, "agility": 1, "intellect": 2, "cunning": 2, "willpower": 2, "presence": 3 },
+    "setup": { "kind": "none", "startingSkillChoice": { "count": 1, "skillIds": ["charm", "negotiation"] } },
+    "source": "Age of Rebellion Core Rulebook, p. 55",
+    "sourcePage": "p. 55",
+    "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=56",
+    "abilities": [
+      { "name": "Starting skill", "summary": "Choose one rank in Charm or Negotiation; the chosen skill may not exceed rank 2 during character creation." },
+      { "name": "Enhanced Vision", "summary": "On ranged combat or Perception checks, remove up to two setback dice imposed by environmental conditions or concealment, but not defense.", "tableReview": true }
+    ]
+  },
+  {
+    "id": "ithorian",
+    "name": "Ithorian",
+    "description": "Ithorians are devoted caretakers of natural environments whose pacifism shapes their service to the Rebellion.",
+    "startingXp": 100,
+    "woundBase": 12,
+    "strainBase": 9,
+    "characteristics": { "brawn": 3, "agility": 1, "intellect": 2, "cunning": 2, "willpower": 2, "presence": 2 },
+    "setup": { "kind": "none", "startingSkillIds": ["survival"] },
+    "source": "Age of Rebellion Core Rulebook, p. 57",
+    "sourcePage": "p. 57",
+    "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=58",
+    "abilities": [
+      { "name": "Survival", "summary": "Begin with one rank in Survival; it may not exceed rank 2 during character creation." },
+      { "name": "Ithorian Bellow", "summary": "Natural weapon: Resilience; Damage 6; Critical 4; Short range; Blast 3, Concussive 1, Slow-Firing 2, Stun Damage. Using it costs 3 strain.", "tableReview": true }
+    ]
+  },
+  {
+    "id": "mon-calamari",
+    "name": "Mon Calamari",
+    "description": "Artisans, dreamers, and committed allies, Mon Calamari combine compassion with strategic and technical gifts.",
+    "startingXp": 100,
+    "woundBase": 10,
+    "strainBase": 10,
+    "characteristics": { "brawn": 1, "agility": 2, "intellect": 3, "cunning": 2, "willpower": 2, "presence": 2 },
+    "setup": { "kind": "none", "startingSkillIds": ["knowledge-education"] },
+    "source": "Age of Rebellion Core Rulebook, pp. 58–59",
+    "sourcePage": "pp. 58–59",
+    "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=59",
+    "abilities": [
+      { "name": "Knowledge (Education)", "summary": "Begin with one rank in Knowledge (Education); it may not exceed rank 2 during character creation." },
+      { "name": "Amphibious", "summary": "Breathe underwater without penalty and never suffer movement penalties for traveling through water.", "tableReview": true }
+    ]
+  },
+  {
+    "id": "sullustan",
+    "name": "Sullustan",
+    "description": "Affable, curious, and free-spirited, Sullustans often carry their natural direction sense into the stars.",
+    "startingXp": 100,
+    "woundBase": 10,
+    "strainBase": 11,
+    "characteristics": { "brawn": 1, "agility": 3, "intellect": 2, "cunning": 2, "willpower": 2, "presence": 2 },
+    "setup": { "kind": "none", "startingSkillIds": ["astrogation"] },
+    "source": "Age of Rebellion Core Rulebook, p. 60",
+    "sourcePage": "p. 60",
+    "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=61",
+    "abilities": [
+      { "name": "Astrogation", "summary": "Begin with one rank in Astrogation; it may not exceed rank 2 during character creation." },
+      { "name": "Skilled Jockey", "summary": "Begin with one rank in the Skilled Jockey talent.", "tableReview": true }
+    ]
+  }
+]
