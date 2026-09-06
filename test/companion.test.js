@@ -4,6 +4,8 @@ import { BACKGROUNDS, CATALOG, CAREERS, CATALOG_VERSION, DUTIES, SPECIALIZATIONS
 import { additionalSpecializationCost, additionalSpecializationCosts, additionalSpecializationUndoBlockReason, createSkillPool, deriveCharacter, isCareerSkill, purchasedSkillCost, purchasedSkillCostEntries, selectedSkillRanks, skillPoolFor, specializationCost, xpSpent } from "../src/companion/calculations.js";
 import { addImportedCharacter, deleteCharacter, loadRoster, saveRoster, upsertCharacter } from "../src/companion/persistence.js";
 import { CHARACTER_EXPORT_KIND, CHARACTER_SCHEMA_VERSION, createCharacter, createRoster, exportCharacter, migrateCharacter, migrateRoster, parseCharacterImport, validateCharacter } from "../src/companion/schema.js";
+import { replayTalentPurchases } from "../src/companion/talentCalculations.js";
+import { purchaseTalentNode, undoLastTalentPurchase } from "../src/companion/talentMutations.js";
 
 function completeCharacter(overrides = {}) {
   return {
@@ -266,7 +268,7 @@ test("skill pools use the higher value for size and lower value for upgrades", (
 test("version-one drafts migrate safely: fixed grants apply and Gran remains editable until its choice is made", () => {
   const legacyBothan = { ...completeCharacter(), schemaVersion: 1 };
   const migratedBothan = migrateCharacter(legacyBothan);
-  assert.equal(migratedBothan.schemaVersion, 2);
+  assert.equal(migratedBothan.schemaVersion, CHARACTER_SCHEMA_VERSION);
   assert.equal(migratedBothan.backgroundText, "");
   assert.deepEqual(migratedBothan.speciesTraining, []);
   assert.equal(selectedSkillRanks(migratedBothan).streetwise, 1);
@@ -276,6 +278,138 @@ test("version-one drafts migrate safely: fixed grants apply and Gran remains edi
   const migratedGran = migrateCharacter({ ...completeCharacter({ speciesId: "gran" }), schemaVersion: 1 });
   assert.deepEqual(migratedGran.speciesTraining, []);
   assert.equal(deriveCharacter(migratedGran).errors.includes("Select the required species starting skill rank."), true);
+});
+
+test("talent ledger migration, serialization, and replay retain only ordered node records", () => {
+  const legacy = {
+    ...completeCharacter(),
+    schemaVersion: 2,
+    talentPurchases: [{ nodeId: "soldier:commando:r1c1", choices: { legacy: true } }]
+  };
+  const migratedLegacy = migrateCharacter(legacy);
+  assert.equal(migratedLegacy.schemaVersion, CHARACTER_SCHEMA_VERSION);
+  assert.deepEqual(migratedLegacy.talentPurchases, []);
+
+  const current = completeCharacter({
+    talentPurchases: [
+      { nodeId: "soldier:commando:r1c1", choices: { target: "self" }, obsoleteTalentId: "physical-training" },
+      { nodeId: "soldier:commando:r2c1", choices: {} }
+    ]
+  });
+  const migratedCurrent = migrateCharacter(current);
+  assert.deepEqual(migratedCurrent.talentPurchases, [
+    { nodeId: "soldier:commando:r1c1", choices: { target: "self" } },
+    { nodeId: "soldier:commando:r2c1", choices: {} }
+  ]);
+  assert.equal(replayTalentPurchases(migratedCurrent).valid, true);
+  assert.equal(xpSpent(migratedCurrent), 15);
+  assert.equal(deriveCharacter(migratedCurrent).xp.spent, 15);
+
+  const imported = parseCharacterImport(exportCharacter(migratedCurrent));
+  assert.deepEqual(imported.talentPurchases, migratedCurrent.talentPurchases);
+  assert.ok(imported.talentPurchases.every((purchase) => Object.keys(purchase).every((key) => key === "nodeId" || key === "choices")));
+  const stored = new MemoryStorage();
+  saveRoster(upsertCharacter(createRoster(), migratedCurrent), stored);
+  assert.deepEqual(loadRoster(stored).roster.characters[0].talentPurchases, migratedCurrent.talentPurchases);
+
+  const freeTraversal = migrateCharacter(completeCharacter({
+    careerId: "ace", specializationId: "driver",
+    careerTraining: ["astrogation", "cool", "gunnery", "mechanics"],
+    specializationTraining: ["cool", "gunnery"],
+    additionalSpecializationIds: ["ace:pilot"],
+    talentPurchases: [{ nodeId: "ace:driver:r1c1", choices: {} }]
+  }));
+  const freeReplay = replayTalentPurchases(freeTraversal);
+  assert.ok(freeReplay.freeNodeIds.includes("ace:pilot:r1c1"));
+  assert.deepEqual(freeTraversal.talentPurchases, [{ nodeId: "ace:driver:r1c1", choices: {} }], "free traversal is derived, not stored");
+});
+
+test("talent purchase mutations enforce legality and globally undo in LIFO order", () => {
+  const initial = completeCharacter();
+  const choices = { target: "self", nested: { count: 1 } };
+  const first = purchaseTalentNode(initial, "soldier:commando:r1c1", choices);
+  choices.nested.count = 2;
+  const second = purchaseTalentNode(first, "soldier:commando:r2c1");
+  assert.deepEqual(initial.talentPurchases, []);
+  assert.deepEqual(second.talentPurchases, [
+    { nodeId: "soldier:commando:r1c1", choices: { target: "self", nested: { count: 1 } } },
+    { nodeId: "soldier:commando:r2c1", choices: {} }
+  ]);
+  assert.equal(xpSpent(second), 15);
+  const laterSpecialization = { ...second, additionalSpecializationIds: [SPECIALIZATIONS.find((entry) => entry.id === "medic").globalId] };
+  assert.equal(xpSpent(laterSpecialization), 35, "paid node costs stay at their acquired node cost");
+  assert.deepEqual(undoLastTalentPurchase(second).talentPurchases, [second.talentPurchases[0]]);
+  assert.throws(() => purchaseTalentNode(initial, "soldier:commando:r3c2"), /not legal/);
+  assert.throws(() => undoLastTalentPurchase(initial), /no talent purchases/);
+
+  const noBudget = completeCharacter({ characteristicAdvances: { brawn: 4 } });
+  assert.throws(() => purchaseTalentNode(noBudget, "soldier:commando:r1c1"), /available XP budget/);
+});
+
+test("talent-ledger imports reject malformed and structurally illegal records while legacy drafts remain safe", () => {
+  const malformed = completeCharacter({ talentPurchases: [{ nodeId: "soldier:commando:r1c1", choices: [] }] });
+  assert.throws(() => migrateCharacter(malformed), /Invalid talent purchase ledger/);
+  assert.throws(() => parseCharacterImport(JSON.stringify({ kind: CHARACTER_EXPORT_KIND, schemaVersion: CHARACTER_SCHEMA_VERSION, character: completeCharacter({ talentPurchases: [{ nodeId: "not:a:node", choices: {} }] }) })), /unknown node/);
+  assert.throws(() => migrateCharacter(completeCharacter({ talentPurchases: [{ nodeId: "ace:driver:r1c1", choices: {} }] })), /require ownership/);
+  assert.throws(() => migrateCharacter(completeCharacter({ talentPurchases: [{ nodeId: "soldier:commando:r2c1", choices: {} }] })), /start in the top row/);
+  assert.throws(() => migrateCharacter(completeCharacter({ talentPurchases: [
+    { nodeId: "soldier:commando:r2c1", choices: {} },
+    { nodeId: "soldier:commando:r1c1", choices: {} }
+  ] })), /start in the top row/);
+
+  const overspentLegacy = migrateCharacter({ ...completeCharacter({ characteristicAdvances: { brawn: 4 } }), schemaVersion: 2 });
+  assert.deepEqual(overspentLegacy.talentPurchases, []);
+  assert.equal(deriveCharacter(overspentLegacy).errors.includes("XP spending exceeds the available budget."), true);
+});
+
+test("an overspent legal talent draft persists through a Duty XP exchange change and remains undoable", () => {
+  const funded = completeCharacter({ dutyXpExchange: true, characteristicAdvances: { brawn: 3 } });
+  const purchased = purchaseTalentNode(purchaseTalentNode(funded, "soldier:commando:r1c1"), "soldier:commando:r2c1");
+  assert.equal(deriveCharacter(purchased).xp.remaining, 0);
+
+  const reducedBudget = { ...purchased, dutyXpExchange: false };
+  assert.deepEqual(validateCharacter(reducedBudget), [], "overspending is a derived playability error, not a structural rejection");
+  assert.equal(deriveCharacter(reducedBudget).errors.includes("XP spending exceeds the available budget."), true);
+  assert.equal(deriveCharacter(reducedBudget).isPlayable, false);
+  assert.throws(() => purchaseTalentNode(reducedBudget, "soldier:commando:r1c2"), /available XP budget/);
+
+  const storage = new MemoryStorage();
+  const saved = saveRoster(upsertCharacter(createRoster(), reducedBudget), storage);
+  assert.equal(saved.error, null);
+  const restored = loadRoster(storage).roster.characters[0];
+  assert.deepEqual(restored.talentPurchases, reducedBudget.talentPurchases);
+  assert.equal(deriveCharacter(restored).errors.includes("XP spending exceeds the available budget."), true);
+
+  const imported = parseCharacterImport(exportCharacter(restored));
+  assert.deepEqual(imported.talentPurchases, reducedBudget.talentPurchases);
+  assert.equal(deriveCharacter(imported).errors.includes("XP spending exceeds the available budget."), true);
+  const recovered = undoLastTalentPurchase(imported);
+  assert.deepEqual(recovered.talentPurchases, [{ nodeId: "soldier:commando:r1c1", choices: {} }]);
+  assert.equal(deriveCharacter(recovered).errors.includes("XP spending exceeds the available budget."), false);
+});
+
+test("additional-specialization undo protects direct and cross-tree talent dependencies", () => {
+  const acePilot = (overrides = {}) => completeCharacter({
+    careerId: "ace", specializationId: "pilot",
+    careerTraining: ["astrogation", "cool", "gunnery", "mechanics"],
+    specializationTraining: ["astrogation", "gunnery"],
+    ...overrides
+  });
+  const direct = acePilot({
+    additionalSpecializationIds: ["ace:driver"],
+    talentPurchases: [{ nodeId: "ace:driver:r1c2", choices: {} }]
+  });
+  assert.match(additionalSpecializationUndoBlockReason(direct), /Remove purchased talent nodes/);
+
+  const crossTree = acePilot({
+    additionalSpecializationIds: ["ace:driver"],
+    talentPurchases: [
+      { nodeId: "ace:driver:r1c1", choices: {} },
+      { nodeId: "ace:pilot:r2c1", choices: {} }
+    ]
+  });
+  assert.deepEqual(validateCharacter(crossTree), []);
+  assert.match(additionalSpecializationUndoBlockReason(crossTree), /Retained talent purchase ace:pilot:r2c1/);
 });
 
 test("roster migration accepts v0 array data and retains a valid active character", () => {
@@ -312,7 +446,7 @@ test("JSON export/import round-trips current and version-one files and rejects u
   assert.equal(JSON.parse(exported).kind, CHARACTER_EXPORT_KIND);
   assert.equal(JSON.parse(exported).schemaVersion, CHARACTER_SCHEMA_VERSION);
   const versionOne = parseCharacterImport(JSON.stringify({ kind: CHARACTER_EXPORT_KIND, schemaVersion: 1, character: { ...character, schemaVersion: 1 } }));
-  assert.equal(versionOne.schemaVersion, 2);
+  assert.equal(versionOne.schemaVersion, CHARACTER_SCHEMA_VERSION);
   assert.throws(() => parseCharacterImport("not json"), /not valid JSON/);
   assert.throws(() => parseCharacterImport(JSON.stringify({ kind: CHARACTER_EXPORT_KIND, schemaVersion: 99, character })), /Unsupported import schema version/);
   assert.throws(() => parseCharacterImport(JSON.stringify({ kind: CHARACTER_EXPORT_KIND, schemaVersion: 1, character: { ...character, speciesId: "unknown" } })), /Unknown species/);

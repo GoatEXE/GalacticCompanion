@@ -1,0 +1,4524 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "rulebook": "Age of Rebellion Core Rulebook",
+    "anyFlipBaseUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html",
+    "anyFlipFragmentMapping": "printed page + 1"
+  },
+  "trees": [
+    {
+      "specializationGlobalId": "ace:driver",
+      "source": {
+        "printedPage": 67,
+        "anyFlipFragmentPage": 68,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=68"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "ace:driver",
+        "entryNodeIds": [
+          "ace:driver:r1c1",
+          "ace:driver:r1c2",
+          "ace:driver:r1c3",
+          "ace:driver:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "ace:driver:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "full-throttle"
+        },
+        {
+          "id": "ace:driver:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "all-terrain-driver"
+        },
+        {
+          "id": "ace:driver:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "fine-tuning"
+        },
+        {
+          "id": "ace:driver:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "gearhead"
+        },
+        {
+          "id": "ace:driver:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "grit"
+        },
+        {
+          "id": "ace:driver:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "skilled-jockey"
+        },
+        {
+          "id": "ace:driver:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "rapid-reaction"
+        },
+        {
+          "id": "ace:driver:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "grit"
+        },
+        {
+          "id": "ace:driver:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "full-throttle-improved"
+        },
+        {
+          "id": "ace:driver:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "tricky-target"
+        },
+        {
+          "id": "ace:driver:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "fine-tuning"
+        },
+        {
+          "id": "ace:driver:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "toughened"
+        },
+        {
+          "id": "ace:driver:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "defensive-driving"
+        },
+        {
+          "id": "ace:driver:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "skilled-jockey"
+        },
+        {
+          "id": "ace:driver:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "natural-driver"
+        },
+        {
+          "id": "ace:driver:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "gearhead"
+        },
+        {
+          "id": "ace:driver:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "full-throttle-supreme"
+        },
+        {
+          "id": "ace:driver:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "full-stop"
+        },
+        {
+          "id": "ace:driver:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "master-driver"
+        },
+        {
+          "id": "ace:driver:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "dedication"
+        }
+      ],
+      "connectors": [
+        [
+          "ace:driver:r1c1",
+          "ace:driver:r2c1"
+        ],
+        [
+          "ace:driver:r2c1",
+          "ace:driver:r3c1"
+        ],
+        [
+          "ace:driver:r3c1",
+          "ace:driver:r4c1"
+        ],
+        [
+          "ace:driver:r4c1",
+          "ace:driver:r5c1"
+        ],
+        [
+          "ace:driver:r2c2",
+          "ace:driver:r3c2"
+        ],
+        [
+          "ace:driver:r1c4",
+          "ace:driver:r2c4"
+        ],
+        [
+          "ace:driver:r2c4",
+          "ace:driver:r3c4"
+        ],
+        [
+          "ace:driver:r3c4",
+          "ace:driver:r4c4"
+        ],
+        [
+          "ace:driver:r4c4",
+          "ace:driver:r5c4"
+        ],
+        [
+          "ace:driver:r2c1",
+          "ace:driver:r2c2"
+        ],
+        [
+          "ace:driver:r2c2",
+          "ace:driver:r2c3"
+        ],
+        [
+          "ace:driver:r2c3",
+          "ace:driver:r2c4"
+        ],
+        [
+          "ace:driver:r3c3",
+          "ace:driver:r3c4"
+        ],
+        [
+          "ace:driver:r4c1",
+          "ace:driver:r4c2"
+        ],
+        [
+          "ace:driver:r4c2",
+          "ace:driver:r4c3"
+        ],
+        [
+          "ace:driver:r5c1",
+          "ace:driver:r5c2"
+        ],
+        [
+          "ace:driver:r5c2",
+          "ace:driver:r5c3"
+        ],
+        [
+          "ace:driver:r5c3",
+          "ace:driver:r5c4"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "ace:gunner",
+      "source": {
+        "printedPage": 68,
+        "anyFlipFragmentPage": 69,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=69"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "ace:gunner",
+        "entryNodeIds": [
+          "ace:gunner:r1c1",
+          "ace:gunner:r1c2",
+          "ace:gunner:r1c3",
+          "ace:gunner:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "ace:gunner:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "durable"
+        },
+        {
+          "id": "ace:gunner:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "grit"
+        },
+        {
+          "id": "ace:gunner:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "overwhelm-defenses"
+        },
+        {
+          "id": "ace:gunner:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "debilitating-shot"
+        },
+        {
+          "id": "ace:gunner:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "toughened"
+        },
+        {
+          "id": "ace:gunner:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "brace"
+        },
+        {
+          "id": "ace:gunner:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "spare-clip"
+        },
+        {
+          "id": "ace:gunner:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "true-aim"
+        },
+        {
+          "id": "ace:gunner:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "durable"
+        },
+        {
+          "id": "ace:gunner:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "enduring"
+        },
+        {
+          "id": "ace:gunner:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "jury-rigged"
+        },
+        {
+          "id": "ace:gunner:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "overwhelm-defenses"
+        },
+        {
+          "id": "ace:gunner:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "toughened"
+        },
+        {
+          "id": "ace:gunner:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "enduring"
+        },
+        {
+          "id": "ace:gunner:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "brace"
+        },
+        {
+          "id": "ace:gunner:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "exhaust-port"
+        },
+        {
+          "id": "ace:gunner:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "heroic-fortitude"
+        },
+        {
+          "id": "ace:gunner:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "jury-rigged"
+        },
+        {
+          "id": "ace:gunner:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "ace:gunner:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "true-aim"
+        }
+      ],
+      "connectors": [
+        [
+          "ace:gunner:r1c1",
+          "ace:gunner:r2c1"
+        ],
+        [
+          "ace:gunner:r3c1",
+          "ace:gunner:r4c1"
+        ],
+        [
+          "ace:gunner:r4c1",
+          "ace:gunner:r5c1"
+        ],
+        [
+          "ace:gunner:r2c2",
+          "ace:gunner:r3c2"
+        ],
+        [
+          "ace:gunner:r4c2",
+          "ace:gunner:r5c2"
+        ],
+        [
+          "ace:gunner:r1c3",
+          "ace:gunner:r2c3"
+        ],
+        [
+          "ace:gunner:r2c3",
+          "ace:gunner:r3c3"
+        ],
+        [
+          "ace:gunner:r3c3",
+          "ace:gunner:r4c3"
+        ],
+        [
+          "ace:gunner:r1c4",
+          "ace:gunner:r2c4"
+        ],
+        [
+          "ace:gunner:r2c4",
+          "ace:gunner:r3c4"
+        ],
+        [
+          "ace:gunner:r3c4",
+          "ace:gunner:r4c4"
+        ],
+        [
+          "ace:gunner:r4c4",
+          "ace:gunner:r5c4"
+        ],
+        [
+          "ace:gunner:r2c1",
+          "ace:gunner:r2c2"
+        ],
+        [
+          "ace:gunner:r2c2",
+          "ace:gunner:r2c3"
+        ],
+        [
+          "ace:gunner:r3c1",
+          "ace:gunner:r3c2"
+        ],
+        [
+          "ace:gunner:r4c1",
+          "ace:gunner:r4c2"
+        ],
+        [
+          "ace:gunner:r4c2",
+          "ace:gunner:r4c3"
+        ],
+        [
+          "ace:gunner:r5c1",
+          "ace:gunner:r5c2"
+        ],
+        [
+          "ace:gunner:r5c2",
+          "ace:gunner:r5c3"
+        ],
+        [
+          "ace:gunner:r5c3",
+          "ace:gunner:r5c4"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "ace:pilot",
+      "source": {
+        "printedPage": 69,
+        "anyFlipFragmentPage": 70,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=70"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "ace:pilot",
+        "entryNodeIds": [
+          "ace:pilot:r1c1",
+          "ace:pilot:r1c2",
+          "ace:pilot:r1c3",
+          "ace:pilot:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "ace:pilot:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "full-throttle"
+        },
+        {
+          "id": "ace:pilot:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "skilled-jockey"
+        },
+        {
+          "id": "ace:pilot:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "galaxy-mapper"
+        },
+        {
+          "id": "ace:pilot:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "let-s-ride"
+        },
+        {
+          "id": "ace:pilot:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "skilled-jockey"
+        },
+        {
+          "id": "ace:pilot:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "dead-to-rights"
+        },
+        {
+          "id": "ace:pilot:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "galaxy-mapper"
+        },
+        {
+          "id": "ace:pilot:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "rapid-recovery"
+        },
+        {
+          "id": "ace:pilot:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "full-throttle-improved"
+        },
+        {
+          "id": "ace:pilot:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "dead-to-rights-improved"
+        },
+        {
+          "id": "ace:pilot:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "grit"
+        },
+        {
+          "id": "ace:pilot:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "natural-pilot"
+        },
+        {
+          "id": "ace:pilot:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "grit"
+        },
+        {
+          "id": "ace:pilot:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "full-throttle-supreme"
+        },
+        {
+          "id": "ace:pilot:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "tricky-target"
+        },
+        {
+          "id": "ace:pilot:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "defensive-driving"
+        },
+        {
+          "id": "ace:pilot:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "master-pilot"
+        },
+        {
+          "id": "ace:pilot:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "ace:pilot:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "toughened"
+        },
+        {
+          "id": "ace:pilot:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "brilliant-evasion"
+        }
+      ],
+      "connectors": [
+        [
+          "ace:pilot:r1c1",
+          "ace:pilot:r2c1"
+        ],
+        [
+          "ace:pilot:r2c1",
+          "ace:pilot:r3c1"
+        ],
+        [
+          "ace:pilot:r3c1",
+          "ace:pilot:r4c1"
+        ],
+        [
+          "ace:pilot:r4c1",
+          "ace:pilot:r5c1"
+        ],
+        [
+          "ace:pilot:r1c2",
+          "ace:pilot:r2c2"
+        ],
+        [
+          "ace:pilot:r2c2",
+          "ace:pilot:r3c2"
+        ],
+        [
+          "ace:pilot:r1c3",
+          "ace:pilot:r2c3"
+        ],
+        [
+          "ace:pilot:r2c3",
+          "ace:pilot:r3c3"
+        ],
+        [
+          "ace:pilot:r3c3",
+          "ace:pilot:r4c3"
+        ],
+        [
+          "ace:pilot:r4c3",
+          "ace:pilot:r5c3"
+        ],
+        [
+          "ace:pilot:r1c4",
+          "ace:pilot:r2c4"
+        ],
+        [
+          "ace:pilot:r2c4",
+          "ace:pilot:r3c4"
+        ],
+        [
+          "ace:pilot:r3c4",
+          "ace:pilot:r4c4"
+        ],
+        [
+          "ace:pilot:r4c4",
+          "ace:pilot:r5c4"
+        ],
+        [
+          "ace:pilot:r2c1",
+          "ace:pilot:r2c2"
+        ],
+        [
+          "ace:pilot:r2c3",
+          "ace:pilot:r2c4"
+        ],
+        [
+          "ace:pilot:r3c3",
+          "ace:pilot:r3c4"
+        ],
+        [
+          "ace:pilot:r4c1",
+          "ace:pilot:r4c2"
+        ],
+        [
+          "ace:pilot:r5c1",
+          "ace:pilot:r5c2"
+        ],
+        [
+          "ace:pilot:r5c2",
+          "ace:pilot:r5c3"
+        ],
+        [
+          "ace:pilot:r5c3",
+          "ace:pilot:r5c4"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "commander:commodore",
+      "source": {
+        "printedPage": 73,
+        "anyFlipFragmentPage": 74,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=74"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "commander:commodore",
+        "entryNodeIds": [
+          "commander:commodore:r1c1",
+          "commander:commodore:r1c2",
+          "commander:commodore:r1c3",
+          "commander:commodore:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "commander:commodore:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "solid-repairs"
+        },
+        {
+          "id": "commander:commodore:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "command"
+        },
+        {
+          "id": "commander:commodore:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "rapid-reaction"
+        },
+        {
+          "id": "commander:commodore:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "galaxy-mapper"
+        },
+        {
+          "id": "commander:commodore:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "known-schematic"
+        },
+        {
+          "id": "commander:commodore:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "commanding-presence"
+        },
+        {
+          "id": "commander:commodore:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "grit"
+        },
+        {
+          "id": "commander:commodore:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "familiar-suns"
+        },
+        {
+          "id": "commander:commodore:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "solid-repairs"
+        },
+        {
+          "id": "commander:commodore:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "command"
+        },
+        {
+          "id": "commander:commodore:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "rapid-reaction"
+        },
+        {
+          "id": "commander:commodore:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "galaxy-mapper"
+        },
+        {
+          "id": "commander:commodore:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "hold-together"
+        },
+        {
+          "id": "commander:commodore:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "commanding-presence"
+        },
+        {
+          "id": "commander:commodore:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "grit"
+        },
+        {
+          "id": "commander:commodore:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "master-starhopper"
+        },
+        {
+          "id": "commander:commodore:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "solid-repairs"
+        },
+        {
+          "id": "commander:commodore:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "fire-control"
+        },
+        {
+          "id": "commander:commodore:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "commander:commodore:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "galaxy-mapper"
+        }
+      ],
+      "connectors": [
+        [
+          "commander:commodore:r1c1",
+          "commander:commodore:r2c1"
+        ],
+        [
+          "commander:commodore:r2c1",
+          "commander:commodore:r3c1"
+        ],
+        [
+          "commander:commodore:r3c1",
+          "commander:commodore:r4c1"
+        ],
+        [
+          "commander:commodore:r4c1",
+          "commander:commodore:r5c1"
+        ],
+        [
+          "commander:commodore:r1c2",
+          "commander:commodore:r2c2"
+        ],
+        [
+          "commander:commodore:r2c2",
+          "commander:commodore:r3c2"
+        ],
+        [
+          "commander:commodore:r3c2",
+          "commander:commodore:r4c2"
+        ],
+        [
+          "commander:commodore:r4c2",
+          "commander:commodore:r5c2"
+        ],
+        [
+          "commander:commodore:r1c3",
+          "commander:commodore:r2c3"
+        ],
+        [
+          "commander:commodore:r2c3",
+          "commander:commodore:r3c3"
+        ],
+        [
+          "commander:commodore:r3c3",
+          "commander:commodore:r4c3"
+        ],
+        [
+          "commander:commodore:r4c3",
+          "commander:commodore:r5c3"
+        ],
+        [
+          "commander:commodore:r1c4",
+          "commander:commodore:r2c4"
+        ],
+        [
+          "commander:commodore:r2c4",
+          "commander:commodore:r3c4"
+        ],
+        [
+          "commander:commodore:r3c4",
+          "commander:commodore:r4c4"
+        ],
+        [
+          "commander:commodore:r4c4",
+          "commander:commodore:r5c4"
+        ],
+        [
+          "commander:commodore:r5c1",
+          "commander:commodore:r5c2"
+        ],
+        [
+          "commander:commodore:r5c2",
+          "commander:commodore:r5c3"
+        ],
+        [
+          "commander:commodore:r5c3",
+          "commander:commodore:r5c4"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "commander:squadron-leader",
+      "source": {
+        "printedPage": 74,
+        "anyFlipFragmentPage": 75,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=75"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "commander:squadron-leader",
+        "entryNodeIds": [
+          "commander:squadron-leader:r1c1",
+          "commander:squadron-leader:r1c2",
+          "commander:squadron-leader:r1c3",
+          "commander:squadron-leader:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "commander:squadron-leader:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "grit"
+        },
+        {
+          "id": "commander:squadron-leader:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "quick-strike"
+        },
+        {
+          "id": "commander:squadron-leader:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "let-s-ride"
+        },
+        {
+          "id": "commander:squadron-leader:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "defensive-driving"
+        },
+        {
+          "id": "commander:squadron-leader:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "field-commander"
+        },
+        {
+          "id": "commander:squadron-leader:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "confidence"
+        },
+        {
+          "id": "commander:squadron-leader:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "quick-strike"
+        },
+        {
+          "id": "commander:squadron-leader:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "situational-awareness"
+        },
+        {
+          "id": "commander:squadron-leader:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "command"
+        },
+        {
+          "id": "commander:squadron-leader:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "grit"
+        },
+        {
+          "id": "commander:squadron-leader:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "full-stop"
+        },
+        {
+          "id": "commander:squadron-leader:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "defensive-driving"
+        },
+        {
+          "id": "commander:squadron-leader:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "field-commander-improved"
+        },
+        {
+          "id": "commander:squadron-leader:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "command"
+        },
+        {
+          "id": "commander:squadron-leader:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "form-on-me"
+        },
+        {
+          "id": "commander:squadron-leader:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "tricky-target"
+        },
+        {
+          "id": "commander:squadron-leader:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "master-leader"
+        },
+        {
+          "id": "commander:squadron-leader:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "confidence"
+        },
+        {
+          "id": "commander:squadron-leader:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "commander:squadron-leader:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "brilliant-evasion"
+        }
+      ],
+      "connectors": [
+        [
+          "commander:squadron-leader:r1c1",
+          "commander:squadron-leader:r2c1"
+        ],
+        [
+          "commander:squadron-leader:r2c1",
+          "commander:squadron-leader:r3c1"
+        ],
+        [
+          "commander:squadron-leader:r3c1",
+          "commander:squadron-leader:r4c1"
+        ],
+        [
+          "commander:squadron-leader:r4c1",
+          "commander:squadron-leader:r5c1"
+        ],
+        [
+          "commander:squadron-leader:r2c2",
+          "commander:squadron-leader:r3c2"
+        ],
+        [
+          "commander:squadron-leader:r3c2",
+          "commander:squadron-leader:r4c2"
+        ],
+        [
+          "commander:squadron-leader:r4c2",
+          "commander:squadron-leader:r5c2"
+        ],
+        [
+          "commander:squadron-leader:r2c3",
+          "commander:squadron-leader:r3c3"
+        ],
+        [
+          "commander:squadron-leader:r3c3",
+          "commander:squadron-leader:r4c3"
+        ],
+        [
+          "commander:squadron-leader:r4c3",
+          "commander:squadron-leader:r5c3"
+        ],
+        [
+          "commander:squadron-leader:r1c4",
+          "commander:squadron-leader:r2c4"
+        ],
+        [
+          "commander:squadron-leader:r2c4",
+          "commander:squadron-leader:r3c4"
+        ],
+        [
+          "commander:squadron-leader:r3c4",
+          "commander:squadron-leader:r4c4"
+        ],
+        [
+          "commander:squadron-leader:r4c4",
+          "commander:squadron-leader:r5c4"
+        ],
+        [
+          "commander:squadron-leader:r2c1",
+          "commander:squadron-leader:r2c2"
+        ],
+        [
+          "commander:squadron-leader:r2c3",
+          "commander:squadron-leader:r2c4"
+        ],
+        [
+          "commander:squadron-leader:r4c2",
+          "commander:squadron-leader:r4c3"
+        ],
+        [
+          "commander:squadron-leader:r4c3",
+          "commander:squadron-leader:r4c4"
+        ],
+        [
+          "commander:squadron-leader:r5c1",
+          "commander:squadron-leader:r5c2"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "commander:tactician",
+      "source": {
+        "printedPage": 75,
+        "anyFlipFragmentPage": 76,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=76"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "commander:tactician",
+        "entryNodeIds": [
+          "commander:tactician:r1c1",
+          "commander:tactician:r1c2",
+          "commander:tactician:r1c3",
+          "commander:tactician:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "commander:tactician:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "outdoorsman"
+        },
+        {
+          "id": "commander:tactician:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "commanding-presence"
+        },
+        {
+          "id": "commander:tactician:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "toughened"
+        },
+        {
+          "id": "commander:tactician:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "side-step"
+        },
+        {
+          "id": "commander:tactician:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "outdoorsman"
+        },
+        {
+          "id": "commander:tactician:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "confidence"
+        },
+        {
+          "id": "commander:tactician:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "quick-draw"
+        },
+        {
+          "id": "commander:tactician:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "swift"
+        },
+        {
+          "id": "commander:tactician:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "natural-outdoorsman"
+        },
+        {
+          "id": "commander:tactician:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "toughened"
+        },
+        {
+          "id": "commander:tactician:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "body-guard"
+        },
+        {
+          "id": "commander:tactician:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "body-guard"
+        },
+        {
+          "id": "commander:tactician:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "confidence"
+        },
+        {
+          "id": "commander:tactician:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "commanding-presence"
+        },
+        {
+          "id": "commander:tactician:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "field-commander"
+        },
+        {
+          "id": "commander:tactician:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "side-step"
+        },
+        {
+          "id": "commander:tactician:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "coordinated-assault"
+        },
+        {
+          "id": "commander:tactician:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "natural-leader"
+        },
+        {
+          "id": "commander:tactician:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "field-commander-improved"
+        },
+        {
+          "id": "commander:tactician:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "dedication"
+        }
+      ],
+      "connectors": [
+        [
+          "commander:tactician:r1c1",
+          "commander:tactician:r2c1"
+        ],
+        [
+          "commander:tactician:r2c1",
+          "commander:tactician:r3c1"
+        ],
+        [
+          "commander:tactician:r1c2",
+          "commander:tactician:r2c2"
+        ],
+        [
+          "commander:tactician:r2c2",
+          "commander:tactician:r3c2"
+        ],
+        [
+          "commander:tactician:r3c2",
+          "commander:tactician:r4c2"
+        ],
+        [
+          "commander:tactician:r4c2",
+          "commander:tactician:r5c2"
+        ],
+        [
+          "commander:tactician:r3c3",
+          "commander:tactician:r4c3"
+        ],
+        [
+          "commander:tactician:r4c3",
+          "commander:tactician:r5c3"
+        ],
+        [
+          "commander:tactician:r1c4",
+          "commander:tactician:r2c4"
+        ],
+        [
+          "commander:tactician:r2c4",
+          "commander:tactician:r3c4"
+        ],
+        [
+          "commander:tactician:r3c4",
+          "commander:tactician:r4c4"
+        ],
+        [
+          "commander:tactician:r4c4",
+          "commander:tactician:r5c4"
+        ],
+        [
+          "commander:tactician:r2c3",
+          "commander:tactician:r2c4"
+        ],
+        [
+          "commander:tactician:r3c2",
+          "commander:tactician:r3c3"
+        ],
+        [
+          "commander:tactician:r3c3",
+          "commander:tactician:r3c4"
+        ],
+        [
+          "commander:tactician:r4c1",
+          "commander:tactician:r4c2"
+        ],
+        [
+          "commander:tactician:r4c2",
+          "commander:tactician:r4c3"
+        ],
+        [
+          "commander:tactician:r5c1",
+          "commander:tactician:r5c2"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "diplomat:ambassador",
+      "source": {
+        "printedPage": 79,
+        "anyFlipFragmentPage": 80,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=80"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "diplomat:ambassador",
+        "entryNodeIds": [
+          "diplomat:ambassador:r1c1",
+          "diplomat:ambassador:r1c2",
+          "diplomat:ambassador:r1c3",
+          "diplomat:ambassador:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "diplomat:ambassador:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "indistinguishable"
+        },
+        {
+          "id": "diplomat:ambassador:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "kill-with-kindness"
+        },
+        {
+          "id": "diplomat:ambassador:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "nobody-s-fool"
+        },
+        {
+          "id": "diplomat:ambassador:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "confidence"
+        },
+        {
+          "id": "diplomat:ambassador:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "indistinguishable"
+        },
+        {
+          "id": "diplomat:ambassador:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "grit"
+        },
+        {
+          "id": "diplomat:ambassador:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "grit"
+        },
+        {
+          "id": "diplomat:ambassador:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "dodge"
+        },
+        {
+          "id": "diplomat:ambassador:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "kill-with-kindness"
+        },
+        {
+          "id": "diplomat:ambassador:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "inspiring-rhetoric"
+        },
+        {
+          "id": "diplomat:ambassador:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "steely-nerves"
+        },
+        {
+          "id": "diplomat:ambassador:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "confidence"
+        },
+        {
+          "id": "diplomat:ambassador:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "inspiring-rhetoric-improved"
+        },
+        {
+          "id": "diplomat:ambassador:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "intense-presence"
+        },
+        {
+          "id": "diplomat:ambassador:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "works-like-a-charm"
+        },
+        {
+          "id": "diplomat:ambassador:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "dodge"
+        },
+        {
+          "id": "diplomat:ambassador:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "inspiring-rhetoric-supreme"
+        },
+        {
+          "id": "diplomat:ambassador:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "natural-charmer"
+        },
+        {
+          "id": "diplomat:ambassador:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "diplomat:ambassador:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "sixth-sense"
+        }
+      ],
+      "connectors": [
+        [
+          "diplomat:ambassador:r1c2",
+          "diplomat:ambassador:r2c2"
+        ],
+        [
+          "diplomat:ambassador:r2c2",
+          "diplomat:ambassador:r3c2"
+        ],
+        [
+          "diplomat:ambassador:r3c2",
+          "diplomat:ambassador:r4c2"
+        ],
+        [
+          "diplomat:ambassador:r4c2",
+          "diplomat:ambassador:r5c2"
+        ],
+        [
+          "diplomat:ambassador:r1c3",
+          "diplomat:ambassador:r2c3"
+        ],
+        [
+          "diplomat:ambassador:r2c3",
+          "diplomat:ambassador:r3c3"
+        ],
+        [
+          "diplomat:ambassador:r1c4",
+          "diplomat:ambassador:r2c4"
+        ],
+        [
+          "diplomat:ambassador:r2c4",
+          "diplomat:ambassador:r3c4"
+        ],
+        [
+          "diplomat:ambassador:r3c4",
+          "diplomat:ambassador:r4c4"
+        ],
+        [
+          "diplomat:ambassador:r4c4",
+          "diplomat:ambassador:r5c4"
+        ],
+        [
+          "diplomat:ambassador:r2c1",
+          "diplomat:ambassador:r2c2"
+        ],
+        [
+          "diplomat:ambassador:r3c1",
+          "diplomat:ambassador:r4c1"
+        ],
+        [
+          "diplomat:ambassador:r4c1",
+          "diplomat:ambassador:r5c1"
+        ],
+        [
+          "diplomat:ambassador:r3c3",
+          "diplomat:ambassador:r3c4"
+        ],
+        [
+          "diplomat:ambassador:r4c2",
+          "diplomat:ambassador:r4c3"
+        ],
+        [
+          "diplomat:ambassador:r5c2",
+          "diplomat:ambassador:r5c3"
+        ],
+        [
+          "diplomat:ambassador:r5c3",
+          "diplomat:ambassador:r5c4"
+        ],
+        [
+          "diplomat:ambassador:r3c1",
+          "diplomat:ambassador:r3c2"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "diplomat:agitator",
+      "source": {
+        "printedPage": 80,
+        "anyFlipFragmentPage": 81,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=81"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "diplomat:agitator",
+        "entryNodeIds": [
+          "diplomat:agitator:r1c1",
+          "diplomat:agitator:r1c2",
+          "diplomat:agitator:r1c3",
+          "diplomat:agitator:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "diplomat:agitator:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "plausible-deniability"
+        },
+        {
+          "id": "diplomat:agitator:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "nobody-s-fool"
+        },
+        {
+          "id": "diplomat:agitator:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "grit"
+        },
+        {
+          "id": "diplomat:agitator:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "intimidating"
+        },
+        {
+          "id": "diplomat:agitator:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "street-smarts"
+        },
+        {
+          "id": "diplomat:agitator:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "street-smarts"
+        },
+        {
+          "id": "diplomat:agitator:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "convincing-demeanor"
+        },
+        {
+          "id": "diplomat:agitator:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "intimidating"
+        },
+        {
+          "id": "diplomat:agitator:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "convincing-demeanor"
+        },
+        {
+          "id": "diplomat:agitator:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "plausible-deniability"
+        },
+        {
+          "id": "diplomat:agitator:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "scathing-tirade"
+        },
+        {
+          "id": "diplomat:agitator:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "grit"
+        },
+        {
+          "id": "diplomat:agitator:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "natural-enforcer"
+        },
+        {
+          "id": "diplomat:agitator:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "nobody-s-fool"
+        },
+        {
+          "id": "diplomat:agitator:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "scathing-tirade-improved"
+        },
+        {
+          "id": "diplomat:agitator:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "intimidating"
+        },
+        {
+          "id": "diplomat:agitator:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "intimidating"
+        },
+        {
+          "id": "diplomat:agitator:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "diplomat:agitator:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "scathing-tirade-supreme"
+        },
+        {
+          "id": "diplomat:agitator:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "incite-rebellion"
+        }
+      ],
+      "connectors": [
+        [
+          "diplomat:agitator:r1c2",
+          "diplomat:agitator:r2c2"
+        ],
+        [
+          "diplomat:agitator:r2c2",
+          "diplomat:agitator:r3c2"
+        ],
+        [
+          "diplomat:agitator:r3c2",
+          "diplomat:agitator:r4c2"
+        ],
+        [
+          "diplomat:agitator:r4c2",
+          "diplomat:agitator:r5c2"
+        ],
+        [
+          "diplomat:agitator:r1c3",
+          "diplomat:agitator:r2c3"
+        ],
+        [
+          "diplomat:agitator:r2c3",
+          "diplomat:agitator:r3c3"
+        ],
+        [
+          "diplomat:agitator:r3c3",
+          "diplomat:agitator:r4c3"
+        ],
+        [
+          "diplomat:agitator:r4c3",
+          "diplomat:agitator:r5c3"
+        ],
+        [
+          "diplomat:agitator:r1c4",
+          "diplomat:agitator:r2c4"
+        ],
+        [
+          "diplomat:agitator:r2c4",
+          "diplomat:agitator:r3c4"
+        ],
+        [
+          "diplomat:agitator:r4c4",
+          "diplomat:agitator:r5c4"
+        ],
+        [
+          "diplomat:agitator:r2c1",
+          "diplomat:agitator:r3c1"
+        ],
+        [
+          "diplomat:agitator:r4c1",
+          "diplomat:agitator:r5c1"
+        ],
+        [
+          "diplomat:agitator:r3c1",
+          "diplomat:agitator:r3c2"
+        ],
+        [
+          "diplomat:agitator:r3c2",
+          "diplomat:agitator:r3c3"
+        ],
+        [
+          "diplomat:agitator:r3c3",
+          "diplomat:agitator:r3c4"
+        ],
+        [
+          "diplomat:agitator:r4c1",
+          "diplomat:agitator:r4c2"
+        ],
+        [
+          "diplomat:agitator:r4c3",
+          "diplomat:agitator:r4c4"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "diplomat:quartermaster",
+      "source": {
+        "printedPage": 81,
+        "anyFlipFragmentPage": 82,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=82"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "diplomat:quartermaster",
+        "entryNodeIds": [
+          "diplomat:quartermaster:r1c1",
+          "diplomat:quartermaster:r1c2",
+          "diplomat:quartermaster:r1c3",
+          "diplomat:quartermaster:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "diplomat:quartermaster:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "know-somebody"
+        },
+        {
+          "id": "diplomat:quartermaster:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "smooth-talker"
+        },
+        {
+          "id": "diplomat:quartermaster:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "wheel-and-deal"
+        },
+        {
+          "id": "diplomat:quartermaster:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "grit"
+        },
+        {
+          "id": "diplomat:quartermaster:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "smooth-talker"
+        },
+        {
+          "id": "diplomat:quartermaster:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "greased-palms"
+        },
+        {
+          "id": "diplomat:quartermaster:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "master-merchant"
+        },
+        {
+          "id": "diplomat:quartermaster:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "toughened"
+        },
+        {
+          "id": "diplomat:quartermaster:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "grit"
+        },
+        {
+          "id": "diplomat:quartermaster:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "wheel-and-deal"
+        },
+        {
+          "id": "diplomat:quartermaster:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "bought-info"
+        },
+        {
+          "id": "diplomat:quartermaster:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "grit"
+        },
+        {
+          "id": "diplomat:quartermaster:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "know-somebody"
+        },
+        {
+          "id": "diplomat:quartermaster:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "sound-investments"
+        },
+        {
+          "id": "diplomat:quartermaster:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "sound-investments"
+        },
+        {
+          "id": "diplomat:quartermaster:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "intense-focus"
+        },
+        {
+          "id": "diplomat:quartermaster:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "diplomat:quartermaster:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "natural-negotiator"
+        },
+        {
+          "id": "diplomat:quartermaster:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "superior-reflexes"
+        },
+        {
+          "id": "diplomat:quartermaster:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "toughened"
+        }
+      ],
+      "connectors": [
+        [
+          "diplomat:quartermaster:r1c1",
+          "diplomat:quartermaster:r2c1"
+        ],
+        [
+          "diplomat:quartermaster:r2c1",
+          "diplomat:quartermaster:r3c1"
+        ],
+        [
+          "diplomat:quartermaster:r3c1",
+          "diplomat:quartermaster:r4c1"
+        ],
+        [
+          "diplomat:quartermaster:r4c1",
+          "diplomat:quartermaster:r5c1"
+        ],
+        [
+          "diplomat:quartermaster:r2c2",
+          "diplomat:quartermaster:r3c2"
+        ],
+        [
+          "diplomat:quartermaster:r3c2",
+          "diplomat:quartermaster:r4c2"
+        ],
+        [
+          "diplomat:quartermaster:r2c3",
+          "diplomat:quartermaster:r3c3"
+        ],
+        [
+          "diplomat:quartermaster:r3c3",
+          "diplomat:quartermaster:r4c3"
+        ],
+        [
+          "diplomat:quartermaster:r1c4",
+          "diplomat:quartermaster:r2c4"
+        ],
+        [
+          "diplomat:quartermaster:r2c4",
+          "diplomat:quartermaster:r3c4"
+        ],
+        [
+          "diplomat:quartermaster:r3c4",
+          "diplomat:quartermaster:r4c4"
+        ],
+        [
+          "diplomat:quartermaster:r4c4",
+          "diplomat:quartermaster:r5c4"
+        ],
+        [
+          "diplomat:quartermaster:r2c2",
+          "diplomat:quartermaster:r2c3"
+        ],
+        [
+          "diplomat:quartermaster:r4c1",
+          "diplomat:quartermaster:r4c2"
+        ],
+        [
+          "diplomat:quartermaster:r4c2",
+          "diplomat:quartermaster:r4c3"
+        ],
+        [
+          "diplomat:quartermaster:r5c1",
+          "diplomat:quartermaster:r5c2"
+        ],
+        [
+          "diplomat:quartermaster:r5c3",
+          "diplomat:quartermaster:r5c4"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "engineer:mechanic",
+      "source": {
+        "printedPage": 85,
+        "anyFlipFragmentPage": 86,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=86"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "engineer:mechanic",
+        "entryNodeIds": [
+          "engineer:mechanic:r1c1",
+          "engineer:mechanic:r1c2",
+          "engineer:mechanic:r1c3",
+          "engineer:mechanic:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "engineer:mechanic:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "gearhead"
+        },
+        {
+          "id": "engineer:mechanic:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "toughened"
+        },
+        {
+          "id": "engineer:mechanic:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "fine-tuning"
+        },
+        {
+          "id": "engineer:mechanic:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "solid-repairs"
+        },
+        {
+          "id": "engineer:mechanic:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "redundant-systems"
+        },
+        {
+          "id": "engineer:mechanic:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "solid-repairs"
+        },
+        {
+          "id": "engineer:mechanic:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "gearhead"
+        },
+        {
+          "id": "engineer:mechanic:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "grit"
+        },
+        {
+          "id": "engineer:mechanic:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "solid-repairs"
+        },
+        {
+          "id": "engineer:mechanic:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "enduring"
+        },
+        {
+          "id": "engineer:mechanic:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "bad-motivator"
+        },
+        {
+          "id": "engineer:mechanic:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "toughened"
+        },
+        {
+          "id": "engineer:mechanic:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "contraption"
+        },
+        {
+          "id": "engineer:mechanic:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "solid-repairs"
+        },
+        {
+          "id": "engineer:mechanic:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "fine-tuning"
+        },
+        {
+          "id": "engineer:mechanic:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "hard-headed"
+        },
+        {
+          "id": "engineer:mechanic:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "natural-tinkerer"
+        },
+        {
+          "id": "engineer:mechanic:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "hold-together"
+        },
+        {
+          "id": "engineer:mechanic:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "engineer:mechanic:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "hard-headed-improved"
+        }
+      ],
+      "connectors": [
+        [
+          "engineer:mechanic:r1c1",
+          "engineer:mechanic:r2c1"
+        ],
+        [
+          "engineer:mechanic:r2c1",
+          "engineer:mechanic:r3c1"
+        ],
+        [
+          "engineer:mechanic:r3c1",
+          "engineer:mechanic:r4c1"
+        ],
+        [
+          "engineer:mechanic:r4c1",
+          "engineer:mechanic:r5c1"
+        ],
+        [
+          "engineer:mechanic:r1c2",
+          "engineer:mechanic:r2c2"
+        ],
+        [
+          "engineer:mechanic:r2c2",
+          "engineer:mechanic:r3c2"
+        ],
+        [
+          "engineer:mechanic:r3c2",
+          "engineer:mechanic:r4c2"
+        ],
+        [
+          "engineer:mechanic:r4c2",
+          "engineer:mechanic:r5c2"
+        ],
+        [
+          "engineer:mechanic:r1c3",
+          "engineer:mechanic:r2c3"
+        ],
+        [
+          "engineer:mechanic:r2c3",
+          "engineer:mechanic:r3c3"
+        ],
+        [
+          "engineer:mechanic:r3c3",
+          "engineer:mechanic:r4c3"
+        ],
+        [
+          "engineer:mechanic:r4c3",
+          "engineer:mechanic:r5c3"
+        ],
+        [
+          "engineer:mechanic:r1c4",
+          "engineer:mechanic:r2c4"
+        ],
+        [
+          "engineer:mechanic:r2c4",
+          "engineer:mechanic:r3c4"
+        ],
+        [
+          "engineer:mechanic:r3c4",
+          "engineer:mechanic:r4c4"
+        ],
+        [
+          "engineer:mechanic:r4c4",
+          "engineer:mechanic:r5c4"
+        ],
+        [
+          "engineer:mechanic:r2c1",
+          "engineer:mechanic:r2c2"
+        ],
+        [
+          "engineer:mechanic:r3c1",
+          "engineer:mechanic:r3c2"
+        ],
+        [
+          "engineer:mechanic:r4c1",
+          "engineer:mechanic:r4c2"
+        ],
+        [
+          "engineer:mechanic:r4c2",
+          "engineer:mechanic:r4c3"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "engineer:saboteur",
+      "source": {
+        "printedPage": 86,
+        "anyFlipFragmentPage": 87,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=87"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "engineer:saboteur",
+        "entryNodeIds": [
+          "engineer:saboteur:r1c1",
+          "engineer:saboteur:r1c2",
+          "engineer:saboteur:r1c3",
+          "engineer:saboteur:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "engineer:saboteur:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "resolve"
+        },
+        {
+          "id": "engineer:saboteur:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "second-wind"
+        },
+        {
+          "id": "engineer:saboteur:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "grit"
+        },
+        {
+          "id": "engineer:saboteur:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "rapid-recovery"
+        },
+        {
+          "id": "engineer:saboteur:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "grit"
+        },
+        {
+          "id": "engineer:saboteur:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "powerful-blast"
+        },
+        {
+          "id": "engineer:saboteur:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "toughened"
+        },
+        {
+          "id": "engineer:saboteur:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "second-wind"
+        },
+        {
+          "id": "engineer:saboteur:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "time-to-go"
+        },
+        {
+          "id": "engineer:saboteur:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "rapid-recovery"
+        },
+        {
+          "id": "engineer:saboteur:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "resolve"
+        },
+        {
+          "id": "engineer:saboteur:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "hard-headed"
+        },
+        {
+          "id": "engineer:saboteur:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "time-to-go-improved"
+        },
+        {
+          "id": "engineer:saboteur:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "powerful-blast"
+        },
+        {
+          "id": "engineer:saboteur:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "selective-detonation"
+        },
+        {
+          "id": "engineer:saboteur:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "toughened"
+        },
+        {
+          "id": "engineer:saboteur:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "engineer:saboteur:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "master-grenadier"
+        },
+        {
+          "id": "engineer:saboteur:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "selective-detonation"
+        },
+        {
+          "id": "engineer:saboteur:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "hard-headed-improved"
+        }
+      ],
+      "connectors": [
+        [
+          "engineer:saboteur:r1c1",
+          "engineer:saboteur:r2c1"
+        ],
+        [
+          "engineer:saboteur:r3c1",
+          "engineer:saboteur:r4c1"
+        ],
+        [
+          "engineer:saboteur:r2c2",
+          "engineer:saboteur:r3c2"
+        ],
+        [
+          "engineer:saboteur:r3c2",
+          "engineer:saboteur:r4c2"
+        ],
+        [
+          "engineer:saboteur:r4c2",
+          "engineer:saboteur:r5c2"
+        ],
+        [
+          "engineer:saboteur:r2c3",
+          "engineer:saboteur:r3c3"
+        ],
+        [
+          "engineer:saboteur:r4c3",
+          "engineer:saboteur:r5c3"
+        ],
+        [
+          "engineer:saboteur:r1c4",
+          "engineer:saboteur:r2c4"
+        ],
+        [
+          "engineer:saboteur:r3c4",
+          "engineer:saboteur:r4c4"
+        ],
+        [
+          "engineer:saboteur:r4c4",
+          "engineer:saboteur:r5c4"
+        ],
+        [
+          "engineer:saboteur:r2c2",
+          "engineer:saboteur:r2c3"
+        ],
+        [
+          "engineer:saboteur:r2c3",
+          "engineer:saboteur:r2c4"
+        ],
+        [
+          "engineer:saboteur:r4c2",
+          "engineer:saboteur:r4c3"
+        ],
+        [
+          "engineer:saboteur:r5c1",
+          "engineer:saboteur:r5c2"
+        ],
+        [
+          "engineer:saboteur:r3c1",
+          "engineer:saboteur:r3c2"
+        ],
+        [
+          "engineer:saboteur:r3c3",
+          "engineer:saboteur:r3c4"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "engineer:scientist",
+      "source": {
+        "printedPage": 87,
+        "anyFlipFragmentPage": 88,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=88"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "engineer:scientist",
+        "entryNodeIds": [
+          "engineer:scientist:r1c1",
+          "engineer:scientist:r1c2",
+          "engineer:scientist:r1c3",
+          "engineer:scientist:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "engineer:scientist:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "knowledge-specialization"
+        },
+        {
+          "id": "engineer:scientist:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "respected-scholar"
+        },
+        {
+          "id": "engineer:scientist:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "researcher"
+        },
+        {
+          "id": "engineer:scientist:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "speaks-binary"
+        },
+        {
+          "id": "engineer:scientist:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "researcher"
+        },
+        {
+          "id": "engineer:scientist:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "knowledge-specialization"
+        },
+        {
+          "id": "engineer:scientist:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "hidden-storage"
+        },
+        {
+          "id": "engineer:scientist:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "tinkerer"
+        },
+        {
+          "id": "engineer:scientist:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "respected-scholar"
+        },
+        {
+          "id": "engineer:scientist:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "mental-fortress"
+        },
+        {
+          "id": "engineer:scientist:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "speaks-binary"
+        },
+        {
+          "id": "engineer:scientist:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "inventor"
+        },
+        {
+          "id": "engineer:scientist:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "natural-scholar"
+        },
+        {
+          "id": "engineer:scientist:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "stroke-of-genius"
+        },
+        {
+          "id": "engineer:scientist:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "inventor"
+        },
+        {
+          "id": "engineer:scientist:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "tinkerer"
+        },
+        {
+          "id": "engineer:scientist:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "intense-focus"
+        },
+        {
+          "id": "engineer:scientist:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "careful-planning"
+        },
+        {
+          "id": "engineer:scientist:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "engineer:scientist:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "utility-belt"
+        }
+      ],
+      "connectors": [
+        [
+          "engineer:scientist:r1c1",
+          "engineer:scientist:r2c1"
+        ],
+        [
+          "engineer:scientist:r2c1",
+          "engineer:scientist:r3c1"
+        ],
+        [
+          "engineer:scientist:r3c1",
+          "engineer:scientist:r4c1"
+        ],
+        [
+          "engineer:scientist:r4c1",
+          "engineer:scientist:r5c1"
+        ],
+        [
+          "engineer:scientist:r1c4",
+          "engineer:scientist:r2c4"
+        ],
+        [
+          "engineer:scientist:r2c4",
+          "engineer:scientist:r3c4"
+        ],
+        [
+          "engineer:scientist:r3c4",
+          "engineer:scientist:r4c4"
+        ],
+        [
+          "engineer:scientist:r4c4",
+          "engineer:scientist:r5c4"
+        ],
+        [
+          "engineer:scientist:r2c1",
+          "engineer:scientist:r2c2"
+        ],
+        [
+          "engineer:scientist:r3c1",
+          "engineer:scientist:r3c2"
+        ],
+        [
+          "engineer:scientist:r4c1",
+          "engineer:scientist:r4c2"
+        ],
+        [
+          "engineer:scientist:r4c3",
+          "engineer:scientist:r4c4"
+        ],
+        [
+          "engineer:scientist:r5c1",
+          "engineer:scientist:r5c2"
+        ],
+        [
+          "engineer:scientist:r5c2",
+          "engineer:scientist:r5c3"
+        ],
+        [
+          "engineer:scientist:r5c3",
+          "engineer:scientist:r5c4"
+        ],
+        [
+          "engineer:scientist:r2c3",
+          "engineer:scientist:r2c4"
+        ],
+        [
+          "engineer:scientist:r3c3",
+          "engineer:scientist:r3c4"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "soldier:commando",
+      "source": {
+        "printedPage": 91,
+        "anyFlipFragmentPage": 92,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=92"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "soldier:commando",
+        "entryNodeIds": [
+          "soldier:commando:r1c1",
+          "soldier:commando:r1c2",
+          "soldier:commando:r1c3",
+          "soldier:commando:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "soldier:commando:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "physical-training"
+        },
+        {
+          "id": "soldier:commando:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "grit"
+        },
+        {
+          "id": "soldier:commando:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "toughened"
+        },
+        {
+          "id": "soldier:commando:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "point-blank"
+        },
+        {
+          "id": "soldier:commando:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "toughened"
+        },
+        {
+          "id": "soldier:commando:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "durable"
+        },
+        {
+          "id": "soldier:commando:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "physical-training"
+        },
+        {
+          "id": "soldier:commando:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "strong-arm"
+        },
+        {
+          "id": "soldier:commando:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "blooded"
+        },
+        {
+          "id": "soldier:commando:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "armor-master"
+        },
+        {
+          "id": "soldier:commando:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "natural-outdoorsman"
+        },
+        {
+          "id": "soldier:commando:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "feral-strength"
+        },
+        {
+          "id": "soldier:commando:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "toughened"
+        },
+        {
+          "id": "soldier:commando:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "heroic-fortitude"
+        },
+        {
+          "id": "soldier:commando:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "durable"
+        },
+        {
+          "id": "soldier:commando:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "knockdown"
+        },
+        {
+          "id": "soldier:commando:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "armor-master-improved"
+        },
+        {
+          "id": "soldier:commando:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "soldier:commando:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "unstoppable"
+        },
+        {
+          "id": "soldier:commando:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "feral-strength"
+        }
+      ],
+      "connectors": [
+        [
+          "soldier:commando:r1c1",
+          "soldier:commando:r2c1"
+        ],
+        [
+          "soldier:commando:r1c3",
+          "soldier:commando:r2c3"
+        ],
+        [
+          "soldier:commando:r1c4",
+          "soldier:commando:r2c4"
+        ],
+        [
+          "soldier:commando:r2c1",
+          "soldier:commando:r2c2"
+        ],
+        [
+          "soldier:commando:r2c1",
+          "soldier:commando:r3c1"
+        ],
+        [
+          "soldier:commando:r2c2",
+          "soldier:commando:r2c3"
+        ],
+        [
+          "soldier:commando:r2c2",
+          "soldier:commando:r3c2"
+        ],
+        [
+          "soldier:commando:r2c3",
+          "soldier:commando:r2c4"
+        ],
+        [
+          "soldier:commando:r2c3",
+          "soldier:commando:r3c3"
+        ],
+        [
+          "soldier:commando:r2c4",
+          "soldier:commando:r3c4"
+        ],
+        [
+          "soldier:commando:r3c1",
+          "soldier:commando:r3c2"
+        ],
+        [
+          "soldier:commando:r3c1",
+          "soldier:commando:r4c1"
+        ],
+        [
+          "soldier:commando:r3c2",
+          "soldier:commando:r4c2"
+        ],
+        [
+          "soldier:commando:r3c4",
+          "soldier:commando:r4c4"
+        ],
+        [
+          "soldier:commando:r4c1",
+          "soldier:commando:r4c2"
+        ],
+        [
+          "soldier:commando:r4c1",
+          "soldier:commando:r5c1"
+        ],
+        [
+          "soldier:commando:r4c2",
+          "soldier:commando:r4c3"
+        ],
+        [
+          "soldier:commando:r4c2",
+          "soldier:commando:r5c2"
+        ],
+        [
+          "soldier:commando:r4c3",
+          "soldier:commando:r5c3"
+        ],
+        [
+          "soldier:commando:r4c4",
+          "soldier:commando:r5c4"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "soldier:medic",
+      "source": {
+        "printedPage": 92,
+        "anyFlipFragmentPage": 93,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=93"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "soldier:medic",
+        "entryNodeIds": [
+          "soldier:medic:r1c1",
+          "soldier:medic:r1c2",
+          "soldier:medic:r1c3",
+          "soldier:medic:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "soldier:medic:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "forager"
+        },
+        {
+          "id": "soldier:medic:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "stimpack-specialization"
+        },
+        {
+          "id": "soldier:medic:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "grit"
+        },
+        {
+          "id": "soldier:medic:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "surgeon"
+        },
+        {
+          "id": "soldier:medic:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "toughened"
+        },
+        {
+          "id": "soldier:medic:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "surgeon"
+        },
+        {
+          "id": "soldier:medic:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "stimpack-specialization"
+        },
+        {
+          "id": "soldier:medic:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "bacta-specialist"
+        },
+        {
+          "id": "soldier:medic:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "well-rounded"
+        },
+        {
+          "id": "soldier:medic:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "grit"
+        },
+        {
+          "id": "soldier:medic:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "stim-application"
+        },
+        {
+          "id": "soldier:medic:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "master-doctor"
+        },
+        {
+          "id": "soldier:medic:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "dodge"
+        },
+        {
+          "id": "soldier:medic:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "natural-doctor"
+        },
+        {
+          "id": "soldier:medic:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "stim-application-improved"
+        },
+        {
+          "id": "soldier:medic:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "stimpack-specialization"
+        },
+        {
+          "id": "soldier:medic:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "anatomy-lessons"
+        },
+        {
+          "id": "soldier:medic:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "soldier:medic:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "it-s-not-that-bad"
+        },
+        {
+          "id": "soldier:medic:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "stim-application-supreme"
+        }
+      ],
+      "connectors": [
+        [
+          "soldier:medic:r1c1",
+          "soldier:medic:r2c1"
+        ],
+        [
+          "soldier:medic:r1c4",
+          "soldier:medic:r2c4"
+        ],
+        [
+          "soldier:medic:r2c1",
+          "soldier:medic:r3c1"
+        ],
+        [
+          "soldier:medic:r2c2",
+          "soldier:medic:r2c3"
+        ],
+        [
+          "soldier:medic:r2c2",
+          "soldier:medic:r3c2"
+        ],
+        [
+          "soldier:medic:r2c3",
+          "soldier:medic:r2c4"
+        ],
+        [
+          "soldier:medic:r2c3",
+          "soldier:medic:r3c3"
+        ],
+        [
+          "soldier:medic:r3c1",
+          "soldier:medic:r4c1"
+        ],
+        [
+          "soldier:medic:r3c2",
+          "soldier:medic:r3c3"
+        ],
+        [
+          "soldier:medic:r3c2",
+          "soldier:medic:r4c2"
+        ],
+        [
+          "soldier:medic:r3c3",
+          "soldier:medic:r3c4"
+        ],
+        [
+          "soldier:medic:r3c3",
+          "soldier:medic:r4c3"
+        ],
+        [
+          "soldier:medic:r4c1",
+          "soldier:medic:r5c1"
+        ],
+        [
+          "soldier:medic:r4c2",
+          "soldier:medic:r5c2"
+        ],
+        [
+          "soldier:medic:r4c3",
+          "soldier:medic:r4c4"
+        ],
+        [
+          "soldier:medic:r4c3",
+          "soldier:medic:r5c3"
+        ],
+        [
+          "soldier:medic:r4c4",
+          "soldier:medic:r5c4"
+        ],
+        [
+          "soldier:medic:r5c2",
+          "soldier:medic:r5c3"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "soldier:sharpshooter",
+      "source": {
+        "printedPage": 93,
+        "anyFlipFragmentPage": 94,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=94"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "soldier:sharpshooter",
+        "entryNodeIds": [
+          "soldier:sharpshooter:r1c1",
+          "soldier:sharpshooter:r1c2",
+          "soldier:sharpshooter:r1c3",
+          "soldier:sharpshooter:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "soldier:sharpshooter:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "expert-tracker"
+        },
+        {
+          "id": "soldier:sharpshooter:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "sniper-shot"
+        },
+        {
+          "id": "soldier:sharpshooter:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "brace"
+        },
+        {
+          "id": "soldier:sharpshooter:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "grit"
+        },
+        {
+          "id": "soldier:sharpshooter:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "grit"
+        },
+        {
+          "id": "soldier:sharpshooter:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "true-aim"
+        },
+        {
+          "id": "soldier:sharpshooter:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "deadly-accuracy"
+        },
+        {
+          "id": "soldier:sharpshooter:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "lethal-blows"
+        },
+        {
+          "id": "soldier:sharpshooter:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "brace"
+        },
+        {
+          "id": "soldier:sharpshooter:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "lethal-blows"
+        },
+        {
+          "id": "soldier:sharpshooter:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "sniper-shot"
+        },
+        {
+          "id": "soldier:sharpshooter:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "true-aim"
+        },
+        {
+          "id": "soldier:sharpshooter:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "expert-tracker"
+        },
+        {
+          "id": "soldier:sharpshooter:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "deadly-accuracy"
+        },
+        {
+          "id": "soldier:sharpshooter:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "toughened"
+        },
+        {
+          "id": "soldier:sharpshooter:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "crippling-blow"
+        },
+        {
+          "id": "soldier:sharpshooter:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "quick-fix"
+        },
+        {
+          "id": "soldier:sharpshooter:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "natural-marksman"
+        },
+        {
+          "id": "soldier:sharpshooter:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "soldier:sharpshooter:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "targeted-blow"
+        }
+      ],
+      "connectors": [
+        [
+          "soldier:sharpshooter:r1c1",
+          "soldier:sharpshooter:r2c1"
+        ],
+        [
+          "soldier:sharpshooter:r1c2",
+          "soldier:sharpshooter:r2c2"
+        ],
+        [
+          "soldier:sharpshooter:r1c4",
+          "soldier:sharpshooter:r2c4"
+        ],
+        [
+          "soldier:sharpshooter:r2c1",
+          "soldier:sharpshooter:r3c1"
+        ],
+        [
+          "soldier:sharpshooter:r2c2",
+          "soldier:sharpshooter:r3c2"
+        ],
+        [
+          "soldier:sharpshooter:r2c3",
+          "soldier:sharpshooter:r3c3"
+        ],
+        [
+          "soldier:sharpshooter:r2c4",
+          "soldier:sharpshooter:r3c4"
+        ],
+        [
+          "soldier:sharpshooter:r3c1",
+          "soldier:sharpshooter:r4c1"
+        ],
+        [
+          "soldier:sharpshooter:r3c2",
+          "soldier:sharpshooter:r3c3"
+        ],
+        [
+          "soldier:sharpshooter:r3c2",
+          "soldier:sharpshooter:r4c2"
+        ],
+        [
+          "soldier:sharpshooter:r3c3",
+          "soldier:sharpshooter:r3c4"
+        ],
+        [
+          "soldier:sharpshooter:r3c4",
+          "soldier:sharpshooter:r4c4"
+        ],
+        [
+          "soldier:sharpshooter:r4c1",
+          "soldier:sharpshooter:r5c1"
+        ],
+        [
+          "soldier:sharpshooter:r4c2",
+          "soldier:sharpshooter:r4c3"
+        ],
+        [
+          "soldier:sharpshooter:r4c2",
+          "soldier:sharpshooter:r5c2"
+        ],
+        [
+          "soldier:sharpshooter:r4c3",
+          "soldier:sharpshooter:r5c3"
+        ],
+        [
+          "soldier:sharpshooter:r4c4",
+          "soldier:sharpshooter:r5c4"
+        ],
+        [
+          "soldier:sharpshooter:r5c1",
+          "soldier:sharpshooter:r5c2"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "spy:infiltrator",
+      "source": {
+        "printedPage": 97,
+        "anyFlipFragmentPage": 98,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=98"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "spy:infiltrator",
+        "entryNodeIds": [
+          "spy:infiltrator:r1c1",
+          "spy:infiltrator:r1c2",
+          "spy:infiltrator:r1c3",
+          "spy:infiltrator:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "spy:infiltrator:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "grit"
+        },
+        {
+          "id": "spy:infiltrator:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "dodge"
+        },
+        {
+          "id": "spy:infiltrator:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "frenzied-attack"
+        },
+        {
+          "id": "spy:infiltrator:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "defensive-stance"
+        },
+        {
+          "id": "spy:infiltrator:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "stunning-blow"
+        },
+        {
+          "id": "spy:infiltrator:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "grit"
+        },
+        {
+          "id": "spy:infiltrator:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "soft-spot"
+        },
+        {
+          "id": "spy:infiltrator:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "jump-up"
+        },
+        {
+          "id": "spy:infiltrator:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "knockdown"
+        },
+        {
+          "id": "spy:infiltrator:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "frenzied-attack"
+        },
+        {
+          "id": "spy:infiltrator:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "grit"
+        },
+        {
+          "id": "spy:infiltrator:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "dodge"
+        },
+        {
+          "id": "spy:infiltrator:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "natural-brawler"
+        },
+        {
+          "id": "spy:infiltrator:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "toughened"
+        },
+        {
+          "id": "spy:infiltrator:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "stunning-blow-improved"
+        },
+        {
+          "id": "spy:infiltrator:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "defensive-stance"
+        },
+        {
+          "id": "spy:infiltrator:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "spy:infiltrator:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "clever-solution"
+        },
+        {
+          "id": "spy:infiltrator:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "master-of-shadows"
+        },
+        {
+          "id": "spy:infiltrator:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "natural-rogue"
+        }
+      ],
+      "connectors": [
+        [
+          "spy:infiltrator:r1c3",
+          "spy:infiltrator:r2c3"
+        ],
+        [
+          "spy:infiltrator:r1c4",
+          "spy:infiltrator:r2c4"
+        ],
+        [
+          "spy:infiltrator:r2c1",
+          "spy:infiltrator:r2c2"
+        ],
+        [
+          "spy:infiltrator:r2c1",
+          "spy:infiltrator:r3c1"
+        ],
+        [
+          "spy:infiltrator:r2c2",
+          "spy:infiltrator:r2c3"
+        ],
+        [
+          "spy:infiltrator:r2c4",
+          "spy:infiltrator:r3c4"
+        ],
+        [
+          "spy:infiltrator:r3c1",
+          "spy:infiltrator:r3c2"
+        ],
+        [
+          "spy:infiltrator:r3c1",
+          "spy:infiltrator:r4c1"
+        ],
+        [
+          "spy:infiltrator:r3c2",
+          "spy:infiltrator:r3c3"
+        ],
+        [
+          "spy:infiltrator:r3c3",
+          "spy:infiltrator:r4c3"
+        ],
+        [
+          "spy:infiltrator:r3c4",
+          "spy:infiltrator:r4c4"
+        ],
+        [
+          "spy:infiltrator:r4c1",
+          "spy:infiltrator:r4c2"
+        ],
+        [
+          "spy:infiltrator:r4c1",
+          "spy:infiltrator:r5c1"
+        ],
+        [
+          "spy:infiltrator:r4c2",
+          "spy:infiltrator:r4c3"
+        ],
+        [
+          "spy:infiltrator:r4c3",
+          "spy:infiltrator:r5c3"
+        ],
+        [
+          "spy:infiltrator:r4c4",
+          "spy:infiltrator:r5c4"
+        ],
+        [
+          "spy:infiltrator:r5c1",
+          "spy:infiltrator:r5c2"
+        ],
+        [
+          "spy:infiltrator:r5c2",
+          "spy:infiltrator:r5c3"
+        ],
+        [
+          "spy:infiltrator:r5c3",
+          "spy:infiltrator:r5c4"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "spy:scout",
+      "source": {
+        "printedPage": 98,
+        "anyFlipFragmentPage": 99,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=99"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "spy:scout",
+        "entryNodeIds": [
+          "spy:scout:r1c1",
+          "spy:scout:r1c2",
+          "spy:scout:r1c3",
+          "spy:scout:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "spy:scout:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "rapid-recovery"
+        },
+        {
+          "id": "spy:scout:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "stalker"
+        },
+        {
+          "id": "spy:scout:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "grit"
+        },
+        {
+          "id": "spy:scout:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "shortcut"
+        },
+        {
+          "id": "spy:scout:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "forager"
+        },
+        {
+          "id": "spy:scout:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "quick-strike"
+        },
+        {
+          "id": "spy:scout:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "let-s-ride"
+        },
+        {
+          "id": "spy:scout:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "disorient"
+        },
+        {
+          "id": "spy:scout:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "rapid-recovery"
+        },
+        {
+          "id": "spy:scout:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "natural-hunter"
+        },
+        {
+          "id": "spy:scout:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "familiar-suns"
+        },
+        {
+          "id": "spy:scout:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "shortcut"
+        },
+        {
+          "id": "spy:scout:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "grit"
+        },
+        {
+          "id": "spy:scout:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "heightened-awareness"
+        },
+        {
+          "id": "spy:scout:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "toughened"
+        },
+        {
+          "id": "spy:scout:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "quick-strike"
+        },
+        {
+          "id": "spy:scout:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "utility-belt"
+        },
+        {
+          "id": "spy:scout:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "spy:scout:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "stalker"
+        },
+        {
+          "id": "spy:scout:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "disorient"
+        }
+      ],
+      "connectors": [
+        [
+          "spy:scout:r1c1",
+          "spy:scout:r2c1"
+        ],
+        [
+          "spy:scout:r1c2",
+          "spy:scout:r2c2"
+        ],
+        [
+          "spy:scout:r1c3",
+          "spy:scout:r2c3"
+        ],
+        [
+          "spy:scout:r1c4",
+          "spy:scout:r2c4"
+        ],
+        [
+          "spy:scout:r2c1",
+          "spy:scout:r2c2"
+        ],
+        [
+          "spy:scout:r2c1",
+          "spy:scout:r3c1"
+        ],
+        [
+          "spy:scout:r2c2",
+          "spy:scout:r2c3"
+        ],
+        [
+          "spy:scout:r2c2",
+          "spy:scout:r3c2"
+        ],
+        [
+          "spy:scout:r2c3",
+          "spy:scout:r2c4"
+        ],
+        [
+          "spy:scout:r2c3",
+          "spy:scout:r3c3"
+        ],
+        [
+          "spy:scout:r2c4",
+          "spy:scout:r3c4"
+        ],
+        [
+          "spy:scout:r3c1",
+          "spy:scout:r4c1"
+        ],
+        [
+          "spy:scout:r3c2",
+          "spy:scout:r4c2"
+        ],
+        [
+          "spy:scout:r3c3",
+          "spy:scout:r4c3"
+        ],
+        [
+          "spy:scout:r3c4",
+          "spy:scout:r4c4"
+        ],
+        [
+          "spy:scout:r4c1",
+          "spy:scout:r5c1"
+        ],
+        [
+          "spy:scout:r4c3",
+          "spy:scout:r5c3"
+        ],
+        [
+          "spy:scout:r4c4",
+          "spy:scout:r5c4"
+        ],
+        [
+          "spy:scout:r5c1",
+          "spy:scout:r5c2"
+        ],
+        [
+          "spy:scout:r5c2",
+          "spy:scout:r5c3"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "spy:slicer",
+      "source": {
+        "printedPage": 99,
+        "anyFlipFragmentPage": 100,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=100"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "spy:slicer",
+        "entryNodeIds": [
+          "spy:slicer:r1c1",
+          "spy:slicer:r1c2",
+          "spy:slicer:r1c3",
+          "spy:slicer:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "spy:slicer:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "codebreaker"
+        },
+        {
+          "id": "spy:slicer:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "grit"
+        },
+        {
+          "id": "spy:slicer:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "technical-aptitude"
+        },
+        {
+          "id": "spy:slicer:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "bypass-security"
+        },
+        {
+          "id": "spy:slicer:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "defensive-slicing"
+        },
+        {
+          "id": "spy:slicer:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "technical-aptitude"
+        },
+        {
+          "id": "spy:slicer:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "grit"
+        },
+        {
+          "id": "spy:slicer:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "bypass-security"
+        },
+        {
+          "id": "spy:slicer:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "natural-programmer"
+        },
+        {
+          "id": "spy:slicer:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "bypass-security"
+        },
+        {
+          "id": "spy:slicer:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "defensive-slicing"
+        },
+        {
+          "id": "spy:slicer:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "grit"
+        },
+        {
+          "id": "spy:slicer:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "defensive-slicing"
+        },
+        {
+          "id": "spy:slicer:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "defensive-slicing-improved"
+        },
+        {
+          "id": "spy:slicer:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "codebreaker"
+        },
+        {
+          "id": "spy:slicer:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "resolve"
+        },
+        {
+          "id": "spy:slicer:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "skilled-slicer"
+        },
+        {
+          "id": "spy:slicer:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "master-slicer"
+        },
+        {
+          "id": "spy:slicer:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "mental-fortress"
+        },
+        {
+          "id": "spy:slicer:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "dedication"
+        }
+      ],
+      "connectors": [
+        [
+          "spy:slicer:r1c1",
+          "spy:slicer:r2c1"
+        ],
+        [
+          "spy:slicer:r2c1",
+          "spy:slicer:r3c1"
+        ],
+        [
+          "spy:slicer:r2c2",
+          "spy:slicer:r2c3"
+        ],
+        [
+          "spy:slicer:r2c2",
+          "spy:slicer:r3c2"
+        ],
+        [
+          "spy:slicer:r2c3",
+          "spy:slicer:r2c4"
+        ],
+        [
+          "spy:slicer:r2c3",
+          "spy:slicer:r3c3"
+        ],
+        [
+          "spy:slicer:r2c4",
+          "spy:slicer:r3c4"
+        ],
+        [
+          "spy:slicer:r3c1",
+          "spy:slicer:r4c1"
+        ],
+        [
+          "spy:slicer:r3c2",
+          "spy:slicer:r3c3"
+        ],
+        [
+          "spy:slicer:r3c2",
+          "spy:slicer:r4c2"
+        ],
+        [
+          "spy:slicer:r3c3",
+          "spy:slicer:r3c4"
+        ],
+        [
+          "spy:slicer:r3c3",
+          "spy:slicer:r4c3"
+        ],
+        [
+          "spy:slicer:r3c4",
+          "spy:slicer:r4c4"
+        ],
+        [
+          "spy:slicer:r4c1",
+          "spy:slicer:r4c2"
+        ],
+        [
+          "spy:slicer:r4c1",
+          "spy:slicer:r5c1"
+        ],
+        [
+          "spy:slicer:r4c2",
+          "spy:slicer:r4c3"
+        ],
+        [
+          "spy:slicer:r4c2",
+          "spy:slicer:r5c2"
+        ],
+        [
+          "spy:slicer:r4c3",
+          "spy:slicer:r4c4"
+        ],
+        [
+          "spy:slicer:r4c3",
+          "spy:slicer:r5c3"
+        ],
+        [
+          "spy:slicer:r4c4",
+          "spy:slicer:r5c4"
+        ],
+        [
+          "spy:slicer:r5c1",
+          "spy:slicer:r5c2"
+        ],
+        [
+          "spy:slicer:r5c2",
+          "spy:slicer:r5c3"
+        ],
+        [
+          "spy:slicer:r5c3",
+          "spy:slicer:r5c4"
+        ]
+      ]
+    },
+    {
+      "specializationGlobalId": "universal:recruit",
+      "source": {
+        "printedPage": 101,
+        "anyFlipFragmentPage": 102,
+        "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=102"
+      },
+      "requirements": {
+        "availableSpecializationGlobalId": "universal:recruit",
+        "entryNodeIds": [
+          "universal:recruit:r1c1",
+          "universal:recruit:r1c2",
+          "universal:recruit:r1c3",
+          "universal:recruit:r1c4"
+        ],
+        "connectorTraversal": "purchased-path"
+      },
+      "nodes": [
+        {
+          "id": "universal:recruit:r1c1",
+          "row": 1,
+          "column": 1,
+          "xpCost": 5,
+          "talentId": "basic-combat-training"
+        },
+        {
+          "id": "universal:recruit:r1c2",
+          "row": 1,
+          "column": 2,
+          "xpCost": 5,
+          "talentId": "second-wind"
+        },
+        {
+          "id": "universal:recruit:r1c3",
+          "row": 1,
+          "column": 3,
+          "xpCost": 5,
+          "talentId": "outdoorsman"
+        },
+        {
+          "id": "universal:recruit:r1c4",
+          "row": 1,
+          "column": 4,
+          "xpCost": 5,
+          "talentId": "tactical-combat-training"
+        },
+        {
+          "id": "universal:recruit:r2c1",
+          "row": 2,
+          "column": 1,
+          "xpCost": 10,
+          "talentId": "second-wind"
+        },
+        {
+          "id": "universal:recruit:r2c2",
+          "row": 2,
+          "column": 2,
+          "xpCost": 10,
+          "talentId": "vehicle-combat-training"
+        },
+        {
+          "id": "universal:recruit:r2c3",
+          "row": 2,
+          "column": 3,
+          "xpCost": 10,
+          "talentId": "well-traveled"
+        },
+        {
+          "id": "universal:recruit:r2c4",
+          "row": 2,
+          "column": 4,
+          "xpCost": 10,
+          "talentId": "toughened"
+        },
+        {
+          "id": "universal:recruit:r3c1",
+          "row": 3,
+          "column": 1,
+          "xpCost": 15,
+          "talentId": "quick-draw"
+        },
+        {
+          "id": "universal:recruit:r3c2",
+          "row": 3,
+          "column": 2,
+          "xpCost": 15,
+          "talentId": "grit"
+        },
+        {
+          "id": "universal:recruit:r3c3",
+          "row": 3,
+          "column": 3,
+          "xpCost": 15,
+          "talentId": "toughened"
+        },
+        {
+          "id": "universal:recruit:r3c4",
+          "row": 3,
+          "column": 4,
+          "xpCost": 15,
+          "talentId": "spare-clip"
+        },
+        {
+          "id": "universal:recruit:r4c1",
+          "row": 4,
+          "column": 1,
+          "xpCost": 20,
+          "talentId": "second-wind"
+        },
+        {
+          "id": "universal:recruit:r4c2",
+          "row": 4,
+          "column": 2,
+          "xpCost": 20,
+          "talentId": "jump-up"
+        },
+        {
+          "id": "universal:recruit:r4c3",
+          "row": 4,
+          "column": 3,
+          "xpCost": 20,
+          "talentId": "grit"
+        },
+        {
+          "id": "universal:recruit:r4c4",
+          "row": 4,
+          "column": 4,
+          "xpCost": 20,
+          "talentId": "creative-killer"
+        },
+        {
+          "id": "universal:recruit:r5c1",
+          "row": 5,
+          "column": 1,
+          "xpCost": 25,
+          "talentId": "dynamic-fire"
+        },
+        {
+          "id": "universal:recruit:r5c2",
+          "row": 5,
+          "column": 2,
+          "xpCost": 25,
+          "talentId": "dedication"
+        },
+        {
+          "id": "universal:recruit:r5c3",
+          "row": 5,
+          "column": 3,
+          "xpCost": 25,
+          "talentId": "toughened"
+        },
+        {
+          "id": "universal:recruit:r5c4",
+          "row": 5,
+          "column": 4,
+          "xpCost": 25,
+          "talentId": "enduring"
+        }
+      ],
+      "connectors": [
+        [
+          "universal:recruit:r1c1",
+          "universal:recruit:r2c1"
+        ],
+        [
+          "universal:recruit:r2c1",
+          "universal:recruit:r3c1"
+        ],
+        [
+          "universal:recruit:r3c1",
+          "universal:recruit:r3c2"
+        ],
+        [
+          "universal:recruit:r4c1",
+          "universal:recruit:r4c2"
+        ],
+        [
+          "universal:recruit:r4c1",
+          "universal:recruit:r5c1"
+        ],
+        [
+          "universal:recruit:r5c1",
+          "universal:recruit:r5c2"
+        ],
+        [
+          "universal:recruit:r1c2",
+          "universal:recruit:r2c2"
+        ],
+        [
+          "universal:recruit:r2c2",
+          "universal:recruit:r3c2"
+        ],
+        [
+          "universal:recruit:r3c2",
+          "universal:recruit:r4c2"
+        ],
+        [
+          "universal:recruit:r4c2",
+          "universal:recruit:r4c3"
+        ],
+        [
+          "universal:recruit:r5c2",
+          "universal:recruit:r5c3"
+        ],
+        [
+          "universal:recruit:r1c3",
+          "universal:recruit:r2c3"
+        ],
+        [
+          "universal:recruit:r2c3",
+          "universal:recruit:r3c3"
+        ],
+        [
+          "universal:recruit:r3c3",
+          "universal:recruit:r4c3"
+        ],
+        [
+          "universal:recruit:r4c3",
+          "universal:recruit:r5c3"
+        ],
+        [
+          "universal:recruit:r4c3",
+          "universal:recruit:r4c4"
+        ],
+        [
+          "universal:recruit:r5c3",
+          "universal:recruit:r5c4"
+        ],
+        [
+          "universal:recruit:r1c4",
+          "universal:recruit:r2c4"
+        ],
+        [
+          "universal:recruit:r2c4",
+          "universal:recruit:r3c4"
+        ],
+        [
+          "universal:recruit:r3c4",
+          "universal:recruit:r4c4"
+        ]
+      ]
+    }
+  ]
+}

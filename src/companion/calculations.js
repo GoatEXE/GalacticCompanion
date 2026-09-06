@@ -1,5 +1,6 @@
 import { CHARACTERISTICS, SKILLS, findAnySpecialization, findCareer, findGear, findSpecialization, findSpecies, speciesGrantedSkillIds } from "./catalog.js";
 import { getCharacterCompletionErrors } from "./schema.js";
+import { talentSpecializationUndoBlockReason, talentXpSpent } from "./talentCalculations.js";
 
 const characteristicLabels = Object.fromEntries(CHARACTERISTICS.map((key) => [key, key[0].toUpperCase() + key.slice(1)]));
 
@@ -99,14 +100,14 @@ export function additionalSpecializationUndoBlockReason(character) {
     if (isCareerSkill(afterUndo, skill.id) || !isCareerSkill(character, skill.id)) continue;
     if (purchasedSkillCostEntries(character, skill.id).some((entry) => entry.career === true)) return `Undo unavailable: Remove purchased ${skill.name} ranks before undoing this specialization.`;
   }
-  return "";
+  return talentSpecializationUndoBlockReason(character, additionalIds.at(-1));
 }
 
 export function xpSpent(character) {
   const characteristics = CHARACTERISTICS.reduce((sum, key) => sum + characteristicCost(character, key), 0);
   const skills = SKILLS.reduce((sum, skill) => sum + purchasedSkillCost(character, skill.id), 0);
   const specializations = additionalSpecializationCosts(character).reduce((sum, entry) => sum + entry.cost, 0);
-  return characteristics + skills + specializations;
+  return characteristics + skills + specializations + talentXpSpent(character);
 }
 
 export function xpBudget(character) {

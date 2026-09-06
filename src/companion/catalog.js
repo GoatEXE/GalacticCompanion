@@ -5,6 +5,7 @@
  * talent effects.
  */
 import speciesData from "./species.json" with { type: "json" };
+import { findTalent } from "./talents.js";
 
 export const CATALOG_VERSION = 2;
 export const CATALOG_SOURCES = {
@@ -120,7 +121,7 @@ export const CAREERS = careers.map(([id, name, names, specializations, page]) =>
 }));
 
 export const UNIVERSAL_SPECIALIZATIONS = [
-  { id: "recruit", globalId: "universal:recruit", name: "Recruit", careerId: null, universal: true, skillIds: skillIds(["Athletics", "Discipline", "Survival", "Vigilance"]), source: "Age of Rebellion Core Rulebook, p. 103" }
+  { id: "recruit", globalId: "universal:recruit", name: "Recruit", careerId: null, universal: true, skillIds: skillIds(["Athletics", "Discipline", "Survival", "Vigilance"]), source: "Age of Rebellion Core Rulebook, p. 100", sourceUrl: "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=101" }
 ];
 
 export const SPECIALIZATIONS = [...CAREERS.flatMap((career) => career.specializations), ...UNIVERSAL_SPECIALIZATIONS];
@@ -159,12 +160,17 @@ export function validateCatalog(catalog = CATALOG) {
   catalog.species?.forEach((entry) => {
     const fixed = entry.setup?.startingSkillIds ?? [];
     const choice = entry.setup?.startingSkillChoice;
+    const talentRanks = entry.setup?.startingTalentRanks ?? [];
     const setupKindValid = ["human", "droid", "none"].includes(entry.setup?.kind);
     const abilitiesValid = Array.isArray(entry.abilities) && entry.abilities.length > 0 && abilitiesAreUnique(entry.abilities) && entry.abilities.every((ability) => Boolean(ability?.name && ability?.summary) && (typeof ability.tableReview === "undefined" || typeof ability.tableReview === "boolean"));
     const characteristicsValid = CHARACTERISTICS.every((key) => Number.isInteger(entry.characteristics?.[key]) && entry.characteristics[key] >= 1 && entry.characteristics[key] <= 5);
     const fixedValid = fixed.every(validSkill) && new Set(fixed).size === fixed.length;
     const choiceValid = !choice || (Number.isInteger(choice.count) && choice.count >= 1 && choice.count <= (choice.skillIds?.length ?? 0) && new Set(choice.skillIds).size === choice.skillIds.length && choice.skillIds.every(validSkill));
-    if (!Number.isInteger(entry.startingXp) || entry.startingXp <= 0 || !Number.isInteger(entry.woundBase) || entry.woundBase <= 0 || !Number.isInteger(entry.strainBase) || entry.strainBase <= 0 || !characteristicsValid || !setupKindValid || !entry.description || !entry.source || !entry.sourcePage || !entry.sourceUrl || !abilitiesValid || !fixedValid || !choiceValid) errors.push(`Invalid species: ${entry.id}.`);
+    const talentRanksValid = Array.isArray(talentRanks) && new Set(talentRanks.map((grant) => grant?.talentId)).size === talentRanks.length && talentRanks.every((grant) => {
+      const talent = findTalent(grant?.talentId);
+      return talent && !talent.npcOnly && Number.isInteger(grant.rank) && grant.rank >= 1 && Number.isInteger(grant.sourcePage) && grant.source === `Age of Rebellion Core Rulebook, p. ${grant.sourcePage}` && grant.sourceUrl === `https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=${grant.sourcePage + 1}`;
+    });
+    if (!Number.isInteger(entry.startingXp) || entry.startingXp <= 0 || !Number.isInteger(entry.woundBase) || entry.woundBase <= 0 || !Number.isInteger(entry.strainBase) || entry.strainBase <= 0 || !characteristicsValid || !setupKindValid || !entry.description || !entry.source || !entry.sourcePage || !entry.sourceUrl || !abilitiesValid || !fixedValid || !choiceValid || !talentRanksValid) errors.push(`Invalid species: ${entry.id}.`);
   });
   catalog.careers?.forEach((career) => {
     if (!career.source || career.skillIds?.length !== 8 || !career.skillIds?.every(validSkill)) errors.push(`Invalid career skill in ${career.id}.`);
