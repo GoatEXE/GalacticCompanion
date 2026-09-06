@@ -1,6 +1,7 @@
 import { BACKGROUNDS, DUTIES, SKILLS, SPECIALIZATIONS, findCareer, findGear, findSpecialization, findSpecies, speciesGrantedSkillIds } from "./catalog.js";
+import { replayTalentPurchases } from "./talentCalculations.js";
 
-export const CHARACTER_SCHEMA_VERSION = 2;
+export const CHARACTER_SCHEMA_VERSION = 3;
 export const ROSTER_SCHEMA_VERSION = 1;
 export const CHARACTER_EXPORT_KIND = "aor-companion-character";
 
@@ -14,6 +15,23 @@ function now() { return new Date().toISOString(); }
 function id() { return `pc-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`; }
 function string(value, fallback = "") { return typeof value === "string" ? value : fallback; }
 function array(value) { return Array.isArray(value) ? value : []; }
+function object(value) { return value && typeof value === "object" && !Array.isArray(value); }
+function copyValue(value) {
+  if (Array.isArray(value)) return value.map(copyValue);
+  if (object(value)) return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, copyValue(entry)]));
+  return value;
+}
+function migratedTalentPurchases(value, sourceSchemaVersion) {
+  // All pre-v3 drafts predate durable talent ownership. Their state is
+  // intentionally reset rather than inferred from a catalogue that can never
+  // prove historic node order or acquisition choices.
+  if (sourceSchemaVersion !== CHARACTER_SCHEMA_VERSION) return [];
+  if (!Object.hasOwn(value, "talentPurchases") || !Array.isArray(value.talentPurchases)) return value.talentPurchases;
+  return value.talentPurchases.map((record) => {
+    if (!object(record) || typeof record.nodeId !== "string" || !Object.hasOwn(record, "choices") || !object(record.choices)) return record;
+    return { nodeId: record.nodeId, choices: copyValue(record.choices) };
+  });
+}
 function integer(value, fallback = 0, min = 0, max = 999) {
   const parsed = Number(value);
   return Number.isInteger(parsed) && parsed >= min && parsed <= max ? parsed : fallback;
@@ -60,6 +78,7 @@ export function createCharacter() {
     careerId: "",
     specializationId: "",
     additionalSpecializationIds: [],
+    talentPurchases: [],
     careerTraining: [],
     specializationTraining: [],
     humanBonusTraining: [],
@@ -76,9 +95,10 @@ export function createCharacter() {
 /** Coerces old/plain JSON to the current shape, then validates it. */
 export function migrateCharacter(value) {
   if (!value || typeof value !== "object") throw new Error("Character must be an object.");
-  if (value.schemaVersion !== undefined && ![1, CHARACTER_SCHEMA_VERSION].includes(value.schemaVersion)) {
+  if (value.schemaVersion !== undefined && ![1, 2, CHARACTER_SCHEMA_VERSION].includes(value.schemaVersion)) {
     throw new Error(`Unsupported character schema version: ${value.schemaVersion}.`);
   }
+  const sourceSchemaVersion = value.schemaVersion;
   const base = createCharacter();
   const character = {
     ...base,
@@ -98,6 +118,7 @@ export function migrateCharacter(value) {
     careerId: string(value.careerId),
     specializationId: string(value.specializationId),
     additionalSpecializationIds: array(value.additionalSpecializationIds).map(String),
+    talentPurchases: migratedTalentPurchases(value, sourceSchemaVersion),
     careerTraining: array(value.careerTraining).map(String),
     specializationTraining: array(value.specializationTraining).map(String),
     humanBonusTraining: array(value.humanBonusTraining).map(String),
@@ -142,6 +163,12 @@ export function validateCharacter(character, { requireComplete = false } = {}) {
   if (!Array.isArray(character.additionalSpecializationIds) || !additionalSpecializationIds.every((id) => specializationIds.has(id)) || !unique(additionalSpecializationIds)) errors.push("Additional specializations must contain distinct known specializations.");
   const startingGlobalId = specialization?.globalId;
   if (character.specializationId && (additionalSpecializationIds.includes(character.specializationId) || (startingGlobalId && additionalSpecializationIds.includes(startingGlobalId)))) errors.push("Starting specialization cannot be purchased twice.");
+  if (!Array.isArray(character.talentPurchases)) {
+    errors.push("Talent purchases must be an ordered array.");
+  } else {
+    const talentReplay = replayTalentPurchases(character);
+    if (!talentReplay.valid) errors.push(`Invalid talent purchase ledger: ${talentReplay.errors.map((error) => error.message).join(" ")}`);
+  }
   const allTraining = [character.careerTraining, character.specializationTraining, character.humanBonusTraining, character.speciesTraining];
   allTraining.forEach((choices) => {
     if (!Array.isArray(choices) || !choices.every((skillId) => skillIds.has(skillId)) || !unique(choices)) errors.push("Training choices must contain distinct known skills.");
@@ -216,7 +243,7 @@ export function parseCharacterImport(json) {
   let value;
   try { value = JSON.parse(json); } catch { throw new Error("Import file is not valid JSON."); }
   if (!value || value.kind !== CHARACTER_EXPORT_KIND) throw new Error("Import file is not an Age of Rebellion companion character.");
-  if (![1, CHARACTER_SCHEMA_VERSION].includes(value.schemaVersion)) throw new Error(`Unsupported import schema version: ${value?.schemaVersion}.`);
+  if (![1, 2, CHARACTER_SCHEMA_VERSION].includes(value.schemaVersion)) throw new Error(`Unsupported import schema version: ${value?.schemaVersion}.`);
   return migrateCharacter(value.character);
 }
 

@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { createServer } from "vite";
 import { BACKGROUNDS, DUTIES, SKILLS, SPECIALIZATIONS, SPECIES } from "../src/companion/catalog.js";
 import { createCharacter } from "../src/companion/schema.js";
+import { changeSpecies, changeStartingCareer, changeStartingSpecialization } from "../src/companion/creatorMutations.js";
 
 const companionCss = readFileSync(new URL("../src/styles/companion.css", import.meta.url), "utf8");
 
@@ -63,6 +64,139 @@ test("Experience copy uses accessible section naming, callout placement, and con
     assert.ok(html.indexOf("experience-specializations-title") < html.indexOf("Specialization pricing legend"));
     assert.match(html, /<h5 id="experience-specializations-title">Specializations<\/h5><p class="experience-skill-note">Starting specialization is free\. Purchasing an additional specialization unlocks its skill tree\.<\/p><div class="skill-pricing-legend specialization-pricing-legend"/);
     assert.doesNotMatch(html, /Starting specialization is free\. Additional specializations grant career skills/);
+  });
+});
+
+test("talent purchases leave tree disclosure state caller-controlled", async () => {
+  const creatorSource = readFileSync(new URL("../src/companion/CharacterCreator.jsx", import.meta.url), "utf8");
+  assert.doesNotMatch(creatorSource, /\bconst openTree\b/);
+  assert.doesNotMatch(creatorSource, /openTree\(node\.specializationGlobalId\)/);
+  await withViews(async ({ TalentExperience }) => {
+    const html = renderToStaticMarkup(React.createElement(TalentExperience, { character: playableCharacter(), onChange: () => {} }));
+    assert.doesNotMatch(html, /<details class="talent-tree-details" open="">/);
+    assert.match(html, /class="talent-purchase-row[^"]*"/);
+  });
+});
+
+test("expanded talent nodes render derived prerequisite labels without exposing node identities", async () => {
+  const nodeMarkup = (html, talentName, row, column) => [...html.matchAll(/<button type="button" class="talent-node[\s\S]*?<\/button>/g)].map(([markup]) => markup).find((markup) => markup.includes(`<b>${talentName}</b>`) && markup.includes(`data-row="${row}" data-column="${column}"`));
+  const visibleNodeMarkup = (markup) => markup.replace(/<span id="[^"]+" class="sr-only">[^<]*<\/span>/g, "");
+  await withViews(async ({ TalentExperience }) => {
+    const initial = renderToStaticMarkup(React.createElement(TalentExperience, { character: playableCharacter(), onChange: () => {} }));
+    const entry = nodeMarkup(initial, "Physical Training", 1, 1);
+    const locked = nodeMarkup(initial, "Toughened", 2, 1);
+    const deduped = nodeMarkup(initial, "Blooded", 3, 1);
+    assert.match(entry, /class="talent-node-prerequisite">Prerequisite: None<\/span>/);
+    assert.match(locked, /class="talent-node-prerequisite">Prerequisite: Physical Training or Durable or Blooded<\/span>/);
+    assert.match(deduped, /class="talent-node-prerequisite">Prerequisite: Toughened or Armor Master<\/span>/);
+    assert.doesNotMatch(visibleNodeMarkup(entry), /R\d C\d|soldier:commando|Connection:|Gains rank/);
+
+    const reached = renderToStaticMarkup(React.createElement(TalentExperience, {
+      character: { ...playableCharacter(), talentPurchases: [{ nodeId: "soldier:commando:r1c1", choices: {} }] }, onChange: () => {}
+    }));
+    const connected = nodeMarkup(reached, "Toughened", 2, 1);
+    assert.match(connected, /talent-node-available/);
+    assert.match(connected, /class="talent-node-prerequisite">Prerequisite: Physical Training<\/span>/);
+    assert.match(connected, /class="talent-status talent-status-available">Available<\/span>/);
+    assert.match(connected, /class="talent-node-cost">10 XP<\/span>/);
+    assert.match(connected, /class="sr-only">R2 C1 · soldier:commando:r2c1\. Connection:/);
+  });
+});
+
+test("talent experience lists eligible occurrences before collapsed owned trees with accessible node states", async () => {
+  await withViews(async ({ TalentExperience }) => {
+    const character = { ...playableCharacter(), talentPurchases: [{ nodeId: "soldier:commando:r1c1", choices: {} }] };
+    const html = renderToStaticMarkup(React.createElement(TalentExperience, { character, onChange: () => {} }));
+    assert.match(html, /<h5 id="experience-talents-title">Talents<\/h5>/);
+    assert.match(html, /Purchase talents from your available specializations\. Talent effects are not automated\./);
+    assert.match(html, /<section class="talent-purchase-options" aria-label="Available talent purchases">/);
+    assert.doesNotMatch(html, /talent-purchase-options-title|>Purchasable now<|<h6[^>]*>Purchasable now<\/h6>/);
+    assert.match(html, /class="button button-secondary talent-undo-button"[^>]*aria-describedby="talent-undo-help"/);
+    assert.match(html, /<p id="talent-undo-help" class="sr-only talent-undo-help">Global LIFO undo:/);
+    assert.match(html, /<p class="sr-only talent-live-region" role="status" aria-live="polite" aria-atomic="true"><\/p>/);
+    assert.match(html, /<details class="talent-tree-details"><summary>/);
+    assert.doesNotMatch(html, /<details class="talent-tree-details" open="">/);
+    assert.equal((html.match(/class="talent-node talent-node-/g) ?? []).length, 20);
+    assert.match(html, /class="talent-connector-layer"[^>]*aria-hidden="true"/);
+    assert.equal((html.match(/<line /g) ?? []).length > 0, true);
+    assert.doesNotMatch(html, /marker-(?:start|mid|end)|<polygon|<path/);
+    const purchaseStart = html.indexOf('<ul class="talent-purchase-list"');
+    const treeStart = html.indexOf('<div class="talent-tree-list"');
+    const purchaseMarkup = html.slice(purchaseStart, treeStart);
+    assert.match(purchaseMarkup, /<b>Grit<\/b><span>Commando<\/span><\/div><p class="talent-purchase-description">Increases strain threshold by 1 per rank\.<\/p>/);
+    assert.match(purchaseMarkup, /<strong class="talent-purchase-cost">5 XP<\/strong><button[^>]*aria-label="Purchase Grit for 5 XP">Purchase<\/button>/);
+    assert.doesNotMatch(purchaseMarkup, /talent-purchase-details|talent-status|Affordable|Unaffordable|Connection:|Gains rank|R\d C\d|soldier:commando/);
+    const treeMarkup = html.slice(treeStart);
+    const firstTreeNodeStart = treeMarkup.indexOf('<button type="button" class="talent-node');
+    const firstTreeNodeEnd = treeMarkup.indexOf('</button>', firstTreeNodeStart) + '</button>'.length;
+    const firstTreeNode = treeMarkup.slice(firstTreeNodeStart, firstTreeNodeEnd);
+    const visibleTreeNode = firstTreeNode.replace(/<span id="[^"]+" class="sr-only">[^<]*<\/span>/g, "");
+    assert.match(firstTreeNode, /class="talent-node-description">Adds a boost per rank to Athletics and Resilience checks\.<\/span>/);
+    assert.match(firstTreeNode, /class="talent-status talent-status-owned">Owned<\/span>/);
+    assert.match(firstTreeNode, /class="talent-node-cost">5 XP<\/span>/);
+    assert.match(firstTreeNode, /aria-label="Physical Training, Adds a boost per rank to Athletics and Resilience checks\., Owned, 5 XP, Prerequisite: None\." aria-describedby="talent-node-details-/);
+    assert.match(firstTreeNode, /class="sr-only">R1 C1 · soldier:commando:r1c1\. Connection: top-row entry node\.<\/span>/);
+    assert.doesNotMatch(treeMarkup, /talent-node-coordinate|talent-node-connection/);
+    assert.doesNotMatch(visibleTreeNode, /R\d C\d|soldier:commando|Connection:|Gains rank/);
+    assert.match(treeMarkup, /Owned elsewhere\/free when reached|>Owned<\/span>/);
+    assert.match(treeMarkup, />Available<\/span>/);
+    assert.match(treeMarkup, />Locked<\/span>/);
+    assert.match(treeMarkup, /Connection: top-row entry node\./);
+    assert.match(treeMarkup, /Source: <a href="https:\/\/online\.anyflip\.com\/ziisf\/jobq\/mobile\/index\.html#page=/);
+    assert.match(html, /Global LIFO undo:/);
+
+    const emptyUndo = renderToStaticMarkup(React.createElement(TalentExperience, {
+      character: playableCharacter(), onChange: () => {}
+    }));
+    assert.match(emptyUndo, /<p id="talent-undo-help" class="sr-only talent-undo-help">No talent purchases to undo\.<\/p>/);
+    assert.match(emptyUndo, /<p class="sr-only talent-live-region" role="status" aria-live="polite" aria-atomic="true"><\/p>/);
+
+    const unaffordable = renderToStaticMarkup(React.createElement(TalentExperience, {
+      character: { ...character, characteristicAdvances: { brawn: 4 } }, onChange: () => {}
+    }));
+    const unaffordableStart = unaffordable.indexOf('<ul class="talent-purchase-list"');
+    const unaffordableTreeStart = unaffordable.indexOf('<div class="talent-tree-list"');
+    const unaffordableMarkup = unaffordable.slice(unaffordableStart, unaffordableTreeStart);
+    assert.match(unaffordableMarkup, /class="[^"]*talent-purchase-unaffordable"/);
+    assert.match(unaffordableMarkup, /<strong class="talent-purchase-cost">5 XP<\/strong><button[^>]*disabled=""[^>]*aria-describedby="talent-purchase-help-/);
+    assert.match(unaffordableMarkup, /class="sr-only">Requires \d+ additional XP\.<\/span>/);
+    const visibleUnaffordableMarkup = unaffordableMarkup.replace(/<span id="[^"]+" class="sr-only">[^<]*<\/span>/g, "");
+    assert.doesNotMatch(visibleUnaffordableMarkup, /Requires \d+ additional XP\.|Affordable|Unaffordable|Connection:|Gains rank|R\d C\d|soldier:commando/);
+  });
+});
+
+test("Experience renders recovered root changes and an editable overspent talent draft", async () => {
+  await withViews(async ({ CharacterCreator }) => {
+    const purchased = {
+      ...playableCharacter(),
+      talentPurchases: [{ nodeId: "soldier:commando:r1c1", choices: {} }]
+    };
+    const rootChanges = [
+      changeSpecies(purchased, "duros"),
+      changeStartingCareer(purchased, "ace"),
+      changeStartingSpecialization(purchased, "medic")
+    ];
+    for (const changed of rootChanges) {
+      const html = renderToStaticMarkup(React.createElement(CharacterCreator, { character: changed, initialStep: 5, onChange: () => {}, onOpenSheet: () => {} }));
+      assert.match(html, /id="experience-talents-title">Talents/);
+      assert.doesNotMatch(html, /Invalid talent purchase ledger/);
+      assert.doesNotMatch(html, /Talent purchase records need repair/);
+    }
+
+    const overspent = {
+      ...playableCharacter(),
+      dutyXpExchange: false,
+      characteristicAdvances: { brawn: 3 },
+      talentPurchases: [
+        { nodeId: "soldier:commando:r1c1", choices: {} },
+        { nodeId: "soldier:commando:r2c1", choices: {} }
+      ]
+    };
+    const overspentHtml = renderToStaticMarkup(React.createElement(CharacterCreator, { character: overspent, initialStep: 5, onChange: () => {}, onOpenSheet: () => {} }));
+    assert.match(overspentHtml, /XP spending exceeds the available budget\./);
+    assert.match(overspentHtml, /class="button button-secondary talent-undo-button"[^>]*>Undo last talent/);
+    assert.doesNotMatch(overspentHtml, /talent-undo-button"[^>]*disabled=""/);
+    assert.match(overspentHtml, /Global LIFO undo:/);
   });
 });
 
@@ -132,6 +266,24 @@ test("additional specialization picker uses a visible legend and accessible row 
   });
 });
 
+test("talent controls share compact secondary sizing while preserving mobile touch targets", () => {
+  assert.match(companionCss, /\.additional-specialization-list \.button,\.talent-undo-button,\.talent-purchase-action \.button \{ font-size: \.72rem; min-height: 2rem; padding-inline: \.55rem; \}/);
+  assert.match(companionCss, /@media \(max-width: 640px\) \{[\s\S]*\.talent-undo-button,\.talent-purchase-action \.button \{ min-height: 2\.75rem; \}/);
+  assert.match(companionCss, /\.talent-experience-heading h5 \{ color: var\(--text\); font-family: "Barlow Condensed",Impact,sans-serif; font-size: 1\.08rem; letter-spacing: \.08em; margin: 0 0 \.4rem; text-transform: uppercase; \}/);
+  assert.match(companionCss, /\.talent-node-footer \{ align-items: baseline; display: flex; flex-wrap: wrap; gap: \.2rem \.45rem; min-width: 0; \}/);
+  assert.match(companionCss, /\.talent-node-prerequisite \{ color: var\(--text-muted\); display: none;/);
+  assert.match(companionCss, /@media \(max-width: 640px\) \{[\s\S]*\.talent-node-footer \{ display: grid; grid-template-columns: minmax\(0,1fr\) auto; width: 100%; \}[\s\S]*\.talent-node-prerequisite \{ display: block; font-size: \.61rem; grid-column: 1; grid-row: 1; justify-self: start;/);
+  assert.match(companionCss, /\.talent-node-cost \{ color: var\(--crawl-yellow\); font-family: "IBM Plex Mono",monospace; font-size: \.62rem;/);
+  assert.match(companionCss, /\.talent-connector-layer \{ height: calc\(100% - 1\.15rem\); inset: \.575rem 0; pointer-events: none;/);
+  assert.match(companionCss, /\.talent-connector-layer line \{ stroke: var\(--alliance-red\); stroke-linecap: round; stroke-width: 2;/);
+  assert.doesNotMatch(companionCss, /\.talent-connector-layer line \{[^}]*stroke-width: (?:0|0\.[0-9]+|1)(?:;|\s)/);
+  assert.match(companionCss, /\.talent-node \{[^}]*background: var\(--raised\);/);
+  assert.match(companionCss, /\.talent-node:hover:not\(:disabled\) \{ background: var\(--raised-hover\);/);
+  assert.match(companionCss, /\.talent-node:disabled \{ background: var\(--raised\); cursor: not-allowed; opacity: 1; \}/);
+  assert.match(companionCss, /@media \(max-width: 640px\) \{[\s\S]*\.talent-connector-layer \{ display: none; \}/);
+  assert.doesNotMatch(companionCss, /\.talent-purchase-options > h6/);
+});
+
 test("specialization hierarchy keeps shared legend rhythm and has open/close motion", () => {
   assert.match(companionCss, /\.skill-pricing-legend \{[\s\S]*margin-top: 1rem/);
   assert.doesNotMatch(companionCss, /\.specialization-pricing-legend\s*\{[^}]*margin-top/);
@@ -140,6 +292,12 @@ test("specialization hierarchy keeps shared legend rhythm and has open/close mot
   assert.match(companionCss, /out-career-menu > summary::before,\.out-career-group > summary::before[\s\S]*transition: transform \.2s ease/);
   assert.match(companionCss, /@media \(prefers-reduced-motion: reduce\)[\s\S]*hierarchy-details-content \{ animation: none !important;/);
   assert.match(companionCss, /@media \(prefers-reduced-motion: reduce\)[\s\S]*summary::before \{ transition: none;/);
+});
+
+test("top-level experience sections use breathing room around dividers without changing internal gaps", () => {
+  assert.match(companionCss, /\.experience-sections \{ display: grid; gap: 1\.25rem; \}/);
+  assert.match(companionCss, /\.experience-subsection \{ border-top: 1px solid var\(--line\); padding-top: \.95rem; \}/);
+  assert.doesNotMatch(companionCss, /\.experience-sections \{ display: grid; gap: 1rem; \}/);
 });
 
 test("experience skill rows use compact career indicators and an accessible legend", async () => {

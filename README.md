@@ -45,7 +45,8 @@ The foundation is organized into `src/shell/` (dossier shell and character-sheet
 
 - The versioned roster is stored under `aor-companion-roster` in browser localStorage. Use **Export active** before clearing site data or changing browsers.
 - The normalized starter catalogue and its source notes are in `src/companion/catalog.js`; validation, migrations, calculations, and persistence are split into the other `src/companion/` modules.
-- It intentionally covers a compact starter roster (eight core species and four core careers) rather than claiming a complete rules compendium. Talent connector diagrams and talent effects are explicitly not modeled; verify them in the Core Rulebook with the GM.
+- It intentionally covers a compact starter roster (eight core species and four core careers) rather than claiming a complete rules compendium. The Core talent catalogue (182 talents), 19 specialization trees with 380 connector-aware nodes, and ordered validated talent purchases with XP accounting, persistence, and recovery are modeled.
+- **TODO — deferred until the character sheet is fully functional:** apply deterministic talent effects to sheet calculations and actions. Passive, conditional, and narrative talents will need appropriate application, action, and reference behavior; effects are not automated yet.
 - Starter species, career, and gear entries are concise data aids, not replacement rule text. The in-app source note identifies the relevant Core Rulebook chapters.
 
 `npm test` includes catalogue/schema/migration/budget/persistence/import tests plus Vite SSR component smoke coverage for the creator and playable sheet.

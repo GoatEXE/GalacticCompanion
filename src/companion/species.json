@@ -23,7 +23,13 @@
     "woundBase": 10,
     "strainBase": 11,
     "characteristics": { "brawn": 1, "agility": 2, "intellect": 2, "cunning": 3, "willpower": 2, "presence": 2 },
-    "setup": { "kind": "none", "startingSkillIds": ["streetwise"] },
+    "setup": {
+      "kind": "none",
+      "startingSkillIds": ["streetwise"],
+      "startingTalentRanks": [
+        { "talentId": "convincing-demeanor", "rank": 1, "source": "Age of Rebellion Core Rulebook, p. 52", "sourcePage": 52, "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=53" }
+      ]
+    },
     "source": "Age of Rebellion Core Rulebook, p. 51",
     "sourcePage": "p. 51",
     "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=52",
@@ -40,7 +46,12 @@
     "woundBase": 10,
     "strainBase": 10,
     "characteristics": { "brawn": 1, "agility": 1, "intellect": 2, "cunning": 1, "willpower": 1, "presence": 1 },
-    "setup": { "kind": "droid" },
+    "setup": {
+      "kind": "droid",
+      "startingTalentRanks": [
+        { "talentId": "enduring", "rank": 1, "source": "Age of Rebellion Core Rulebook, p. 54", "sourcePage": 54, "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=55" }
+      ]
+    },
     "source": "Age of Rebellion Core Rulebook, pp. 52–53",
     "sourcePage": "pp. 52–53",
     "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=53",
@@ -128,7 +139,13 @@
     "woundBase": 10,
     "strainBase": 11,
     "characteristics": { "brawn": 1, "agility": 3, "intellect": 2, "cunning": 2, "willpower": 2, "presence": 2 },
-    "setup": { "kind": "none", "startingSkillIds": ["astrogation"] },
+    "setup": {
+      "kind": "none",
+      "startingSkillIds": ["astrogation"],
+      "startingTalentRanks": [
+        { "talentId": "skilled-jockey", "rank": 1, "source": "Age of Rebellion Core Rulebook, p. 60", "sourcePage": 60, "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=61" }
+      ]
+    },
     "source": "Age of Rebellion Core Rulebook, p. 60",
     "sourcePage": "p. 60",
     "sourceUrl": "https://online.anyflip.com/ziisf/jobq/mobile/index.html#page=61",
